@@ -87,7 +87,7 @@
         <div class="glass-card-strong p-2 sm:p-3" data-aos="fade-up" data-aos-delay="500">
             <div class="relative aspect-video rounded-xl overflow-hidden bg-gray-900">
                 @if($hero['intro_video'])
-                <video id="hero-video" class="w-full h-full object-cover" muted loop playsinline>
+                <video id="hero-video" class="w-full h-full object-cover" loop playsinline>
                     <source src="{{ asset('storage/' . $hero['intro_video']) }}" type="video/mp4">
                 </video>
                 {{-- Play overlay --}}
@@ -139,7 +139,7 @@
                     });
                 </script>
                 @else
-                <video id="hero-video" class="w-full h-full object-cover" muted loop playsinline poster="">
+                <video id="hero-video" class="w-full h-full object-cover" loop playsinline poster="">
                 </video>
                 @endif
 
@@ -171,6 +171,14 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
+                        <button id="sound-toggle" onclick="toggleVideoSound()"
+                            class="hidden sm:inline-flex items-center gap-2 text-sm bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-lg transition-all">
+                            <svg id="sound-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H3a2 2 0 01-2-2V9a2 2 0 012-2h2.586l5.657-5.657a1 1 0 011.414 0l5.657 5.657h2.586a2 2 0 012 2v4a2 2 0 01-2 2h-2.586l-5.657 5.657a1 1 0 01-1.414 0L5.586 15z" />
+                            </svg>
+                            <span class="text-xs">On</span>
+                        </button>
                         <a href="#portfolio"
                             class="hidden sm:inline-flex items-center gap-2 text-sm bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-all">
                             View Work
@@ -189,6 +197,28 @@
                         </a>
                     </div>
                 </div>
+                <script>
+                    let isMuted = false;
+                    
+                    function toggleVideoSound() {
+                        const video = document.getElementById('hero-video');
+                        const soundToggle = document.getElementById('sound-toggle');
+                        const soundIcon = document.getElementById('sound-icon');
+                        
+                        isMuted = !isMuted;
+                        video.muted = isMuted;
+                        
+                        if (isMuted) {
+                            soundToggle.classList.add('bg-white/5');
+                            soundToggle.querySelector('span').textContent = 'Off';
+                            soundIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H3a2 2 0 01-2-2V9a2 2 0 012-2h2.586l5.657-5.657a1 1 0 011.414 0l5.657 5.657h2.586a2 2 0 012 2v4a2 2 0 01-2 2h-2.586l-5.657 5.657a1 1 0 01-1.414 0L5.586 15z M3 3l18 18"/>';
+                        } else {
+                            soundToggle.classList.remove('bg-white/5');
+                            soundToggle.querySelector('span').textContent = 'On';
+                            soundIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H3a2 2 0 01-2-2V9a2 2 0 012-2h2.586l5.657-5.657a1 1 0 011.414 0l5.657 5.657h2.586a2 2 0 012 2v4a2 2 0 01-2 2h-2.586l-5.657 5.657a1 1 0 01-1.414 0L5.586 15z"/>';
+                        }
+                    }
+                </script>
             </div>
         </div>
     </div>
