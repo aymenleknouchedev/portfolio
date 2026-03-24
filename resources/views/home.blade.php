@@ -67,18 +67,15 @@
                     </div>
 
                     {{-- Floating badges --}}
-                    <div class="absolute -right-2 top-8 glass rounded-xl px-3 py-1.5 text-xs font-medium text-purple-300 animate-bounce"
-                        style="animation-delay: 0.5s; animation-duration: 3s;">
-                        ✦ Blender
+                    @php
+                        $categories = $projects->map(fn($p) => $p->projectCategory)->unique()->take(3);
+                    @endphp
+                    @foreach($categories as $category)
+                    <div class="absolute {{ $loop->index === 0 ? '-right-2 top-8' : ($loop->index === 1 ? '-left-4 bottom-12' : 'right-4 -bottom-2') }} glass rounded-xl px-3 py-1.5 text-xs font-medium text-purple-300 animate-bounce"
+                        style="animation-delay: {{ $loop->index * 0.5 }}s; animation-duration: {{ 3 + $loop->index * 0.5 }}s;">
+                        ✦ {{ $category->name }}
                     </div>
-                    <div class="absolute -left-4 bottom-12 glass rounded-xl px-3 py-1.5 text-xs font-medium text-purple-300 animate-bounce"
-                        style="animation-delay: 1s; animation-duration: 3.5s;">
-                        ✦ Houdini
-                    </div>
-                    <div class="absolute right-4 -bottom-2 glass rounded-xl px-3 py-1.5 text-xs font-medium text-purple-300 animate-bounce"
-                        style="animation-delay: 1.5s; animation-duration: 4s;">
-                        ✦ After Effects
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
