@@ -54,19 +54,19 @@
                 </div>
 
                 {{-- Lightbox --}}
-                <div id="addon-lightbox" class="fixed inset-0 z-50 bg-black/95 hidden items-center justify-center" onclick="closeAddonLightbox()">
-                    <div class="relative max-w-5xl w-full px-16" onclick="event.stopPropagation()">
-                        <img id="addon-lightbox-img" src="" alt="Screenshot" class="max-h-[85vh] w-full rounded-xl object-contain mx-auto block">
-                        <p id="addon-lightbox-counter" class="text-center text-white/50 text-sm mt-3"></p>
+                <div id="addon-lightbox" class="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-xl hidden items-center justify-center p-4" onclick="closeAddonLightbox()">
+                    <div class="relative" onclick="event.stopPropagation()">
+                        <img id="addon-lightbox-img" src="" alt="Screenshot" class="max-w-full max-h-[90vh] rounded-xl object-contain select-none mx-auto block">
                     </div>
-                    <button onclick="closeAddonLightbox()" class="absolute top-6 right-6 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <div id="addon-lightbox-counter" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 text-sm font-medium"></div>
+                    <button onclick="closeAddonLightbox()" class="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
-                    <button id="addon-lb-prev" onclick="event.stopPropagation(); addonLightboxNav(-1)" class="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    <button id="addon-lb-prev" onclick="event.stopPropagation(); addonLightboxNav(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </button>
-                    <button id="addon-lb-next" onclick="event.stopPropagation(); addonLightboxNav(1)" class="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    <button id="addon-lb-next" onclick="event.stopPropagation(); addonLightboxNav(1)" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
                 </div>
                 <script>
@@ -98,9 +98,6 @@
                     function render() {
                         document.getElementById('addon-lightbox-img').src = urls[current];
                         document.getElementById('addon-lightbox-counter').textContent = (current + 1) + ' / ' + urls.length;
-                        const show = urls.length > 1;
-                        document.getElementById('addon-lb-prev').style.display = show ? 'flex' : 'none';
-                        document.getElementById('addon-lb-next').style.display = show ? 'flex' : 'none';
                     }
                     document.addEventListener('keydown', function(e) {
                         const lb = document.getElementById('addon-lightbox');

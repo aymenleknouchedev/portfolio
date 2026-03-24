@@ -20,7 +20,7 @@
 
     <div class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8" id="hero-content">
         {{-- Hero Split: Text Left + Picture Right --}}
-        <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16 mb-10">
+        <div class="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16 mb-10">
             {{-- Left: Text --}}
             <div class="flex-1 text-center lg:text-left">
 
@@ -40,7 +40,7 @@
             </div>
 
             {{-- Right: Profile Picture --}}
-            <div class="shrink-0" data-aos="fade-left" data-aos-delay="400">
+            <div class="shrink-0 mt-20 lg:mt-0" data-aos="fade-left" data-aos-delay="400">
                 <div class="relative">
                     {{-- Glow effect --}}
                     <div
@@ -87,11 +87,59 @@
         <div class="glass-card-strong p-2 sm:p-3" data-aos="fade-up" data-aos-delay="500">
             <div class="relative aspect-video rounded-xl overflow-hidden bg-gray-900">
                 @if($hero['intro_video'])
-                <video id="hero-video" class="w-full h-full object-cover" autoplay muted loop playsinline>
+                <video id="hero-video" class="w-full h-full object-cover" muted loop playsinline>
                     <source src="{{ asset('storage/' . $hero['intro_video']) }}" type="video/mp4">
                 </video>
+                {{-- Play overlay --}}
+                <div id="video-play-overlay" class="absolute inset-0 bg-black/30 flex items-center justify-center cursor-pointer z-10 transition-opacity duration-300"
+                    onclick="toggleVideoPlayPause()">
+                    <div class="w-20 h-20 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform">
+                        <svg id="play-icon" class="w-8 h-8 text-purple-400 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                        <svg id="pause-icon" class="w-8 h-8 text-purple-400 hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                        </svg>
+                    </div>
+                </div>
+                <script>
+                    function toggleVideoPlayPause() {
+                        const video = document.getElementById('hero-video');
+                        const overlay = document.getElementById('video-play-overlay');
+                        const playIcon = document.getElementById('play-icon');
+                        const pauseIcon = document.getElementById('pause-icon');
+
+                        if (video.paused) {
+                            video.play();
+                            overlay.style.opacity = '0';
+                            overlay.style.pointerEvents = 'none';
+                            playIcon.classList.add('hidden');
+                            pauseIcon.classList.remove('hidden');
+                        } else {
+                            video.pause();
+                            overlay.style.opacity = '1';
+                            overlay.style.pointerEvents = 'auto';
+                            playIcon.classList.remove('hidden');
+                            pauseIcon.classList.add('hidden');
+                        }
+                    }
+
+                    // Add click handler to video element
+                    document.getElementById('hero-video').addEventListener('click', toggleVideoPlayPause);
+
+                    // Show overlay when video ends
+                    document.getElementById('hero-video').addEventListener('ended', () => {
+                        const overlay = document.getElementById('video-play-overlay');
+                        const playIcon = document.getElementById('play-icon');
+                        const pauseIcon = document.getElementById('pause-icon');
+                        overlay.style.opacity = '1';
+                        overlay.style.pointerEvents = 'auto';
+                        playIcon.classList.remove('hidden');
+                        pauseIcon.classList.add('hidden');
+                    });
+                </script>
                 @else
-                <video id="hero-video" class="w-full h-full object-cover" autoplay muted loop playsinline poster="">
+                <video id="hero-video" class="w-full h-full object-cover" muted loop playsinline poster="">
                 </video>
                 @endif
 
@@ -153,6 +201,35 @@
     </div>
 </section>
 
+{{-- Brands Marquee --}}
+@if($brands->count())
+<section class="relative mt-16 py-8 overflow-hidden border-y border-white/5 bg-gray-950/80">
+    <div class="absolute inset-0 bg-gradient-to-r from-gray-950 via-transparent to-gray-950 z-10 pointer-events-none"></div>
+    <div class="flex items-center gap-16 animate-marquee whitespace-nowrap">
+        @for($i = 0; $i < 2; $i++)
+        @foreach($brands as $brand)
+        <div class="flex items-center gap-3 shrink-0 opacity-40 hover:opacity-80 transition-opacity duration-300">
+            <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" class="h-8 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300">
+            <span class="text-sm text-gray-500 font-medium tracking-wide">{{ $brand->name }}</span>
+        </div>
+        @endforeach
+        @endfor
+    </div>
+    <style>
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            animation: marquee 30s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+    </style>
+</section>
+@endif
+
 {{-- Featured Work / Portfolio --}}
 <section class="py-24 px-4" id="portfolio">
     <div class="max-w-7xl mx-auto">
@@ -193,7 +270,7 @@
                         }}</span>
                     <h3 class="text-lg font-semibold mt-2 group-hover:text-purple-400 transition-colors">{{
                         $project->title }}</h3>
-                    <p class="text-gray-400 text-sm mt-2 line-clamp-2">{{ $project->description }}</p>
+                    <p class="text-gray-400 text-sm mt-2 line-clamp-2">{{ strip_tags($project->description) }}</p>
                 </div>
             </a>
             @endforeach
@@ -390,28 +467,21 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div data-aos="fade-right">
                 <span class="text-purple-400 text-sm font-semibold uppercase tracking-widest">About</span>
-                <h2 class="font-display text-5xl lg:text-6xl mt-2 mb-6">THE STUDIO</h2>
-                <p class="text-gray-400 leading-relaxed mb-6">
-                    FraxionFX is a creative studio specializing in cutting-edge 3D visual effects, particle simulations,
-                    and digital content creation. Every project is crafted with meticulous attention to detail and a
-                    passion for pushing creative boundaries.
-                </p>
-                <p class="text-gray-400 leading-relaxed mb-8">
-                    With expertise in Blender, Houdini, and modern rendering pipelines, we deliver stunning visuals that
-                    captivate audiences and elevate brands.
-                </p>
+                <h2 class="font-display text-5xl lg:text-6xl mt-2 mb-6">{{ $about['title'] }}</h2>
+                <p class="text-gray-400 leading-relaxed mb-6">{{ $about['description_1'] }}</p>
+                <p class="text-gray-400 leading-relaxed mb-8">{{ $about['description_2'] }}</p>
                 <div class="grid grid-cols-3 gap-6">
                     <div class="text-center p-4 glass-card">
-                        <div class="font-display text-4xl text-purple-400">50+</div>
-                        <div class="text-gray-400 text-sm mt-1">Projects</div>
+                        <div class="font-display text-4xl text-purple-400">{{ $about['stat_1_number'] }}</div>
+                        <div class="text-gray-400 text-sm mt-1">{{ $about['stat_1_label'] }}</div>
                     </div>
                     <div class="text-center p-4 glass-card">
-                        <div class="font-display text-4xl text-purple-400">5+</div>
-                        <div class="text-gray-400 text-sm mt-1">Years</div>
+                        <div class="font-display text-4xl text-purple-400">{{ $about['stat_2_number'] }}</div>
+                        <div class="text-gray-400 text-sm mt-1">{{ $about['stat_2_label'] }}</div>
                     </div>
                     <div class="text-center p-4 glass-card">
-                        <div class="font-display text-4xl text-purple-400">100+</div>
-                        <div class="text-gray-400 text-sm mt-1">Clients</div>
+                        <div class="font-display text-4xl text-purple-400">{{ $about['stat_3_number'] }}</div>
+                        <div class="text-gray-400 text-sm mt-1">{{ $about['stat_3_label'] }}</div>
                     </div>
                 </div>
             </div>
@@ -421,9 +491,9 @@
                     <div class="text-center p-8">
                         <div
                             class="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center font-display text-6xl mb-6">
-                            K</div>
-                        <h3 class="font-display text-4xl">KHAYREDDINE</h3>
-                        <p class="text-purple-400 mt-1">3D Artist & FX Designer</p>
+                            {{ substr($about['avatar_name'], 0, 1) }}</div>
+                        <h3 class="font-display text-4xl">{{ $about['avatar_name'] }}</h3>
+                        <p class="text-purple-400 mt-1">{{ $about['avatar_title'] }}</p>
                     </div>
                 </div>
                 <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl"></div>

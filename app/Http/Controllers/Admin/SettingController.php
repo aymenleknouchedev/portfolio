@@ -73,4 +73,112 @@ class SettingController extends Controller
 
         return redirect()->route('admin.settings.hero')->with('success', 'Hero settings updated successfully.');
     }
+
+    public function general()
+    {
+        $settings = [
+            'site_name' => Setting::get('site_name', 'FraxionFX'),
+            'contact_email' => Setting::get('contact_email', ''),
+            'contact_phone' => Setting::get('contact_phone', ''),
+        ];
+
+        return view('admin.settings.general', compact('settings'));
+    }
+
+    public function updateGeneral(Request $request)
+    {
+        $request->validate([
+            'site_name' => 'required|string|max:255',
+            'contact_email' => 'nullable|email|max:255',
+            'contact_phone' => 'nullable|string|max:50',
+        ]);
+
+        Setting::set('site_name', $request->site_name);
+        Setting::set('contact_email', $request->contact_email);
+        Setting::set('contact_phone', $request->contact_phone);
+
+        return redirect()->route('admin.settings.general')->with('success', 'General settings updated successfully.');
+    }
+
+    public function social()
+    {
+        $settings = [
+            'social_twitter' => Setting::get('social_twitter', ''),
+            'social_github' => Setting::get('social_github', ''),
+            'social_instagram' => Setting::get('social_instagram', ''),
+            'social_linkedin' => Setting::get('social_linkedin', ''),
+            'social_youtube' => Setting::get('social_youtube', ''),
+            'social_behance' => Setting::get('social_behance', ''),
+            'social_whatsapp' => Setting::get('social_whatsapp', ''),
+            'social_facebook' => Setting::get('social_facebook', ''),
+            'social_dribbble' => Setting::get('social_dribbble', ''),
+        ];
+
+        return view('admin.settings.social', compact('settings'));
+    }
+
+    public function updateSocial(Request $request)
+    {
+        $request->validate([
+            'social_twitter' => 'nullable|url|max:500',
+            'social_github' => 'nullable|url|max:500',
+            'social_instagram' => 'nullable|url|max:500',
+            'social_linkedin' => 'nullable|url|max:500',
+            'social_youtube' => 'nullable|url|max:500',
+            'social_behance' => 'nullable|url|max:500',
+            'social_whatsapp' => 'nullable|string|max:500',
+            'social_facebook' => 'nullable|url|max:500',
+            'social_dribbble' => 'nullable|url|max:500',
+        ]);
+
+        $keys = ['social_twitter', 'social_github', 'social_instagram', 'social_linkedin', 'social_youtube', 'social_behance', 'social_whatsapp', 'social_facebook', 'social_dribbble'];
+        foreach ($keys as $key) {
+            Setting::set($key, $request->input($key));
+        }
+
+        return redirect()->route('admin.settings.social')->with('success', 'Social media links updated successfully.');
+    }
+
+    public function about()
+    {
+        $settings = [
+            'about_title' => Setting::get('about_title', 'THE STUDIO'),
+            'about_description_1' => Setting::get('about_description_1', 'FraxionFX is a creative studio specializing in cutting-edge 3D visual effects, particle simulations, and digital content creation. Every project is crafted with meticulous attention to detail and a passion for pushing creative boundaries.'),
+            'about_description_2' => Setting::get('about_description_2', 'With expertise in Blender, Houdini, and modern rendering pipelines, we deliver stunning visuals that captivate audiences and elevate brands.'),
+            'about_stat_1_number' => Setting::get('about_stat_1_number', '50+'),
+            'about_stat_1_label' => Setting::get('about_stat_1_label', 'Projects'),
+            'about_stat_2_number' => Setting::get('about_stat_2_number', '5+'),
+            'about_stat_2_label' => Setting::get('about_stat_2_label', 'Years'),
+            'about_stat_3_number' => Setting::get('about_stat_3_number', '100+'),
+            'about_stat_3_label' => Setting::get('about_stat_3_label', 'Clients'),
+            'about_avatar_name' => Setting::get('about_avatar_name', 'KHAYREDDINE'),
+            'about_avatar_title' => Setting::get('about_avatar_title', '3D Artist & FX Designer'),
+        ];
+
+        return view('admin.settings.about', compact('settings'));
+    }
+
+    public function updateAbout(Request $request)
+    {
+        $request->validate([
+            'about_title' => 'required|string|max:255',
+            'about_description_1' => 'required|string|max:2000',
+            'about_description_2' => 'nullable|string|max:2000',
+            'about_stat_1_number' => 'required|string|max:20',
+            'about_stat_1_label' => 'required|string|max:50',
+            'about_stat_2_number' => 'required|string|max:20',
+            'about_stat_2_label' => 'required|string|max:50',
+            'about_stat_3_number' => 'required|string|max:20',
+            'about_stat_3_label' => 'required|string|max:50',
+            'about_avatar_name' => 'required|string|max:255',
+            'about_avatar_title' => 'required|string|max:255',
+        ]);
+
+        $keys = ['about_title', 'about_description_1', 'about_description_2', 'about_stat_1_number', 'about_stat_1_label', 'about_stat_2_number', 'about_stat_2_label', 'about_stat_3_number', 'about_stat_3_label', 'about_avatar_name', 'about_avatar_title'];
+        foreach ($keys as $key) {
+            Setting::set($key, $request->input($key));
+        }
+
+        return redirect()->route('admin.settings.about')->with('success', 'About section updated successfully.');
+    }
 }

@@ -8,7 +8,29 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @php
+            $primaryColor = \App\Models\Setting::get('primary_color', '#7c3aed');
+            $siteName = \App\Models\Setting::get('site_name', 'FraxionFX');
+        @endphp
+        <style>
+            :root {
+                --clr-brand: {{ $primaryColor }};
+                --color-purple-300: color-mix(in srgb, var(--clr-brand) 45%, white);
+                --color-purple-400: color-mix(in srgb, var(--clr-brand) 65%, white);
+                --color-purple-500: color-mix(in srgb, var(--clr-brand) 82%, white);
+                --color-purple-600: var(--clr-brand);
+                --color-purple-700: color-mix(in srgb, var(--clr-brand) 82%, black);
+                --color-purple-800: color-mix(in srgb, var(--clr-brand) 70%, black);
+                --color-purple-900: color-mix(in srgb, var(--clr-brand) 55%, black);
+                --color-purple-950: color-mix(in srgb, var(--clr-brand) 40%, black);
+                --color-violet-400: color-mix(in srgb, var(--clr-brand) 60%, white);
+                --color-violet-500: color-mix(in srgb, var(--clr-brand) 78%, white);
+                --color-violet-600: color-mix(in srgb, var(--clr-brand) 92%, black);
+                --color-violet-900: color-mix(in srgb, var(--clr-brand) 50%, black);
+            }
+        </style>
     </head>
     <body class="font-sans bg-gray-950 text-white antialiased">
         <div class="min-h-screen flex relative overflow-hidden">
@@ -24,8 +46,8 @@
             <div class="hidden lg:flex lg:w-1/2 relative items-center justify-center p-12">
                 <div class="relative z-10 max-w-md">
                     <a href="/" class="flex items-center space-x-3 group mb-12">
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center font-bold text-2xl group-hover:scale-110 transition-transform shadow-xl shadow-purple-500/30">F</div>
-                        <span class="text-3xl font-bold">FraxionFX</span>
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center font-bold text-2xl group-hover:scale-110 transition-transform shadow-xl shadow-purple-500/30">{{ substr($siteName, 0, 1) }}</div>
+                        <span class="text-3xl font-bold">{{ $siteName }}</span>
                     </a>
                     <h2 class="text-4xl font-bold leading-tight mb-4">
                         Premium <span class="bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text text-transparent">3D Assets</span> & Visual Effects
@@ -46,7 +68,7 @@
                 </div>
 
                 {{-- Decorative elements --}}
-                <div class="absolute bottom-12 left-12 text-xs text-gray-600">© {{ date('Y') }} FraxionFX</div>
+                <div class="absolute bottom-12 left-12 text-xs text-gray-600">© {{ date('Y') }} {{ $siteName }}</div>
             </div>
 
             {{-- Right Panel: Form --}}
@@ -54,8 +76,8 @@
                 {{-- Mobile Logo --}}
                 <div class="lg:hidden mb-8">
                     <a href="/" class="flex items-center space-x-3 group">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition-transform">F</div>
-                        <span class="text-2xl font-bold">FraxionFX</span>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition-transform">{{ substr($siteName, 0, 1) }}</div>
+                        <span class="text-2xl font-bold">{{ $siteName }}</span>
                     </a>
                 </div>
 

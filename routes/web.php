@@ -92,6 +92,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('project-categories', Admin\ProjectCategoryController::class)->except(['show']);
     Route::resource('projects', Admin\ProjectController::class)->except(['show']);
     Route::resource('services', Admin\ServiceController::class)->except(['show']);
+    Route::resource('brands', Admin\BrandController::class)->except(['show']);
     Route::resource('articles', Admin\ArticleController::class)->except(['show']);
 
     Route::get('/purchases', [Admin\PurchaseController::class , 'index'])->name('purchases.index');
@@ -99,6 +100,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/settings/hero', [Admin\SettingController::class , 'hero'])->name('settings.hero');
     Route::put('/settings/hero', [Admin\SettingController::class , 'updateHero'])->name('settings.hero.update');
+
+    Route::get('/settings/general', [Admin\SettingController::class , 'general'])->name('settings.general');
+    Route::put('/settings/general', [Admin\SettingController::class , 'updateGeneral'])->name('settings.general.update');
+
+    Route::get('/settings/social', [Admin\SettingController::class , 'social'])->name('settings.social');
+    Route::put('/settings/social', [Admin\SettingController::class , 'updateSocial'])->name('settings.social.update');
+
+    Route::get('/settings/about', [Admin\SettingController::class , 'about'])->name('settings.about');
+    Route::put('/settings/about', [Admin\SettingController::class , 'updateAbout'])->name('settings.about.update');
+
+    Route::get('/contact-messages', [Admin\ContactMessageController::class , 'index'])->name('contact-messages.index');
+    Route::get('/contact-messages/{contactMessage}', [Admin\ContactMessageController::class , 'show'])->name('contact-messages.show');
+    Route::delete('/contact-messages/{contactMessage}', [Admin\ContactMessageController::class , 'destroy'])->name('contact-messages.destroy');
 });
 
 /*

@@ -18,9 +18,20 @@
         <h1 class="text-4xl lg:text-5xl font-bold mt-2 mb-6" data-aos="fade-up" data-aos-delay="100">{{ $project->title
             }}</h1>
 
-        @if($project->published_at)
-        <time class="text-gray-500 text-sm" data-aos="fade-up">{{ $project->published_at->format('F j, Y') }}</time>
-        @endif
+        <div class="flex flex-wrap items-center gap-4 mt-2">
+            @if($project->published_at)
+            <time class="text-gray-500 text-sm" data-aos="fade-up">{{ $project->published_at->format('F j, Y') }}</time>
+            @endif
+
+            @if($project->url)
+            <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" data-aos="fade-up"
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25"
+                style="background: var(--clr-brand, #7c3aed);">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                Visit Project
+            </a>
+            @endif
+        </div>
 
         {{-- Hero --}}
         <div class="mt-8 aspect-video rounded-2xl overflow-hidden bg-gray-900 border border-white/5" data-aos="fade-up"

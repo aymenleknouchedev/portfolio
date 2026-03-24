@@ -82,6 +82,12 @@
                 <input type="url" name="hero_video" value="{{ old('hero_video', $project->hero_video ?? '') }}" placeholder="https://www.youtube.com/watch?v=..."
                     class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
             </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Project Link</label>
+                <input type="url" name="url" value="{{ old('url', $project->url ?? '') }}" placeholder="https://example.com or Play Store link"
+                    class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
+                <p class="text-xs text-gray-500 mt-1">Website URL or app store link (shown as a Visit button on the project page)</p>
+            </div>
             <div x-data="tagInput({{ json_encode(old('software_used', isset($project) && $project->software_used ? $project->software_used : [])) }})">
                 <label class="block text-sm font-medium text-gray-300 mb-2">Software Used</label>
                 <input type="hidden" name="software_used" :value="JSON.stringify(items)">
