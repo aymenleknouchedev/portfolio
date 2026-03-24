@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth overflow-x-hidden">
 
 <head>
     <meta charset="utf-8">
@@ -86,8 +86,8 @@
     @endphp
 
     {{-- Top Bar --}}
-    <div class="fixed top-0 left-0 right-0 text-white text-xs py-2 z-[60]" style="background-color: var(--clr-brand);">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+    <div class="fixed top-0 left-0 right-0 text-white text-xs py-2 z-[60] overflow-hidden" style="background-color: var(--clr-brand);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-hidden">
             <div class="flex items-center gap-4 sm:gap-6">
                 @if($contactEmail)
                 <a href="mailto:{{ $contactEmail }}" class="flex items-center gap-1.5 hover:text-white/80 transition-colors">
