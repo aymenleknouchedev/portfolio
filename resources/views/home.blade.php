@@ -33,7 +33,7 @@
                     <span class="bg-gradient-to-r from-violet-400 to-purple-500 bg-clip-text text-transparent">{{ $hero['title_line3'] }}</span>
                 </h1>
 
-                <p class="text-lg sm:text-xl text-gray-400 max-w-xl mb-8 leading-relaxed lg:mx-0 mx-auto"
+                <p class="text-md sm:text-xl text-gray-400 max-w-xl mb-8 leading-relaxed lg:mx-0 mx-auto"
                     data-aos="fade-up" data-aos-delay="400">
                     {{ $hero['description'] }}
                 </p>
