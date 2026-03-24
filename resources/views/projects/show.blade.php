@@ -15,7 +15,7 @@
 
         <span class="text-purple-400 text-sm font-medium uppercase tracking-wider" data-aos="fade-up">{{
             $project->projectCategory->name ?? $project->category }}</span>
-        <h1 class="text-4xl lg:text-5xl font-bold mt-2 mb-6" data-aos="fade-up" data-aos-delay="100">{{ $project->title
+        <h1 class="text-3xl lg:text-4xl font-bold mt-2 mb-6" data-aos="fade-up" data-aos-delay="100">{{ $project->title
             }}</h1>
 
         <div class="flex flex-wrap items-center gap-4 mt-2">
