@@ -24,7 +24,7 @@
             {{-- Left: Text --}}
             <div class="flex-1 text-center lg:text-left">
 
-                <h1 class="font-display text-6xl sm:text-7xl lg:text-9xl leading-[0.9] mb-6 mt-15" data-aos="fade-up"
+                <h1 class="font-display text-8xl sm:text-6xl lg:text-8xl leading-[0.9] mb-6 mt-15" data-aos="fade-up"
                     data-aos-delay="300">
                     <span class="text-white">{{ $hero['title_line1'] }}</span><br>
                     <span
