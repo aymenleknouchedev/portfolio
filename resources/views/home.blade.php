@@ -2,7 +2,7 @@
 
 @section('content')
 {{-- Hero Section with Intro Video --}}
-<section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20" id="hero">
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 mt-10" id="hero">
     {{-- Animated Background --}}
     <div class="absolute inset-0 bg-gradient-to-br from-gray-950 via-purple-950/20 to-gray-950"></div>
     <div class="absolute inset-0" id="particles-bg">
