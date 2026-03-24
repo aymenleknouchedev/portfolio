@@ -33,7 +33,7 @@ class SettingController extends Controller
             'hero_title_line3' => 'required|string|max:255',
             'hero_description' => 'required|string|max:1000',
             'hero_portrait' => 'nullable|image|max:5120',
-            'intro_video' => 'nullable|mimes:mp4,webm,mov|max:51200',
+            'intro_video' => 'nullable|mimes:mp4,webm,mov|max:1048576',
             'site_logo' => 'nullable|image|max:2048',
             'primary_color' => 'nullable|string|regex:/^#[0-9a-fA-F]{6}$/',
         ]);

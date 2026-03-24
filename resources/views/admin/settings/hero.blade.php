@@ -17,9 +17,28 @@
         <a href="{{ route('admin.settings.about') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">About Section</a>
     </div>
 
-    <form action="{{ route('admin.settings.hero.update') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+    <form action="{{ route('admin.settings.hero.update') }}" method="POST" enctype="multipart/form-data" class="space-y-8" id="hero-form">
         @csrf
         @method('PUT')
+
+        {{-- Upload Progress --}}
+        <div id="upload-progress" class="hidden rounded-2xl bg-gray-900 border border-white/5 p-6 space-y-4">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <svg class="w-5 h-5 text-purple-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+                Uploading...
+            </h2>
+            <div class="relative w-full h-3 bg-white/5 rounded-full overflow-hidden">
+                <div id="progress-bar" class="absolute inset-y-0 left-0 bg-gradient-to-r from-purple-600 to-violet-500 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
+            </div>
+            <p class="text-center">
+                <span id="progress-number" class="text-3xl font-display text-white">0</span>
+                <span class="text-gray-400 text-sm">%</span>
+            </p>
+            <p id="progress-status" class="text-xs text-gray-500 text-center">Preparing upload...</p>
+        </div>
 
         {{-- Brand Color --}}
         <div class="rounded-2xl bg-gray-900 border border-white/5 p-6 space-y-5">
@@ -169,7 +188,7 @@
             @endif
             <input type="file" name="intro_video" accept="video/mp4,video/webm,video/quicktime"
                 class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none file:bg-purple-600 file:text-white file:border-0 file:rounded-lg file:px-4 file:py-1 file:mr-4">
-            <p class="text-xs text-gray-500">Accepted formats: MP4, WebM, MOV · Max 50MB</p>
+            <p class="text-xs text-gray-500">Accepted formats: MP4, WebM, MOV · Max 1G</p>
             @error('intro_video') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
         </div>
 
@@ -189,5 +208,77 @@ function setBrandColor(hex) {
 document.getElementById('primary-color-input').addEventListener('input', function() {
     document.getElementById('color-hex-display').textContent = this.value;
 });
+
+// Upload progress with XHR
+document.getElementById('hero-form').addEventListener('submit', function(e) {
+    const fileInputs = this.querySelectorAll('input[type="file"]');
+    let hasFile = false;
+    fileInputs.forEach(input => { if (input.files.length > 0) hasFile = true; });
+    if (!hasFile) return; // normal submit if no files
+
+    e.preventDefault();
+    const form = this;
+    const formData = new FormData(form);
+    const progressDiv = document.getElementById('upload-progress');
+    const progressBar = document.getElementById('progress-bar');
+    const progressNumber = document.getElementById('progress-number');
+    const progressStatus = document.getElementById('progress-status');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    progressDiv.classList.remove('hidden');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Uploading...';
+    progressDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', form.action, true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+    let currentPercent = 0;
+    xhr.upload.addEventListener('progress', function(e) {
+        if (e.lengthComputable) {
+            const percent = Math.round((e.loaded / e.total) * 100);
+            currentPercent = percent;
+            progressBar.style.width = percent + '%';
+            progressNumber.textContent = percent;
+            if (percent < 100) {
+                progressStatus.textContent = 'Uploading... ' + formatBytes(e.loaded) + ' / ' + formatBytes(e.total);
+            } else {
+                progressStatus.textContent = 'Processing... Please wait.';
+            }
+        }
+    });
+
+    xhr.addEventListener('load', function() {
+        if (xhr.status >= 200 && xhr.status < 400) {
+            progressStatus.textContent = 'Upload complete! Redirecting...';
+            progressNumber.textContent = '100';
+            progressBar.style.width = '100%';
+            window.location.reload();
+        } else {
+            progressStatus.textContent = 'Upload failed. Please try again.';
+            progressBar.classList.remove('from-purple-600', 'to-violet-500');
+            progressBar.classList.add('bg-red-500');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Save Settings';
+        }
+    });
+
+    xhr.addEventListener('error', function() {
+        progressStatus.textContent = 'Connection error. Please try again.';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save Settings';
+    });
+
+    xhr.send(formData);
+});
+
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
 </script>
 @endsection

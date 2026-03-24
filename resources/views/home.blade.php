@@ -90,6 +90,19 @@
                 <video id="hero-video" class="w-full h-full object-cover" loop playsinline>
                     <source src="{{ asset('storage/' . $hero['intro_video']) }}" type="video/mp4">
                 </video>
+                {{-- Buffering/Loading Overlay --}}
+                <div id="video-loading" class="absolute inset-0 bg-black/50 flex items-center justify-center z-20 hidden pointer-events-none">
+                    <div class="text-center">
+                        <div class="w-14 h-14 mx-auto mb-3 relative">
+                            <svg class="w-14 h-14 animate-spin" viewBox="0 0 50 50">
+                                <circle class="opacity-20" cx="25" cy="25" r="20" stroke="white" stroke-width="4" fill="none"></circle>
+                                <circle cx="25" cy="25" r="20" stroke="url(#loader-gradient)" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="80, 200" stroke-dashoffset="0"></circle>
+                                <defs><linearGradient id="loader-gradient"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs>
+                            </svg>
+                        </div>
+                        <p class="text-sm text-gray-300">Loading...</p>
+                    </div>
+                </div>
                 {{-- Play overlay --}}
                 <div id="video-play-overlay" class="absolute inset-0 bg-black/30 flex items-center justify-center cursor-pointer z-10 transition-opacity duration-300"
                     onclick="toggleVideoPlayPause()">
@@ -137,6 +150,29 @@
                         playIcon.classList.remove('hidden');
                         pauseIcon.classList.add('hidden');
                     });
+
+                    // Buffering / loading detection
+                    (function() {
+                        const video = document.getElementById('hero-video');
+                        const loader = document.getElementById('video-loading');
+                        if (!video || !loader) return;
+
+                        let bufferTimer = null;
+
+                        video.addEventListener('waiting', () => {
+                            bufferTimer = setTimeout(() => loader.classList.remove('hidden'), 300);
+                        });
+
+                        video.addEventListener('playing', () => {
+                            clearTimeout(bufferTimer);
+                            loader.classList.add('hidden');
+                        });
+
+                        video.addEventListener('canplay', () => {
+                            clearTimeout(bufferTimer);
+                            loader.classList.add('hidden');
+                        });
+                    })();
                 </script>
                 @else
                 <video id="hero-video" class="w-full h-full object-cover" loop playsinline poster="">
