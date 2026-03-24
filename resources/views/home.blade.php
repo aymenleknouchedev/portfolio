@@ -68,7 +68,7 @@
 
                     {{-- Floating badges --}}
                     @php
-                        $categories = $projects->map(fn($p) => $p->projectCategory)->unique()->take(3);
+                        $categories = $projects->map(fn($p) => $p->projectCategory)->filter()->unique('id')->take(3);
                     @endphp
                     @foreach($categories as $category)
                     <div class="absolute {{ $loop->index === 0 ? '-right-2 top-8' : ($loop->index === 1 ? '-left-4 bottom-12' : 'right-4 -bottom-2') }} glass rounded-xl px-3 py-1.5 text-xs font-medium text-purple-300 animate-bounce"
