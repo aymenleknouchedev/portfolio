@@ -7,7 +7,7 @@
             <div data-aos="fade-right">
                 <span class="text-purple-400 text-sm font-semibold uppercase tracking-widest">About</span>
                 <h1 class="text-4xl lg:text-6xl font-bold mt-2 mb-6">The Studio</h1>
-                <p class="text-gray-400 leading-relaxed mb-6">FraxionFX is a creative studio specializing in cutting-edge 3D visual effects, particle simulations, and digital content creation. Every project is crafted with meticulous attention to detail and a passion for pushing creative boundaries.</p>
+                <p class="text-gray-400 leading-relaxed mb-6">{{ \App\Models\Setting::get('about_description_1', 'FraxionFX is a creative studio specializing in cutting-edge 3D visual effects, particle simulations, and digital content creation. Every project is crafted with meticulous attention to detail and a passion for pushing creative boundaries.') }}</p>
                 <p class="text-gray-400 leading-relaxed mb-6">With expertise in Blender, Houdini, and modern rendering pipelines, we deliver stunning visuals that captivate audiences and elevate brands worldwide.</p>
                 <p class="text-gray-400 leading-relaxed mb-8">Our mission is to democratize premium 3D content by offering high-quality add-ons, educational resources, and professional services to creators at every level.</p>
                 <div class="grid grid-cols-3 gap-6">

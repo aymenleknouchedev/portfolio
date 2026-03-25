@@ -56,12 +56,6 @@
             class="fixed top-0 left-0 h-screen z-50 bg-gray-900 border-r border-white/5 shrink-0 overflow-y-auto overflow-x-hidden flex flex-col lg:sticky lg:z-auto -translate-x-full lg:translate-x-0 w-64 sidebar-expanded">
             <div class="p-4 border-b border-white/5">
                 <a href="{{ route('admin.dashboard') }}" @click="closeMobile()" class="flex items-center gap-3">
-                    @php $siteLogo = \App\Models\Setting::get('site_logo'); @endphp
-                    @if($siteLogo)
-                        <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="w-10 h-10 object-contain rounded-lg shrink-0">
-                    @else
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center font-bold text-lg shrink-0">{{ substr($siteName, 0, 1) }}</div>
-                    @endif
                     <span class="sidebar-label text-lg font-bold">{{ $siteName }}</span>
                 </a>
             </div>

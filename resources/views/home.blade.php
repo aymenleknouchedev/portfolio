@@ -193,13 +193,13 @@
                 @endif
 
                 {{-- Bottom glassmorphic overlay bar --}}
-                <div class="absolute bottom-0 inset-x-0 glass p-4 flex items-center justify-between">
+                <div class="absolute bottom-0 inset-x-0 glass p-4 hidden sm:flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div
                             class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-xs font-bold">
-                            F</div>
+                            {{ substr(\App\Models\Setting::get('site_name', 'FraxionFX'), 0, 1) }}</div>
                         <div>
-                            <p class="text-sm font-medium text-white">FraxionFX Showreel 2025</p>
+                            <p class="text-sm font-medium text-white">{{ \App\Models\Setting::get('site_name', 'FraxionFX') }} Showreel {{ date('Y') }}</p>
                             <p class="text-xs text-gray-400">3D & VFX Highlights</p>
                         </div>
                     </div>
@@ -457,8 +457,7 @@
                     <div class="flex-1">
                         <h3 class="text-xl font-semibold mb-2">{{ $service->title }}</h3>
                         <p class="text-gray-400 text-sm leading-relaxed mb-4">{{ $service->description }}</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-purple-400 font-medium text-sm">{{ $service->price_range }}</span>
+                        <div class="flex items-center justify-end">
                             <a href="{{ $service->getWhatsappUrl() }}" target="_blank" rel="noopener"
                                 class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-all hover:shadow-lg hover:shadow-green-500/20">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

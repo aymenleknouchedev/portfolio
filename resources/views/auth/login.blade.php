@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-white">Welcome back</h1>
-        <p class="text-gray-400 mt-1 text-sm">Sign in to your FraxionFX account</p>
+        <p class="text-gray-400 mt-1 text-sm">Sign in to your {{ \App\Models\Setting::get('site_name', 'FraxionFX') }} account</p>
     </div>
 
     <!-- Session Status -->

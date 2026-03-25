@@ -13,15 +13,9 @@
         <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
         <textarea name="description" rows="4" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none resize-none">{{ old('description', $service->description ?? '') }}</textarea>
     </div>
-    <div class="grid grid-cols-2 gap-6">
-        <div>
-            <label class="block text-sm font-medium text-gray-300 mb-2">Price Range</label>
-            <input type="text" name="price_range" value="{{ old('price_range', $service->price_range ?? '') }}" placeholder="$500 - $5,000" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-300 mb-2">WhatsApp Number</label>
-            <input type="text" name="whatsapp_number" value="{{ old('whatsapp_number', $service->whatsapp_number ?? '') }}" placeholder="Optional, uses global default" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
-        </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">WhatsApp Number</label>
+        <input type="text" name="whatsapp_number" value="{{ old('whatsapp_number', $service->whatsapp_number ?? '') }}" placeholder="Optional, uses global default" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
     </div>
     <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Example Image</label>

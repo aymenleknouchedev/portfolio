@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-white">Create your account</h1>
-        <p class="text-gray-400 mt-1 text-sm">Join FraxionFX to access premium assets</p>
+        <p class="text-gray-400 mt-1 text-sm">Join {{ \App\Models\Setting::get('site_name', 'FraxionFX') }} to access premium assets</p>
     </div>
 
     <form method="POST" action="{{ route('register') }}" class="space-y-5">
