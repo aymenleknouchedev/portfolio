@@ -40,7 +40,7 @@
             </div>
 
             {{-- Right: Profile Picture --}}
-            <div class="shrink-0 mt-20 lg:mt-0" data-aos="fade-left" data-aos-delay="400">
+            <div class="shrink-0 md:mt-20 lg:mt-0" data-aos="fade-left" data-aos-delay="400">
                 <div class="relative">
                     {{-- Glow effect --}}
                     <div
