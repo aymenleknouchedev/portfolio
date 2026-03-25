@@ -37,7 +37,7 @@
                 <div class="p-6">
                     <span class="text-xs text-purple-400 font-medium uppercase tracking-wider">{{ $project->projectCategory->name ?? $project->category }}</span>
                     <h3 class="text-lg font-semibold mt-2 group-hover:text-purple-400 transition-colors">{{ $project->title }}</h3>
-                    <p class="text-gray-400 text-sm mt-2 line-clamp-2">{{ $project->description }}</p>
+                    <p class="text-gray-400 text-sm mt-2 line-clamp-2">{{ strip_tags($project->description) }}</p>
                     <div class="flex items-center gap-2 mt-4">
                         @if($project->software_used)
                             @foreach(array_slice($project->software_used, 0, 3) as $sw)
