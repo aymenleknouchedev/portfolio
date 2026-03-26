@@ -159,6 +159,7 @@
         $socialYoutube = \App\Models\Setting::get('social_youtube');
         $socialBehance = \App\Models\Setting::get('social_behance');
         $socialWhatsapp = \App\Models\Setting::get('social_whatsapp');
+        $whatsappUrl = $socialWhatsapp ? 'https://wa.me/' . preg_replace('/\D/', '', preg_replace('#^https?://wa\.me/#', '', trim($socialWhatsapp))) : null;
         $socialFacebook = \App\Models\Setting::get('social_facebook');
         $socialDribbble = \App\Models\Setting::get('social_dribbble');
     @endphp
@@ -189,7 +190,7 @@
                 @if($socialBehance)<a href="{{ $socialBehance }}" target="_blank" rel="noopener" class="hover:text-white/80 transition-colors"><i class="fa-brands fa-behance"></i></a>@endif
                 @if($socialFacebook)<a href="{{ $socialFacebook }}" target="_blank" rel="noopener" class="hover:text-white/80 transition-colors"><i class="fa-brands fa-facebook-f"></i></a>@endif
                 @if($socialDribbble)<a href="{{ $socialDribbble }}" target="_blank" rel="noopener" class="hover:text-white/80 transition-colors"><i class="fa-brands fa-dribbble"></i></a>@endif
-                @if($socialWhatsapp)<a href="{{ $socialWhatsapp }}" target="_blank" rel="noopener" class="hover:text-white/80 transition-colors"><i class="fa-brands fa-whatsapp"></i></a>@endif
+                @if($whatsappUrl)<a href="{{ $whatsappUrl }}" target="_blank" rel="noopener" class="hover:text-white/80 transition-colors"><i class="fa-brands fa-whatsapp"></i></a>@endif
             </div>
         </div>
     </div>
@@ -393,8 +394,8 @@
                             <i class="fa-brands fa-dribbble"></i>
                         </a>
                         @endif
-                        @if($socialWhatsapp)
-                        <a href="{{ $socialWhatsapp }}" target="_blank" rel="noopener"
+                        @if($whatsappUrl)
+                        <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener"
                             class="w-10 h-10 rounded-lg bg-white/5 hover:bg-purple-500/20 border border-white/10 hover:border-purple-500/30 flex items-center justify-center text-gray-400 hover:text-purple-400 transition-all">
                             <i class="fa-brands fa-whatsapp"></i>
                         </a>
