@@ -8,6 +8,10 @@
             $primaryColor = \App\Models\Setting::get('primary_color', '#7c3aed');
             $siteName = \App\Models\Setting::get('site_name', 'FraxionFX');
             $favicon = \App\Models\Setting::get('favicon');
+            $authTitle = \App\Models\Setting::get('auth_title', 'Premium 3D Assets & Visual Effects');
+            $authDescription = \App\Models\Setting::get('auth_description', 'Access exclusive add-ons, tutorials, and professional-grade assets crafted for creators and studios worldwide.');
+            $authFeature1 = \App\Models\Setting::get('auth_feature_1', 'Premium Add-ons');
+            $authFeature2 = \App\Models\Setting::get('auth_feature_2', 'In-depth Tutorials');
         @endphp
         <title>{{ $siteName }}</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,19 +58,19 @@
                         <span class="text-3xl font-bold">{{ $siteName }}</span>
                     </a>
                     <h2 class="text-4xl font-bold leading-tight mb-4">
-                        Premium <span class="bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text text-transparent">3D Assets</span> & Visual Effects
+                        {{ $authTitle }}
                     </h2>
                     <p class="text-gray-400 text-lg leading-relaxed mb-8">
-                        Access exclusive add-ons, tutorials, and professional-grade assets crafted for creators and studios worldwide.
+                        {{ $authDescription }}
                     </p>
                     <div class="flex items-center gap-6 text-sm text-gray-500">
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            Premium Add-ons
+                            {{ $authFeature1 }}
                         </div>
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            In-depth Tutorials
+                            {{ $authFeature2 }}
                         </div>
                     </div>
                 </div>

@@ -15,6 +15,7 @@
         <a href="{{ route('admin.settings.general') }}" class="px-4 py-2 rounded-lg text-sm font-medium bg-purple-600 text-white">General</a>
         <a href="{{ route('admin.settings.social') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">Social Media</a>
         <a href="{{ route('admin.settings.about') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">About Section</a>
+        <a href="{{ route('admin.settings.auth') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">Login & Register</a>
     </div>
 
     <form action="{{ route('admin.settings.general.update') }}" method="POST" enctype="multipart/form-data" class="space-y-8">

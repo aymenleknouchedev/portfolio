@@ -190,4 +190,33 @@ class SettingController extends Controller
 
         return redirect()->route('admin.settings.about')->with('success', 'About section updated successfully.');
     }
+
+    public function auth()
+    {
+        $settings = [
+            'auth_title' => Setting::get('auth_title', 'Premium 3D Assets & Visual Effects'),
+            'auth_description' => Setting::get('auth_description', 'Access exclusive add-ons, tutorials, and professional-grade assets crafted for creators and studios worldwide.'),
+            'auth_feature_1' => Setting::get('auth_feature_1', 'Premium Add-ons'),
+            'auth_feature_2' => Setting::get('auth_feature_2', 'In-depth Tutorials'),
+        ];
+
+        return view('admin.settings.auth', compact('settings'));
+    }
+
+    public function updateAuth(Request $request)
+    {
+        $request->validate([
+            'auth_title' => 'required|string|max:500',
+            'auth_description' => 'required|string|max:1000',
+            'auth_feature_1' => 'required|string|max:255',
+            'auth_feature_2' => 'required|string|max:255',
+        ]);
+
+        $keys = ['auth_title', 'auth_description', 'auth_feature_1', 'auth_feature_2'];
+        foreach ($keys as $key) {
+            Setting::set($key, $request->input($key));
+        }
+
+        return redirect()->route('admin.settings.auth')->with('success', 'Login & Register settings updated successfully.');
+    }
 }
