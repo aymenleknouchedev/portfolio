@@ -23,12 +23,14 @@ class Service extends Model
 
     public function getWhatsappUrl(): string
     {
-        $phone = $this->whatsapp_number
+        $raw = $this->whatsapp_number
             ?: \App\Models\Setting::get('social_whatsapp')
             ?: config('fraxionfx.whatsapp_number');
 
-        // Strip https://wa.me/ prefix if present (stored as full URL in social settings)
-        $phone = preg_replace('#^https?://wa\.me/#', '', $phone);
+        // Strip full URL prefix if stored as https://wa.me/NUMBER
+        $raw = preg_replace('#^https?://wa\.me/#', '', trim($raw));
+        // Keep only digits (strip +, spaces, dashes)
+        $phone = preg_replace('/\D/', '', $raw);
 
         return "https://wa.me/{$phone}?text=" . urlencode("Hello, I'm interested in your {$this->title} service.");
     }

@@ -89,8 +89,8 @@
                     <label class="block text-sm font-medium text-gray-300 mb-2"><i class="fa-brands fa-whatsapp mr-2 text-purple-400"></i>WhatsApp</label>
                     <input type="text" name="social_whatsapp" value="{{ old('social_whatsapp', $settings['social_whatsapp']) }}"
                         class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none"
-                        placeholder="https://wa.me/1234567890">
-                    <p class="text-xs text-gray-500 mt-2">Use format: https://wa.me/phonenumber</p>
+                        placeholder="213XXXXXXXXX">
+                    <p class="text-xs text-gray-500 mt-2">Phone number with country code, digits only (e.g. 213XXXXXXXXX). Used for "Hire Me" buttons on services.</p>
                     @error('social_whatsapp') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
                 </div>
             </div>
