@@ -4,17 +4,17 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        @php
+            $primaryColor = \App\Models\Setting::get('primary_color', '#7c3aed');
+            $siteName = \App\Models\Setting::get('site_name', 'FraxionFX');
+            $favicon = \App\Models\Setting::get('favicon');
+        @endphp
         <title>{{ $siteName }}</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @php
-            $primaryColor = \App\Models\Setting::get('primary_color', '#7c3aed');
-            $siteName = \App\Models\Setting::get('site_name', 'FraxionFX');
-            $favicon = \App\Models\Setting::get('favicon');
-        @endphp
         @if($favicon)
         <link rel="icon" href="{{ asset('storage/' . $favicon) }}" type="image/png">
         @endif
