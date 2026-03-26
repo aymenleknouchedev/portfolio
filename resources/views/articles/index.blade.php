@@ -6,7 +6,6 @@
         <div class="text-center mb-16" data-aos="fade-up">
             <span class="text-purple-400 text-sm font-semibold uppercase tracking-widest">Learn</span>
             <h1 class="text-4xl lg:text-6xl font-bold mt-2">Articles & Tutorials</h1>
-            <p class="text-gray-400 mt-4 max-w-xl mx-auto">Level up your 3D skills with in-depth tutorials and insights.</p>
         </div>
 
         {{-- Course Waitlist --}}

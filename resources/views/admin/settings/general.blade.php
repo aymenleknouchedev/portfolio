@@ -17,7 +17,7 @@
         <a href="{{ route('admin.settings.about') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">About Section</a>
     </div>
 
-    <form action="{{ route('admin.settings.general.update') }}" method="POST" class="space-y-8">
+    <form action="{{ route('admin.settings.general.update') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
         @csrf
         @method('PUT')
 
@@ -33,6 +33,19 @@
                     placeholder="FraxionFX">
                 <p class="text-xs text-gray-500 mt-2">Appears in the browser tab, navigation, and footer</p>
                 @error('site_name') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Favicon</label>
+                @if($settings['favicon'])
+                <div class="flex items-center gap-4 mb-3">
+                    <img src="{{ asset('storage/' . $settings['favicon']) }}" alt="Current favicon" class="w-10 h-10 object-contain rounded-lg border border-white/10 bg-white/5 p-1">
+                    <p class="text-sm text-gray-400">Current favicon</p>
+                </div>
+                @endif
+                <input type="file" name="favicon" accept="image/*"
+                    class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none file:bg-purple-600 file:text-white file:border-0 file:rounded-lg file:px-4 file:py-1 file:mr-4">
+                <p class="text-xs text-gray-500 mt-2">PNG or ICO recommended · 32x32 or 64x64px · Max 1MB</p>
+                @error('favicon') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
             </div>
         </div>
 

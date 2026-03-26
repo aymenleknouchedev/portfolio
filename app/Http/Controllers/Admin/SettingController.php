@@ -80,6 +80,7 @@ class SettingController extends Controller
             'site_name' => Setting::get('site_name', 'FraxionFX'),
             'contact_email' => Setting::get('contact_email', ''),
             'contact_phone' => Setting::get('contact_phone', ''),
+            'favicon' => Setting::get('favicon'),
         ];
 
         return view('admin.settings.general', compact('settings'));
@@ -91,11 +92,19 @@ class SettingController extends Controller
             'site_name' => 'required|string|max:255',
             'contact_email' => 'nullable|email|max:255',
             'contact_phone' => 'nullable|string|max:50',
+            'favicon' => 'nullable|image|max:1024',
         ]);
 
         Setting::set('site_name', $request->site_name);
         Setting::set('contact_email', $request->contact_email);
         Setting::set('contact_phone', $request->contact_phone);
+
+        if ($request->hasFile('favicon')) {
+            $old = Setting::get('favicon');
+            if ($old) Storage::disk('public')->delete($old);
+            $path = $request->file('favicon')->store('settings', 'public');
+            Setting::set('favicon', $path);
+        }
 
         return redirect()->route('admin.settings.general')->with('success', 'General settings updated successfully.');
     }

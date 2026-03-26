@@ -6,7 +6,6 @@
         <div class="text-center mb-16" data-aos="fade-up">
             <span class="text-purple-400 text-sm font-semibold uppercase tracking-widest">Our Work</span>
             <h1 class="text-4xl lg:text-6xl font-bold mt-2">Portfolio</h1>
-            <p class="text-gray-400 mt-4 max-w-xl mx-auto">Explore our latest projects, from cinematic VFX to stunning 3D environments.</p>
         </div>
 
         <div class="flex flex-wrap justify-center gap-3 mb-12" data-aos="fade-up" data-aos-delay="100">

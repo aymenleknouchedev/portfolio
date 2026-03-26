@@ -7,10 +7,53 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @php
         $siteName = \App\Models\Setting::get('site_name', 'FraxionFX');
+        $favicon = \App\Models\Setting::get('favicon');
+        $heroLine1 = \App\Models\Setting::get('hero_title_line1', 'KHAYREDDINE');
+        $heroLine2 = \App\Models\Setting::get('hero_title_line2', '3D ARTIST');
+        $heroLine3 = \App\Models\Setting::get('hero_title_line3', 'FX DESIGNER');
+        $heroDesc = \App\Models\Setting::get('hero_description', 'Crafting cinematic visual effects, immersive 3D environments, and premium digital assets for creators worldwide.');
+        $portrait = \App\Models\Setting::get('hero_portrait');
+        $siteLogo = \App\Models\Setting::get('site_logo');
+        $ogTitle = $title ?? $siteName . ' — ' . $heroLine2 . ' & ' . $heroLine3;
+        $ogDescription = $metaDescription ?? $heroDesc;
+        $ogImage = $portrait ? asset('storage/' . $portrait) : ($siteLogo ? asset('storage/' . $siteLogo) : '');
     @endphp
-    <title>{{ $title ?? $siteName }}</title>
-    <meta name="description"
-        content="{{ $metaDescription ?? $siteName . ' — 3D Artist & FX Designer. Digital add-ons, VFX services, and creative tutorials.' }}">
+    <title>{{ $title ?? $siteName . ' — ' . $heroLine2 . ' & ' . $heroLine3 }}</title>
+
+    {{-- Favicon --}}
+    @if($favicon)
+    <link rel="icon" href="{{ asset('storage/' . $favicon) }}" type="image/png">
+    <link rel="icon" href="{{ asset('storage/' . $favicon) }}" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="{{ asset('storage/' . $favicon) }}">
+    @endif
+
+    {{-- SEO Meta --}}
+    <meta name="description" content="{{ $ogDescription }}">
+    <meta name="keywords" content="3D artist, VFX, visual effects, motion graphics, {{ $siteName }}, 3D design, particle simulation, digital assets, Blender, Houdini">
+    <meta name="author" content="{{ $heroLine1 }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    {{-- Open Graph (Facebook, LinkedIn, WhatsApp, etc.) --}}
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="{{ $ogTitle }}">
+    <meta property="og:description" content="{{ $ogDescription }}">
+    <meta property="og:site_name" content="{{ $siteName }}">
+    @if($ogImage)
+    <meta property="og:image" content="{{ $ogImage }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    @endif
+
+    {{-- Twitter Card --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $ogTitle }}">
+    <meta name="twitter:description" content="{{ $ogDescription }}">
+    @if($ogImage)
+    <meta name="twitter:image" content="{{ $ogImage }}">
+    @endif
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -59,6 +102,44 @@
             color: #ffffff;
         }
     </style>
+
+    {{-- JSON-LD Structured Data --}}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "{{ $heroLine1 }}",
+        "jobTitle": "{{ $heroLine2 }} & {{ $heroLine3 }}",
+        "description": "{{ $ogDescription }}",
+        "url": "{{ url('/') }}",
+        @if($ogImage)"image": "{{ $ogImage }}",@endif
+        @if($siteLogo)"logo": "{{ asset('storage/' . $siteLogo) }}",@endif
+        "sameAs": [
+            @php
+                $sameAs = array_filter([
+                    \App\Models\Setting::get('social_twitter'),
+                    \App\Models\Setting::get('social_github'),
+                    \App\Models\Setting::get('social_instagram'),
+                    \App\Models\Setting::get('social_linkedin'),
+                    \App\Models\Setting::get('social_youtube'),
+                    \App\Models\Setting::get('social_behance'),
+                    \App\Models\Setting::get('social_facebook'),
+                    \App\Models\Setting::get('social_dribbble'),
+                ]);
+            @endphp
+            {!! collect($sameAs)->map(fn($url) => '"' . e($url) . '"')->implode(',') !!}
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "{{ $siteName }}",
+        "url": "{{ url('/') }}",
+        "description": "{{ $ogDescription }}"
+    }
+    </script>
 </head>
 
 <body class="bg-gray-950 text-white font-sans antialiased overflow-x-hidden" x-data="{ mobileMenu: false }">
@@ -122,7 +203,6 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16 lg:h-20">
                     <a href="{{ route('home') }}" class="flex items-center space-x-2 group">
-                        @php $siteLogo = \App\Models\Setting::get('site_logo'); @endphp
                         @if($siteLogo)
                             <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ $siteName }}" class="h-10 w-auto object-contain group-hover:scale-110 transition-transform">
                         @else
@@ -241,8 +321,7 @@
                         <span class="text-xl font-bold">{{ $siteName }}</span>
                         @endif
                     </a>
-                    <p class="text-gray-400 text-sm leading-relaxed">Crafting stunning 3D visuals and digital
-                        experiences.</p>
+                    <p class="text-gray-400 text-sm leading-relaxed">{{ Str::limit(\App\Models\Setting::get('about_description_1', 'Crafting stunning 3D visuals and digital experiences.'), 120) }}</p>
                 </div>
                 <div>
                     <h4 class="text-sm font-semibold uppercase tracking-wider mb-4">Explore</h4>

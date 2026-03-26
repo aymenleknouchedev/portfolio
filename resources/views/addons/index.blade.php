@@ -7,7 +7,6 @@
         <div class="text-center mb-12" data-aos="fade-up">
             <span class="text-purple-400 text-sm font-semibold uppercase tracking-widest">Digital Assets</span>
             <h1 class="text-4xl lg:text-6xl font-bold mt-2">Shop Now</h1>
-            <p class="text-gray-400 mt-4 max-w-xl mx-auto">Premium digital add-ons for 3D artists and creators.</p>
         </div>
 
         {{-- Category Filter --}}

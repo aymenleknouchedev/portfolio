@@ -200,7 +200,6 @@
                             {{ substr(\App\Models\Setting::get('site_name', 'FraxionFX'), 0, 1) }}</div>
                         <div>
                             <p class="text-sm font-medium text-white">{{ \App\Models\Setting::get('site_name', 'FraxionFX') }} Showreel {{ date('Y') }}</p>
-                            <p class="text-xs text-gray-400">3D & VFX Highlights</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
@@ -348,8 +347,7 @@
         <div class="text-center mb-16" data-aos="fade-up">
             <span class="text-purple-400 text-sm font-semibold uppercase tracking-widest">Digital Assets</span>
             <h2 class="font-display text-5xl lg:text-6xl mt-2">PREMIUM ADD-ONS</h2>
-            <p class="text-gray-400 mt-4 max-w-xl mx-auto">Professional-grade assets and presets to supercharge your 3D
-                workflow.</p>
+            
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

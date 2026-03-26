@@ -9,8 +9,12 @@
         $primaryColor = \App\Models\Setting::get('primary_color', '#7c3aed');
         $siteName = \App\Models\Setting::get('site_name', 'FraxionFX');
         $unreadMessages = \App\Models\ContactMessage::where('is_read', false)->count();
+        $favicon = \App\Models\Setting::get('favicon');
     @endphp
     <title>Admin - {{ $siteName }}</title>
+    @if($favicon)
+    <link rel="icon" href="{{ asset('storage/' . $favicon) }}" type="image/png">
+    @endif
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])

@@ -6,7 +6,6 @@
         <div class="text-center mb-16" data-aos="fade-up">
             <span class="text-purple-400 text-sm font-semibold uppercase tracking-widest">What We Offer</span>
             <h1 class="text-4xl lg:text-6xl font-bold mt-2">Services</h1>
-            <p class="text-gray-400 mt-4 max-w-xl mx-auto">Professional 3D and VFX services tailored to your creative vision.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
