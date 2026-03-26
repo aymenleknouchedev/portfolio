@@ -110,9 +110,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/settings/about', [Admin\SettingController::class , 'about'])->name('settings.about');
     Route::put('/settings/about', [Admin\SettingController::class , 'updateAbout'])->name('settings.about.update');
 
-    Route::get('/settings/auth', [Admin\SettingController::class , 'auth'])->name('settings.auth');
-    Route::put('/settings/auth', [Admin\SettingController::class , 'updateAuth'])->name('settings.auth.update');
-
     Route::get('/contact-messages', [Admin\ContactMessageController::class , 'index'])->name('contact-messages.index');
     Route::get('/contact-messages/{contactMessage}', [Admin\ContactMessageController::class , 'show'])->name('contact-messages.show');
     Route::delete('/contact-messages/{contactMessage}', [Admin\ContactMessageController::class , 'destroy'])->name('contact-messages.destroy');

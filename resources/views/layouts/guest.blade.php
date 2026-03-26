@@ -8,7 +8,7 @@
             $primaryColor = \App\Models\Setting::get('primary_color', '#7c3aed');
             $siteName = \App\Models\Setting::get('site_name', 'FraxionFX');
             $favicon = \App\Models\Setting::get('favicon');
-            $authTitle = \App\Models\Setting::get('auth_title', 'Premium 3D Assets & Visual Effects');
+            $authHeading = \App\Models\Setting::get('auth_heading', 'Premium 3D Assets & Visual Effects');
             $authDescription = \App\Models\Setting::get('auth_description', 'Access exclusive add-ons, tutorials, and professional-grade assets crafted for creators and studios worldwide.');
             $authFeature1 = \App\Models\Setting::get('auth_feature_1', 'Premium Add-ons');
             $authFeature2 = \App\Models\Setting::get('auth_feature_2', 'In-depth Tutorials');
@@ -58,7 +58,7 @@
                         <span class="text-3xl font-bold">{{ $siteName }}</span>
                     </a>
                     <h2 class="text-4xl font-bold leading-tight mb-4">
-                        {{ $authTitle }}
+                        {{ $authHeading }}
                     </h2>
                     <p class="text-gray-400 text-lg leading-relaxed mb-8">
                         {{ $authDescription }}

@@ -81,6 +81,10 @@ class SettingController extends Controller
             'contact_email' => Setting::get('contact_email', ''),
             'contact_phone' => Setting::get('contact_phone', ''),
             'favicon' => Setting::get('favicon'),
+            'auth_heading' => Setting::get('auth_heading', 'Premium 3D Assets & Visual Effects'),
+            'auth_description' => Setting::get('auth_description', 'Access exclusive add-ons, tutorials, and professional-grade assets crafted for creators and studios worldwide.'),
+            'auth_feature_1' => Setting::get('auth_feature_1', 'Premium Add-ons'),
+            'auth_feature_2' => Setting::get('auth_feature_2', 'In-depth Tutorials'),
         ];
 
         return view('admin.settings.general', compact('settings'));
@@ -93,11 +97,19 @@ class SettingController extends Controller
             'contact_email' => 'nullable|email|max:255',
             'contact_phone' => 'nullable|string|max:50',
             'favicon' => 'nullable|image|max:1024',
+            'auth_heading' => 'nullable|string|max:255',
+            'auth_description' => 'nullable|string|max:500',
+            'auth_feature_1' => 'nullable|string|max:100',
+            'auth_feature_2' => 'nullable|string|max:100',
         ]);
 
         Setting::set('site_name', $request->site_name);
         Setting::set('contact_email', $request->contact_email);
         Setting::set('contact_phone', $request->contact_phone);
+        Setting::set('auth_heading', $request->auth_heading);
+        Setting::set('auth_description', $request->auth_description);
+        Setting::set('auth_feature_1', $request->auth_feature_1);
+        Setting::set('auth_feature_2', $request->auth_feature_2);
 
         if ($request->hasFile('favicon')) {
             $old = Setting::get('favicon');
@@ -189,34 +201,5 @@ class SettingController extends Controller
         }
 
         return redirect()->route('admin.settings.about')->with('success', 'About section updated successfully.');
-    }
-
-    public function auth()
-    {
-        $settings = [
-            'auth_title' => Setting::get('auth_title', 'Premium 3D Assets & Visual Effects'),
-            'auth_description' => Setting::get('auth_description', 'Access exclusive add-ons, tutorials, and professional-grade assets crafted for creators and studios worldwide.'),
-            'auth_feature_1' => Setting::get('auth_feature_1', 'Premium Add-ons'),
-            'auth_feature_2' => Setting::get('auth_feature_2', 'In-depth Tutorials'),
-        ];
-
-        return view('admin.settings.auth', compact('settings'));
-    }
-
-    public function updateAuth(Request $request)
-    {
-        $request->validate([
-            'auth_title' => 'required|string|max:500',
-            'auth_description' => 'required|string|max:1000',
-            'auth_feature_1' => 'required|string|max:255',
-            'auth_feature_2' => 'required|string|max:255',
-        ]);
-
-        $keys = ['auth_title', 'auth_description', 'auth_feature_1', 'auth_feature_2'];
-        foreach ($keys as $key) {
-            Setting::set($key, $request->input($key));
-        }
-
-        return redirect()->route('admin.settings.auth')->with('success', 'Login & Register settings updated successfully.');
     }
 }
