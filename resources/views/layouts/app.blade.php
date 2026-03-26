@@ -104,42 +104,37 @@
     </style>
 
     {{-- JSON-LD Structured Data --}}
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "{{ $heroLine1 }}",
-        "jobTitle": "{{ $heroLine2 }} & {{ $heroLine3 }}",
-        "description": "{{ $ogDescription }}",
-        "url": "{{ url('/') }}",
-        @if($ogImage)"image": "{{ $ogImage }}",@endif
-        @if($siteLogo)"logo": "{{ asset('storage/' . $siteLogo) }}",@endif
-        "sameAs": [
-            @php
-                $sameAs = array_filter([
-                    \App\Models\Setting::get('social_twitter'),
-                    \App\Models\Setting::get('social_github'),
-                    \App\Models\Setting::get('social_instagram'),
-                    \App\Models\Setting::get('social_linkedin'),
-                    \App\Models\Setting::get('social_youtube'),
-                    \App\Models\Setting::get('social_behance'),
-                    \App\Models\Setting::get('social_facebook'),
-                    \App\Models\Setting::get('social_dribbble'),
-                ]);
-            @endphp
-            {!! collect($sameAs)->map(fn($url) => '"' . e($url) . '"')->implode(',') !!}
-        ]
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "{{ $siteName }}",
-        "url": "{{ url('/') }}",
-        "description": "{{ $ogDescription }}"
-    }
-    </script>
+    @php
+        $personSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Person',
+            'name' => $heroLine1,
+            'jobTitle' => $heroLine2 . ' & ' . $heroLine3,
+            'description' => $ogDescription,
+            'url' => url('/'),
+        ];
+        if ($ogImage) $personSchema['image'] = $ogImage;
+        if ($siteLogo) $personSchema['logo'] = asset('storage/' . $siteLogo);
+        $sameAs = array_values(array_filter([
+            \App\Models\Setting::get('social_twitter'),
+            \App\Models\Setting::get('social_github'),
+            \App\Models\Setting::get('social_instagram'),
+            \App\Models\Setting::get('social_linkedin'),
+            \App\Models\Setting::get('social_youtube'),
+            \App\Models\Setting::get('social_behance'),
+            \App\Models\Setting::get('social_facebook'),
+            \App\Models\Setting::get('social_dribbble'),
+        ]));
+        if ($sameAs) $personSchema['sameAs'] = $sameAs;
+    @endphp
+    <script type="application/ld+json">{!! json_encode($personSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    <script type="application/ld+json">{!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'WebSite',
+        'name' => $siteName,
+        'url' => url('/'),
+        'description' => $ogDescription,
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
 </head>
 
 <body class="bg-gray-950 text-white font-sans antialiased overflow-x-hidden" x-data="{ mobileMenu: false }">
