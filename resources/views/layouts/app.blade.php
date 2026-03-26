@@ -126,15 +126,17 @@
             \App\Models\Setting::get('social_dribbble'),
         ]));
         if ($sameAs) $personSchema['sameAs'] = $sameAs;
+
+        $websiteSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'name' => $siteName,
+            'url' => url('/'),
+            'description' => $ogDescription,
+        ];
     @endphp
     <script type="application/ld+json">{!! json_encode($personSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
-    <script type="application/ld+json">{!! json_encode([
-        '@context' => 'https://schema.org',
-        '@type' => 'WebSite',
-        'name' => $siteName,
-        'url' => url('/'),
-        'description' => $ogDescription,
-    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    <script type="application/ld+json">{!! json_encode($websiteSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
 </head>
 
 <body class="bg-gray-950 text-white font-sans antialiased overflow-x-hidden" x-data="{ mobileMenu: false }">
