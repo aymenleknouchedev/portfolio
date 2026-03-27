@@ -11,7 +11,7 @@ class Project extends Model
 
     protected $fillable = [
         'title', 'slug', 'description', 'hero_image', 'hero_video', 'url',
-        'gallery', 'software_used', 'process_steps', 'category', 'category_id', 'published_at', 'sort_order',
+        'gallery', 'software_used', 'process_steps', 'category', 'category_id', 'published_at', 'is_featured',
     ];
 
     public function projectCategory()
@@ -26,6 +26,7 @@ class Project extends Model
             'process_steps' => 'array',
             'gallery' => 'array',
             'published_at' => 'datetime',
+            'is_featured' => 'boolean',
         ];
     }
 

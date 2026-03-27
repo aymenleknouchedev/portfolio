@@ -66,12 +66,15 @@
                         </svg>
                     </div>
                 </div>
+
+            </div>
+            <div class="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-xl">
+                <input type="checkbox" name="is_featured" id="is_featured" value="1"
+                    {{ old('is_featured', $project->is_featured ?? false) ? 'checked' : '' }}
+                    class="w-5 h-5 rounded accent-purple-500 cursor-pointer">
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Sort Order</label>
-                    <input type="number" name="sort_order" value="{{ old('sort_order', $project->sort_order ?? 0) }}" min="0"
-                        class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none"
-                        placeholder="0">
-                    <p class="text-xs text-gray-500 mt-1">Lower = shown first</p>
+                    <label for="is_featured" class="text-sm font-medium text-white cursor-pointer">Featured Project</label>
+                    <p class="text-xs text-gray-500 mt-0.5">Show this project in the home page featured section</p>
                 </div>
             </div>
             <div>

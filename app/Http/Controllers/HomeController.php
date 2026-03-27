@@ -13,7 +13,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $projects = Project::with('projectCategory')->published()->orderBy('sort_order')->latest('published_at')->take(6)->get();
+        $projects = Project::with('projectCategory')->published()->where('is_featured', true)->latest('published_at')->take(6)->get();
         $featuredAddons = Addon::where('is_featured', true)->with('category')->take(3)->get();
         $services = Service::where('is_active', true)->get();
         $articles = Article::published()->latest('published_at')->take(3)->get();

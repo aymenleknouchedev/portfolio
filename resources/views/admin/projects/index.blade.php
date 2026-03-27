@@ -7,12 +7,19 @@
 </div>
 <div class="rounded-xl bg-gray-900 border border-white/5 overflow-hidden">
     <table class="w-full text-sm">
-        <thead><tr class="text-gray-400 border-b border-white/5"><th class="text-left p-4">Title</th><th class="text-left p-4">Category</th><th class="text-left p-4">Published</th><th class="text-right p-4">Actions</th></tr></thead>
+        <thead><tr class="text-gray-400 border-b border-white/5"><th class="text-left p-4">Title</th><th class="text-left p-4">Category</th><th class="text-left p-4">Featured</th><th class="text-left p-4">Published</th><th class="text-right p-4">Actions</th></tr></thead>
         <tbody>
             @foreach($projects as $project)
             <tr class="border-b border-white/5 hover:bg-white/5">
                 <td class="p-4 font-medium">{{ $project->title }}</td>
                 <td class="p-4 text-gray-400">{{ $project->projectCategory->name ?? $project->category }}</td>
+                <td class="p-4">
+                    @if($project->is_featured)
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-400">Featured</span>
+                    @else
+                    <span class="text-xs text-gray-600">—</span>
+                    @endif
+                </td>
                 <td class="p-4 text-gray-400">{{ $project->published_at?->format('M d, Y') ?? 'Draft' }}</td>
                 <td class="p-4 text-right">
                     <a href="{{ route('admin.projects.edit', $project) }}" class="text-purple-400 hover:text-purple-300 mr-3">Edit</a>

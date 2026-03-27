@@ -13,7 +13,7 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::orderBy('sort_order')->latest()->get();
+        $projects = Project::latest()->get();
         return view('admin.projects.index', compact('projects'));
     }
 
@@ -38,10 +38,10 @@ class ProjectController extends Controller
             'software_used' => 'nullable|string',
             'process_steps' => 'nullable|string',
             'published_at' => 'nullable|date',
-            'sort_order' => 'nullable|integer',
+            'is_featured' => 'nullable|boolean',
         ]);
 
-        $validated['sort_order'] = $validated['sort_order'] ?? 0;
+        $validated['is_featured'] = $request->boolean('is_featured');
         $validated['slug'] = Str::slug($validated['title']);
         $validated['software_used'] = $request->software_used ? json_decode($request->software_used, true) : [];
         $validated['process_steps'] = $request->process_steps ? json_decode($request->process_steps, true) : [];
@@ -83,10 +83,10 @@ class ProjectController extends Controller
             'software_used' => 'nullable|string',
             'process_steps' => 'nullable|string',
             'published_at' => 'nullable|date',
-            'sort_order' => 'nullable|integer',
+            'is_featured' => 'nullable|boolean',
         ]);
 
-        $validated['sort_order'] = $validated['sort_order'] ?? 0;
+        $validated['is_featured'] = $request->boolean('is_featured');
         $validated['slug'] = Str::slug($validated['title']);
         $validated['software_used'] = $request->software_used ? json_decode($request->software_used, true) : [];
         $validated['process_steps'] = $request->process_steps ? json_decode($request->process_steps, true) : [];
