@@ -307,14 +307,14 @@
         @for($i = 0; $i < $repeatCount; $i++)
         @foreach($brands as $brand)
         <div class="shrink-0 px-10">
-            <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" class="h-8 w-auto object-contain opacity-30 hover:opacity-70 transition-opacity duration-500">
+            <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" class="h-14 w-auto object-contain opacity-30 hover:opacity-70 transition-opacity duration-500">
         </div>
         @endforeach
         @endfor
     </div>
     <style>
         .brands-marquee-track {
-            animation: brands-scroll 60s linear infinite;
+            animation: brands-scroll 120s linear infinite;
             width: max-content;
         }
         .brands-marquee-track:hover {
