@@ -299,21 +299,22 @@
 
 {{-- Brands Marquee --}}
 @if($brands->count())
-<section class="relative mt-16 py-10 overflow-hidden border-y border-white/5 bg-gray-950/80">
-    <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-gray-950 to-transparent z-10 pointer-events-none"></div>
-    <div class="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-gray-950 to-transparent z-10 pointer-events-none"></div>
-    <div class="brands-marquee-track flex gap-20">
-        @for($i = 0; $i < 4; $i++)
+<section class="relative mt-28 py-12 overflow-hidden">
+    <div class="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-gray-950 to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-gray-950 to-transparent z-10 pointer-events-none"></div>
+    @php $repeatCount = max(8, ceil(80 / $brands->count())); @endphp
+    <div class="brands-marquee-track flex items-center">
+        @for($i = 0; $i < $repeatCount; $i++)
         @foreach($brands as $brand)
-        <div class="flex items-center gap-3 shrink-0">
-            <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" class="h-10 w-auto object-contain brightness-50 hover:brightness-100 transition-all duration-500">
+        <div class="shrink-0 px-10">
+            <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" class="h-8 w-auto object-contain opacity-30 hover:opacity-70 transition-opacity duration-500">
         </div>
         @endforeach
         @endfor
     </div>
     <style>
         .brands-marquee-track {
-            animation: brands-scroll 40s linear infinite;
+            animation: brands-scroll 60s linear infinite;
             width: max-content;
         }
         .brands-marquee-track:hover {
