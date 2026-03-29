@@ -16,7 +16,7 @@
         $siteLogo = \App\Models\Setting::get('site_logo');
         $ogTitle = $title ?? $siteName . ' — ' . $heroLine2 . ' & ' . $heroLine3;
         $ogDescription = $metaDescription ?? $heroDesc;
-        $ogImage = $portrait ? asset('storage/' . $portrait) : ($siteLogo ? asset('storage/' . $siteLogo) : '');
+        $ogImage = $ogImage ?? ($portrait ? asset('storage/' . $portrait) : ($siteLogo ? asset('storage/' . $siteLogo) : ''));
     @endphp
     <title>{{ $title ?? $siteName . ' — ' . $heroLine2 . ' & ' . $heroLine3 }}</title>
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\ArticleView;
+use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
@@ -26,6 +27,10 @@ class ArticleController extends Controller
             $article->increment('views_count');
         }
 
-        return view('articles.show', compact('article'));
+        $title = $article->title;
+        $metaDescription = $article->excerpt ?: Str::limit(strip_tags($article->content ?? ''), 160);
+        $ogImage = $article->hero_image ? asset('storage/' . $article->hero_image) : null;
+
+        return view('articles.show', compact('article', 'title', 'metaDescription', 'ogImage'));
     }
 }

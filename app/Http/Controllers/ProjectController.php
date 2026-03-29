@@ -23,6 +23,11 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        return view('projects.show', compact('project'));
+        $title = $project->title;
+        $metaDescription = strip_tags($project->description ?? '');
+        $metaDescription = \Illuminate\Support\Str::limit($metaDescription, 160);
+        $ogImage = $project->hero_image ? asset('storage/' . $project->hero_image) : null;
+
+        return view('projects.show', compact('project', 'title', 'metaDescription', 'ogImage'));
     }
 }
