@@ -377,6 +377,7 @@
 </section>
 
 {{-- Shop Now Section --}}
+@if($featuredAddons->count())
 <section class="py-24 px-4 relative" id="shop">
     <div class="absolute inset-0 bg-gradient-to-b from-purple-950/10 via-gray-950 to-gray-950"></div>
     <div class="max-w-7xl mx-auto relative z-10">
@@ -456,6 +457,8 @@
             @endforeach
         </div>
 
+        </div>
+
         <div class="text-center mt-12" data-aos="fade-up">
             <a href="{{ route('shop.index') }}"
                 class="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors font-medium">
@@ -467,6 +470,7 @@
         </div>
     </div>
 </section>
+@endif
 
 {{-- Services Section --}}
 <section class="py-24 px-4" id="services">
