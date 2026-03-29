@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\Password;
 
 class SettingController extends Controller
 {
@@ -201,5 +203,33 @@ class SettingController extends Controller
         }
 
         return redirect()->route('admin.settings.about')->with('success', 'About section updated successfully.');
+    }
+
+    public function account()
+    {
+        return view('admin.settings.account');
+    }
+
+    public function updateAccount(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'current_password' => 'nullable|required_with:password|current_password',
+            'password' => ['nullable', 'confirmed', Password::min(8)],
+        ]);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        $user->save();
+
+        return redirect()->route('admin.settings.account')->with('success', 'Account updated successfully.');
     }
 }

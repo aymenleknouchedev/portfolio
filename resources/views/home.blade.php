@@ -113,6 +113,8 @@
                     </div>
                 </div>
                 <script>
+                    let userStartedVideo = false;
+
                     function toggleVideoPlayPause() {
                         const video = document.getElementById('hero-video');
                         const overlay = document.getElementById('video-play-overlay');
@@ -121,6 +123,7 @@
 
                         if (video.paused) {
                             video.play();
+                            userStartedVideo = true;
                             overlay.style.opacity = '0';
                             overlay.style.pointerEvents = 'none';
                             playIcon.classList.add('hidden');
@@ -147,6 +150,37 @@
                         playIcon.classList.remove('hidden');
                         pauseIcon.classList.add('hidden');
                     });
+
+                    // Pause/resume on scroll visibility (only after user manually started)
+                    (function() {
+                        const video = document.getElementById('hero-video');
+                        if (!video) return;
+
+                        const observer = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => {
+                                if (!userStartedVideo) return;
+                                const overlay = document.getElementById('video-play-overlay');
+                                const playIcon = document.getElementById('play-icon');
+                                const pauseIcon = document.getElementById('pause-icon');
+
+                                if (!entry.isIntersecting && !video.paused) {
+                                    video.pause();
+                                    overlay.style.opacity = '1';
+                                    overlay.style.pointerEvents = 'auto';
+                                    playIcon.classList.remove('hidden');
+                                    pauseIcon.classList.add('hidden');
+                                } else if (entry.isIntersecting && video.paused && userStartedVideo) {
+                                    video.play();
+                                    overlay.style.opacity = '0';
+                                    overlay.style.pointerEvents = 'none';
+                                    playIcon.classList.add('hidden');
+                                    pauseIcon.classList.remove('hidden');
+                                }
+                            });
+                        }, { threshold: 0.3 });
+
+                        observer.observe(video);
+                    })();
 
                     // Buffering / loading detection
                     (function() {
@@ -265,28 +299,29 @@
 
 {{-- Brands Marquee --}}
 @if($brands->count())
-<section class="relative mt-16 py-8 overflow-hidden border-y border-white/5 bg-gray-950/80">
-    <div class="absolute inset-0 bg-gradient-to-r from-gray-950 via-transparent to-gray-950 z-10 pointer-events-none"></div>
-    <div class="flex items-center gap-16 animate-marquee whitespace-nowrap">
-        @for($i = 0; $i < 2; $i++)
+<section class="relative mt-16 py-10 overflow-hidden border-y border-white/5 bg-gray-950/80">
+    <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-gray-950 to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-gray-950 to-transparent z-10 pointer-events-none"></div>
+    <div class="brands-marquee-track flex gap-20">
+        @for($i = 0; $i < 4; $i++)
         @foreach($brands as $brand)
-        <div class="flex items-center gap-3 shrink-0 opacity-40 hover:opacity-80 transition-opacity duration-300">
-            <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" class="h-8 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300">
-            <span class="text-sm text-gray-500 font-medium tracking-wide">{{ $brand->name }}</span>
+        <div class="flex items-center gap-3 shrink-0">
+            <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}" class="h-10 w-auto object-contain brightness-50 hover:brightness-100 transition-all duration-500">
         </div>
         @endforeach
         @endfor
     </div>
     <style>
-        @keyframes marquee {
+        .brands-marquee-track {
+            animation: brands-scroll 40s linear infinite;
+            width: max-content;
+        }
+        .brands-marquee-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes brands-scroll {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-            animation: marquee 30s linear infinite;
-        }
-        .animate-marquee:hover {
-            animation-play-state: paused;
         }
     </style>
 </section>

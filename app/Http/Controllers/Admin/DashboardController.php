@@ -8,6 +8,7 @@ use App\Models\Article;
 use App\Models\Purchase;
 use App\Models\Project;
 use App\Models\Service;
+use App\Models\SiteVisit;
 use App\Models\User;
 
 class DashboardController extends Controller
@@ -45,6 +46,9 @@ class DashboardController extends Controller
             'recent_users' => User::latest()->take(5)->get(),
             'monthly_chart' => $monthlyRevenue,
             'max_revenue' => $maxRevenue,
+            'visits_today' => SiteVisit::where('visited_date', now()->toDateString())->count(),
+            'visits_week' => SiteVisit::where('visited_date', '>=', now()->subDays(7)->toDateString())->count(),
+            'visits_month' => SiteVisit::where('visited_date', '>=', now()->subDays(30)->toDateString())->count(),
         ];
 
         return view('admin.dashboard', compact('stats'));

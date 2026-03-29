@@ -11,7 +11,7 @@ class Article extends Model
 
     protected $fillable = [
         'title', 'slug', 'excerpt', 'content',
-        'hero_image', 'youtube_url', 'is_published', 'published_at',
+        'hero_image', 'youtube_url', 'is_published', 'published_at', 'views_count',
     ];
 
     protected function casts(): array

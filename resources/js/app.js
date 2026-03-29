@@ -43,11 +43,11 @@ if (cursor && cursorDot) {
     document.querySelectorAll('a, button, input, textarea, select, [role="button"]').forEach(el => {
         el.addEventListener('mouseenter', () => {
             cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
-            cursor.style.borderColor = 'rgb(168 85 247)';
+            cursor.style.borderColor = 'var(--color-purple-400)';
         });
         el.addEventListener('mouseleave', () => {
             cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-            cursor.style.borderColor = 'rgb(168 85 247)';
+            cursor.style.borderColor = 'var(--color-purple-500)';
         });
     });
 }
