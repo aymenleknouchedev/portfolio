@@ -22,6 +22,8 @@ class SettingController extends Controller
             'intro_video' => Setting::get('intro_video'),
             'site_logo' => Setting::get('site_logo'),
             'primary_color' => Setting::get('primary_color', '#7c3aed'),
+            'hero_title_size' => Setting::get('hero_title_size', '8xl'),
+            'hero_description_size' => Setting::get('hero_description_size', 'xl'),
         ];
 
         return view('admin.settings.hero', compact('settings'));
@@ -34,10 +36,12 @@ class SettingController extends Controller
             'hero_title_line2' => 'required|string|max:255',
             'hero_title_line3' => 'required|string|max:255',
             'hero_description' => 'required|string|max:1000',
-            'hero_portrait' => 'nullable|image|max:5120',
+            'hero_portrait' => 'nullable|image|max:51200',
             'intro_video' => 'nullable|mimes:mp4,webm,mov|max:1048576',
-            'site_logo' => 'nullable|image|max:2048',
+            'site_logo' => 'nullable|image|max:51200',
             'primary_color' => 'nullable|string|regex:/^#[0-9a-fA-F]{6}$/',
+            'hero_title_size' => 'nullable|string|in:4xl,5xl,6xl,7xl,8xl,9xl',
+            'hero_description_size' => 'nullable|string|in:sm,base,lg,xl,2xl',
         ]);
 
         Setting::set('hero_title_line1', $request->hero_title_line1);
@@ -46,6 +50,13 @@ class SettingController extends Controller
         Setting::set('hero_description', $request->hero_description);
         if ($request->filled('primary_color')) {
             Setting::set('primary_color', $request->primary_color);
+        }
+
+        if ($request->filled('hero_title_size')) {
+            Setting::set('hero_title_size', $request->hero_title_size);
+        }
+        if ($request->filled('hero_description_size')) {
+            Setting::set('hero_description_size', $request->hero_description_size);
         }
 
         if ($request->hasFile('hero_portrait')) {
@@ -98,7 +109,7 @@ class SettingController extends Controller
             'site_name' => 'required|string|max:255',
             'contact_email' => 'nullable|email|max:255',
             'contact_phone' => 'nullable|string|max:50',
-            'favicon' => 'nullable|image|max:1024',
+            'favicon' => 'nullable|image|max:51200',
             'auth_heading' => 'nullable|string|max:255',
             'auth_description' => 'nullable|string|max:500',
             'auth_feature_1' => 'nullable|string|max:100',
@@ -135,6 +146,8 @@ class SettingController extends Controller
             'social_whatsapp' => Setting::get('social_whatsapp', ''),
             'social_facebook' => Setting::get('social_facebook', ''),
             'social_dribbble' => Setting::get('social_dribbble', ''),
+            'social_artstation' => Setting::get('social_artstation', ''),
+            'social_sketchfab' => Setting::get('social_sketchfab', ''),
         ];
 
         return view('admin.settings.social', compact('settings'));
@@ -152,9 +165,11 @@ class SettingController extends Controller
             'social_whatsapp' => 'nullable|string|max:500',
             'social_facebook' => 'nullable|url|max:500',
             'social_dribbble' => 'nullable|url|max:500',
+            'social_artstation' => 'nullable|url|max:500',
+            'social_sketchfab' => 'nullable|url|max:500',
         ]);
 
-        $keys = ['social_twitter', 'social_github', 'social_instagram', 'social_linkedin', 'social_youtube', 'social_behance', 'social_whatsapp', 'social_facebook', 'social_dribbble'];
+        $keys = ['social_twitter', 'social_github', 'social_instagram', 'social_linkedin', 'social_youtube', 'social_behance', 'social_whatsapp', 'social_facebook', 'social_dribbble', 'social_artstation', 'social_sketchfab'];
         foreach ($keys as $key) {
             Setting::set($key, $request->input($key));
         }

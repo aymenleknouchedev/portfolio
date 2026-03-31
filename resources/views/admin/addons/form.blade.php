@@ -9,7 +9,7 @@
 
     <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Category</label>
-        <select name="category_id" required class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
+        <select name="category_id" required class="w-full bg-gray-900 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
             @foreach($categories as $cat)
             <option value="{{ $cat->id }}" {{ old('category_id', $addon->category_id ?? '') == $cat->id ? 'selected' : '' }} class="bg-gray-900">{{ $cat->name }}</option>
             @endforeach

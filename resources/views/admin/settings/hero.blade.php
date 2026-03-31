@@ -124,6 +124,26 @@
                     class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none resize-none">{{ old('hero_description', $settings['hero_description']) }}</textarea>
                 @error('hero_description') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
             </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Title Font Size</label>
+                    <select name="hero_title_size" class="w-full bg-gray-900 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
+                        @foreach(['4xl' => '4XL (Small)', '5xl' => '5XL', '6xl' => '6XL', '7xl' => '7XL', '8xl' => '8XL (Default)', '9xl' => '9XL (Largest)'] as $val => $label)
+                        <option value="{{ $val }}" {{ old('hero_title_size', $settings['hero_title_size']) == $val ? 'selected' : '' }} class="bg-gray-900">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    @error('hero_title_size') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Description Font Size</label>
+                    <select name="hero_description_size" class="w-full bg-gray-900 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
+                        @foreach(['sm' => 'Small', 'base' => 'Base', 'lg' => 'Large', 'xl' => 'XL (Default)', '2xl' => '2XL (Largest)'] as $val => $label)
+                        <option value="{{ $val }}" {{ old('hero_description_size', $settings['hero_description_size']) == $val ? 'selected' : '' }} class="bg-gray-900">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    @error('hero_description_size') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
+                </div>
+            </div>
         </div>
 
         {{-- Site Logo --}}

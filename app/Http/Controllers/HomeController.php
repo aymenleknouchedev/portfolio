@@ -27,6 +27,8 @@ class HomeController extends Controller
             'description' => Setting::get('hero_description', 'Crafting cinematic visual effects, immersive 3D environments, and premium digital assets for creators worldwide.'),
             'portrait' => Setting::get('hero_portrait'),
             'intro_video' => Setting::get('intro_video'),
+            'title_size' => Setting::get('hero_title_size', '8xl'),
+            'description_size' => Setting::get('hero_description_size', 'xl'),
         ];
 
         // About section settings

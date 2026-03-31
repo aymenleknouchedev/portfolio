@@ -94,6 +94,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('services', Admin\ServiceController::class)->except(['show']);
     Route::resource('brands', Admin\BrandController::class)->except(['show']);
     Route::resource('articles', Admin\ArticleController::class)->except(['show']);
+    Route::post('/articles/upload-image', [Admin\ArticleController::class, 'uploadImage'])->name('articles.upload-image');
 
     Route::get('/purchases', [Admin\PurchaseController::class , 'index'])->name('purchases.index');
     Route::get('/waitlist', [Admin\WaitlistController::class , 'index'])->name('waitlist.index');

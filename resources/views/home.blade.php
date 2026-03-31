@@ -24,7 +24,7 @@
             {{-- Left: Text --}}
             <div class="flex-1 text-center lg:text-left">
 
-                <h1 class="font-display text-5xl sm:text-6xl  lg:text-8xl leading-[0.9] mb-6 mt-15" data-aos="fade-up"
+                <h1 class="font-display text-5xl sm:text-6xl lg:text-{{ $hero['title_size'] }} leading-[0.9] mb-6 mt-15" data-aos="fade-up"
                     data-aos-delay="300">
                     <span class="text-white">{{ $hero['title_line1'] }}</span><br>
                     <span
@@ -33,7 +33,7 @@
                     <span class="bg-gradient-to-r from-violet-400 to-purple-500 bg-clip-text text-transparent">{{ $hero['title_line3'] }}</span>
                 </h1>
 
-                <p class="text-md sm:text-xl text-gray-400 max-w-xl mb-8 leading-relaxed lg:mx-0 mx-auto"
+                <p class="text-md sm:text-{{ $hero['description_size'] }} text-gray-400 max-w-xl mb-8 leading-relaxed lg:mx-0 mx-auto"
                     data-aos="fade-up" data-aos-delay="400">
                     {{ $hero['description'] }}
                 </p>
@@ -593,7 +593,7 @@
             </div>
             <div class="relative" data-aos="fade-left">
                 <div
-                    class="aspect-square rounded-3xl glass-card-strong overflow-hidden flex items-center justify-center">
+                    class="aspect-square rounded-3xl glass-card-strong overflow-hidden flex items-center justify-center animate-float-card">
                     <div class="text-center p-8">
                         <div
                             class="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center font-display text-6xl mb-6">
@@ -607,6 +607,16 @@
         </div>
     </div>
 </section>
+
+<style>
+@keyframes float-card {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+.animate-float-card {
+    animation: float-card 4s ease-in-out infinite;
+}
+</style>
 
 {{-- Contact / CTA Section --}}
 <section class="py-24 px-4 relative" id="contact">

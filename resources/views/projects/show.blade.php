@@ -39,12 +39,18 @@
             @if($project->hero_video)
             @php
                 $videoUrl = $project->hero_video;
-                // Convert YouTube watch/short URLs to embed format
-                if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]+)/', $videoUrl, $m)) {
+                $isYoutube = preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]+)/', $videoUrl, $m);
+                if ($isYoutube) {
                     $videoUrl = 'https://www.youtube.com/embed/' . $m[1];
                 }
             @endphp
+            @if($isYoutube)
             <iframe src="{{ $videoUrl }}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            @else
+            <video src="{{ $videoUrl }}" class="w-full h-full object-cover" controls playsinline>
+                Your browser does not support the video tag.
+            </video>
+            @endif
             @elseif($project->hero_image)
             <img src="{{ asset('storage/' . $project->hero_image) }}" alt="{{ $project->title }}" class="w-full h-full object-cover">
             @else

@@ -24,9 +24,9 @@ class ArticleController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'excerpt' => 'nullable|string|max:500',
+            'excerpt' => 'nullable|string',
             'content' => 'nullable|string',
-            'hero_image' => 'nullable|image|max:5120',
+            'hero_image' => 'nullable|image|max:51200',
             'youtube_url' => 'nullable|url',
             'is_published' => 'boolean',
         ]);
@@ -53,9 +53,9 @@ class ArticleController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'excerpt' => 'nullable|string|max:500',
+            'excerpt' => 'nullable|string',
             'content' => 'nullable|string',
-            'hero_image' => 'nullable|image|max:5120',
+            'hero_image' => 'nullable|image|max:51200',
             'youtube_url' => 'nullable|url',
             'is_published' => 'boolean',
         ]);
@@ -84,5 +84,18 @@ class ArticleController extends Controller
     {
         $article->delete();
         return redirect()->route('admin.articles.index')->with('success', 'Article deleted successfully.');
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:jpg,jpeg,png,gif,webp,mp4,webm|max:51200',
+        ]);
+
+        $path = $request->file('file')->store('articles/content', 'public');
+
+        return response()->json([
+            'location' => asset('storage/' . $path),
+        ]);
     }
 }

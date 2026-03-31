@@ -124,6 +124,8 @@
             \App\Models\Setting::get('social_behance'),
             \App\Models\Setting::get('social_facebook'),
             \App\Models\Setting::get('social_dribbble'),
+            \App\Models\Setting::get('social_artstation'),
+            \App\Models\Setting::get('social_sketchfab'),
         ]));
         if ($sameAs) $personSchema['sameAs'] = $sameAs;
 
@@ -162,6 +164,8 @@
         $whatsappUrl = $socialWhatsapp ? 'https://wa.me/' . preg_replace('/\D/', '', preg_replace('#^https?://wa\.me/#', '', trim($socialWhatsapp))) : null;
         $socialFacebook = \App\Models\Setting::get('social_facebook');
         $socialDribbble = \App\Models\Setting::get('social_dribbble');
+        $socialArtstation = \App\Models\Setting::get('social_artstation');
+        $socialSketchfab = \App\Models\Setting::get('social_sketchfab');
     @endphp
 
     {{-- Top Bar --}}
@@ -190,6 +194,8 @@
                 @if($socialBehance)<a href="{{ $socialBehance }}" target="_blank" rel="noopener" class="hover:text-white/80 transition-colors"><i class="fa-brands fa-behance"></i></a>@endif
                 @if($socialFacebook)<a href="{{ $socialFacebook }}" target="_blank" rel="noopener" class="hover:text-white/80 transition-colors"><i class="fa-brands fa-facebook-f"></i></a>@endif
                 @if($socialDribbble)<a href="{{ $socialDribbble }}" target="_blank" rel="noopener" class="hover:text-white/80 transition-colors"><i class="fa-brands fa-dribbble"></i></a>@endif
+                @if($socialArtstation)<a href="{{ $socialArtstation }}" target="_blank" rel="noopener" class="hover:text-white/80 transition-colors"><i class="fa-brands fa-artstation"></i></a>@endif
+                @if($socialSketchfab)<a href="{{ $socialSketchfab }}" target="_blank" rel="noopener" class="hover:text-white/80 transition-colors"><svg class="w-3.5 h-3.5 inline" viewBox="0 0 24 24" fill="currentColor"><path d="M11.5 9.05C11.26 9.05 11.04 9.14 10.88 9.3L7.3 12.88C7.14 13.04 7.05 13.26 7.05 13.5C7.05 13.74 7.14 13.96 7.3 14.12L9.88 16.7C10.04 16.86 10.26 16.95 10.5 16.95C10.74 16.95 10.96 16.86 11.12 16.7L14.7 13.12C14.86 12.96 14.95 12.74 14.95 12.5C14.95 12.26 14.86 12.04 14.7 11.88L12.12 9.3C11.96 9.14 11.74 9.05 11.5 9.05M11.5 0C5.15 0 0 5.15 0 11.5C0 17.85 5.15 23 11.5 23C17.85 23 23 17.85 23 11.5C23 5.15 17.85 0 11.5 0M11.5 21C6.26 21 2 16.74 2 11.5C2 6.26 6.26 2 11.5 2C16.74 2 21 6.26 21 11.5C21 16.74 16.74 21 11.5 21Z"/></svg></a>@endif
                 @if($whatsappUrl)<a href="{{ $whatsappUrl }}" target="_blank" rel="noopener" class="hover:text-white/80 transition-colors"><i class="fa-brands fa-whatsapp"></i></a>@endif
             </div>
         </div>
@@ -392,6 +398,18 @@
                         <a href="{{ $socialDribbble }}" target="_blank" rel="noopener"
                             class="w-10 h-10 rounded-lg bg-white/5 hover:bg-purple-500/20 border border-white/10 hover:border-purple-500/30 flex items-center justify-center text-gray-400 hover:text-purple-400 transition-all">
                             <i class="fa-brands fa-dribbble"></i>
+                        </a>
+                        @endif
+                        @if($socialArtstation)
+                        <a href="{{ $socialArtstation }}" target="_blank" rel="noopener"
+                            class="w-10 h-10 rounded-lg bg-white/5 hover:bg-purple-500/20 border border-white/10 hover:border-purple-500/30 flex items-center justify-center text-gray-400 hover:text-purple-400 transition-all">
+                            <i class="fa-brands fa-artstation"></i>
+                        </a>
+                        @endif
+                        @if($socialSketchfab)
+                        <a href="{{ $socialSketchfab }}" target="_blank" rel="noopener"
+                            class="w-10 h-10 rounded-lg bg-white/5 hover:bg-purple-500/20 border border-white/10 hover:border-purple-500/30 flex items-center justify-center text-gray-400 hover:text-purple-400 transition-all">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M11.5 9.05C11.26 9.05 11.04 9.14 10.88 9.3L7.3 12.88C7.14 13.04 7.05 13.26 7.05 13.5C7.05 13.74 7.14 13.96 7.3 14.12L9.88 16.7C10.04 16.86 10.26 16.95 10.5 16.95C10.74 16.95 10.96 16.86 11.12 16.7L14.7 13.12C14.86 12.96 14.95 12.74 14.95 12.5C14.95 12.26 14.86 12.04 14.7 11.88L12.12 9.3C11.96 9.14 11.74 9.05 11.5 9.05M11.5 0C5.15 0 0 5.15 0 11.5C0 17.85 5.15 23 11.5 23C17.85 23 23 17.85 23 11.5C23 5.15 17.85 0 11.5 0M11.5 21C6.26 21 2 16.74 2 11.5C2 6.26 6.26 2 11.5 2C16.74 2 21 6.26 21 11.5C21 16.74 16.74 21 11.5 21Z"/></svg>
                         </a>
                         @endif
                         @if($whatsappUrl)

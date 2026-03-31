@@ -94,6 +94,20 @@
                     <p class="text-xs text-gray-500 mt-2">Phone number with country code, digits only (e.g. 213XXXXXXXXX). Used for "Hire Me" buttons on services.</p>
                     @error('social_whatsapp') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2"><i class="fa-brands fa-artstation mr-2 text-purple-400"></i>ArtStation</label>
+                    <input type="url" name="social_artstation" value="{{ old('social_artstation', $settings['social_artstation']) }}"
+                        class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none"
+                        placeholder="https://www.artstation.com/username">
+                    @error('social_artstation') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2"><svg class="inline w-4 h-4 mr-2 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M11.5 9.05C11.26 9.05 11.04 9.14 10.88 9.3L7.3 12.88C7.14 13.04 7.05 13.26 7.05 13.5C7.05 13.74 7.14 13.96 7.3 14.12L9.88 16.7C10.04 16.86 10.26 16.95 10.5 16.95C10.74 16.95 10.96 16.86 11.12 16.7L14.7 13.12C14.86 12.96 14.95 12.74 14.95 12.5C14.95 12.26 14.86 12.04 14.7 11.88L12.12 9.3C11.96 9.14 11.74 9.05 11.5 9.05M11.5 0C5.15 0 0 5.15 0 11.5C0 17.85 5.15 23 11.5 23C17.85 23 23 17.85 23 11.5C23 5.15 17.85 0 11.5 0M11.5 21C6.26 21 2 16.74 2 11.5C2 6.26 6.26 2 11.5 2C16.74 2 21 6.26 21 11.5C21 16.74 16.74 21 11.5 21Z"/></svg>Sketchfab</label>
+                    <input type="url" name="social_sketchfab" value="{{ old('social_sketchfab', $settings['social_sketchfab']) }}"
+                        class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none"
+                        placeholder="https://sketchfab.com/username">
+                    @error('social_sketchfab') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
+                </div>
             </div>
         </div>
 

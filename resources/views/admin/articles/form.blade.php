@@ -70,11 +70,41 @@ document.addEventListener('DOMContentLoaded', function() {
         skin: 'oxide-dark',
         content_css: 'dark',
         menubar: false,
-        plugins: 'lists link image code table media hr',
+        plugins: 'lists link image code table media hr autolink',
         toolbar: 'undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright | bullist numlist | link image media hr | table | code',
         height: 500,
         branding: false,
-        content_style: 'body { font-family: Inter, sans-serif; font-size: 14px; color: #e5e7eb; background: #111827; }',
+        content_style: 'body { font-family: Inter, sans-serif; font-size: 14px; color: #e5e7eb; background: #111827; } img { max-width: 100%; height: auto; } video { max-width: 100%; height: auto; }',
+        images_upload_url: '{{ route("admin.articles.upload-image") }}',
+        images_upload_credentials: true,
+        automatic_uploads: true,
+        file_picker_types: 'image media',
+        media_live_embeds: true,
+        setup: function(editor) {
+            editor.on('init', function() {
+                var token = document.querySelector('meta[name="csrf-token"]');
+                if (token) {
+                    editor.getDoc().cookie = 'XSRF-TOKEN=' + token.content;
+                }
+            });
+        },
+        images_upload_handler: function(blobInfo, success, failure) {
+            var formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+            formData.append('_token', document.querySelector('input[name="_token"]').value);
+
+            fetch('{{ route("admin.articles.upload-image") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(result => success(result.location))
+            .catch(() => failure('Image upload failed'));
+        },
     });
 
     document.querySelector('form').addEventListener('submit', function() {

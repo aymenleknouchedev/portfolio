@@ -47,10 +47,10 @@
             <div class="grid grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2">Category</label>
-                    <select name="category_id" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
-                        <option value="">Select a category</option>
+                    <select name="category_id" class="w-full bg-gray-900 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
+                        <option value="" class="bg-gray-900">Select a category</option>
                         @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}" {{ old('category_id', $project->category_id ?? '') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                            <option value="{{ $cat->id }}" {{ old('category_id', $project->category_id ?? '') == $cat->id ? 'selected' : '' }} class="bg-gray-900">{{ $cat->name }}</option>
                         @endforeach
                     </select>
                 </div>

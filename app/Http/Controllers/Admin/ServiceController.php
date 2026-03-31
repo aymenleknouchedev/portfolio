@@ -26,7 +26,7 @@ class ServiceController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price_range' => 'nullable|string|max:255',
-            'example_image' => 'nullable|image|max:5120',
+            'example_image' => 'nullable|image|max:51200',
             'is_active' => 'boolean',
             'whatsapp_number' => 'nullable|string|max:20',
         ]);
@@ -54,7 +54,7 @@ class ServiceController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price_range' => 'nullable|string|max:255',
-            'example_image' => 'nullable|image|max:5120',
+            'example_image' => 'nullable|image|max:51200',
             'is_active' => 'boolean',
             'whatsapp_number' => 'nullable|string|max:20',
         ]);
