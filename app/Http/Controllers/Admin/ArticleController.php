@@ -24,8 +24,8 @@ class ArticleController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'excerpt' => 'nullable|string',
-            'content' => 'nullable|string',
+            'excerpt' => 'nullable|string|max:65535',
+            'content' => 'nullable|string|max:16777215',
             'hero_image' => 'nullable|image|max:51200',
             'youtube_url' => 'nullable|url',
             'is_published' => 'boolean',
@@ -53,8 +53,8 @@ class ArticleController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'excerpt' => 'nullable|string',
-            'content' => 'nullable|string',
+            'excerpt' => 'nullable|string|max:65535',
+            'content' => 'nullable|string|max:16777215',
             'hero_image' => 'nullable|image|max:51200',
             'youtube_url' => 'nullable|url',
             'is_published' => 'boolean',

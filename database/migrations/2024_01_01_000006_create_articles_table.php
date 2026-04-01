@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->text('excerpt')->nullable();
+            $table->mediumText('excerpt')->nullable();
             $table->longText('content')->nullable();
             $table->string('hero_image')->nullable();
             $table->boolean('is_published')->default(false);
