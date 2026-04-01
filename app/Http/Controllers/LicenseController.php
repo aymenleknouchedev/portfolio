@@ -18,25 +18,42 @@ class LicenseController extends Controller
     {
         $validated = $request->validate([
             'license_key' => 'required|string',
-            'addon_slug' => 'required|string',
-            'machine_id' => 'required|string',
-            'version' => 'nullable|string',
-            'platform' => 'nullable|string',
+            'addon_slug'  => 'nullable|string', // from website/new clients
+            'addon_id'    => 'nullable|string', // from Blender plugin
+            'machine_id'  => 'nullable|string',
+            'version'     => 'nullable|string',
+            'platform'    => 'nullable|string',
         ]);
 
+        // Accept either addon_slug or addon_id
+        $addonSlug = $validated['addon_slug'] ?? $validated['addon_id'] ?? null;
+
+        if (!$addonSlug) {
+            return response()->json([
+                'valid' => false,
+                'error' => 'addon_slug is required.',
+            ], 422);
+        }
+
+        // Normalize: underscores → hyphens, lowercase, trim (matches Laravel slugs)
+        $addonSlug = str_replace('_', '-', strtolower(trim($addonSlug)));
+
         try {
-            // Find license by key and addon slug
-            $license = License::where('key', $validated['license_key'])
-                ->whereHas('addon', fn ($q) => $q->where('slug', $validated['addon_slug']))
+            // Find license by key (case-insensitive) and addon slug
+            $license = License::whereRaw('UPPER(key) = ?', [strtoupper(trim($validated['license_key']))])
+                ->whereHas('addon', fn ($q) => $q->where('slug', $addonSlug))
                 ->first();
 
             if (!$license) {
+                $keyExists = License::whereRaw('UPPER(key) = ?', [strtoupper(trim($validated['license_key']))])->exists();
+
                 return response()->json([
                     'valid' => false,
-                    'error' => 'License key not found.',
-                    'message' => 'Invalid license key'
+                    'error' => $keyExists
+                        ? 'License key does not match the given addon.'
+                        : 'License key not found.',
+                    'message' => 'Invalid license key',
                 ], 200);
-                
             }
 
             if ($license->status !== 'active') {
