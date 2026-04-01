@@ -142,4 +142,41 @@ class ProjectController extends Controller
             'location' => asset('storage/' . $path),
         ]);
     }
+
+    public function downloadImages(Project $project)
+    {
+        $images = [];
+
+        if ($project->hero_image && Storage::disk('public')->exists($project->hero_image)) {
+            $images['hero_' . basename($project->hero_image)] = Storage::disk('public')->path($project->hero_image);
+        }
+
+        if ($project->gallery) {
+            foreach ($project->gallery as $index => $img) {
+                if (Storage::disk('public')->exists($img)) {
+                    $images['gallery_' . ($index + 1) . '_' . basename($img)] = Storage::disk('public')->path($img);
+                }
+            }
+        }
+
+        if (empty($images)) {
+            return back()->with('error', 'No images found for this project.');
+        }
+
+        $zipName = Str::slug($project->title) . '-images.zip';
+        $zipPath = storage_path('app/temp/' . $zipName);
+
+        if (!is_dir(storage_path('app/temp'))) {
+            mkdir(storage_path('app/temp'), 0755, true);
+        }
+
+        $zip = new \ZipArchive();
+        $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        foreach ($images as $name => $path) {
+            $zip->addFile($path, $name);
+        }
+        $zip->close();
+
+        return response()->download($zipPath, $zipName)->deleteFileAfterSend(true);
+    }
 }

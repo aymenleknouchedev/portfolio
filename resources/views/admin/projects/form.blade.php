@@ -192,6 +192,17 @@
             class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none resize-none">{{ old('description', $project->description ?? '') }}</textarea>
     </div>
 
+    @if(isset($project))
+    <div>
+        <a href="{{ route('admin.projects.download-images', $project) }}"
+            class="inline-flex items-center gap-2 bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-500/20 font-medium px-5 py-2.5 rounded-xl transition-all text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Download All Images (ZIP)
+        </a>
+        <p class="text-xs text-gray-500 mt-1">Downloads hero image + all gallery images as a ZIP file</p>
+    </div>
+    @endif
+
     <div class="flex gap-3">
         <button type="submit"
             class="bg-purple-600 hover:bg-purple-500 text-white font-medium px-6 py-3 rounded-xl transition-all">{{
@@ -232,9 +243,11 @@
             selector: '#description-editor',
             skin: 'oxide-dark',
             content_css: 'dark',
-            height: 500,
-            menubar: false,
-            plugins: 'lists link image code table media autolink hr paste',
+            min_height: 600,
+            max_height: 1200,
+            autoresize_bottom_margin: 50,
+            menubar: true,
+            plugins: 'lists link image code table media autolink hr paste autoresize',
             toolbar: 'undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright | bullist numlist | link image media hr | table | code',
             content_style: 'body { font-family: Inter, sans-serif; font-size: 14px; color: #e5e7eb; background-color: #111827; } img { max-width: 100%; height: auto; } video { max-width: 100%; height: auto; }',
             branding: false,

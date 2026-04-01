@@ -23,6 +23,7 @@
                 <td class="p-4 text-gray-400">{{ $project->published_at?->format('M d, Y') ?? 'Draft' }}</td>
                 <td class="p-4 text-right">
                     <a href="{{ route('admin.projects.edit', $project) }}" class="text-purple-400 hover:text-purple-300 mr-3">Edit</a>
+                    <a href="{{ route('admin.projects.download-images', $project) }}" class="text-green-400 hover:text-green-300 mr-3" title="Download all project images as ZIP">&#8659; Images</a>
                     <form action="{{ route('admin.projects.destroy', $project) }}" method="POST" class="inline" onsubmit="return confirm('Delete?')">@csrf @method('DELETE')<button class="text-red-400 hover:text-red-300">Delete</button></form>
                 </td>
             </tr>
