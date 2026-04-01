@@ -36,6 +36,7 @@ class LicenseController extends Controller
                     'error' => 'License key not found.',
                     'message' => 'Invalid license key'
                 ], 200);
+                
             }
 
             if ($license->status !== 'active') {
