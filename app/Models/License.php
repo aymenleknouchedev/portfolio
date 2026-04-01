@@ -5,19 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Purchase extends Model
+class License extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'addon_id', 'stripe_payment_intent_id',
-        'amount', 'status', 'download_token', 'expires_at',
+        'key',
+        'addon_id',
+        'user_id',
+        'purchase_id',
+        'stripe_subscription_id',
+        'status',
+        'is_lifetime',
+        'machine_id',
+        'expires_at',
     ];
 
     protected function casts(): array
     {
         return [
-            'amount' => 'decimal:2',
+            'is_lifetime' => 'boolean',
             'expires_at' => 'datetime',
         ];
     }
@@ -32,18 +39,8 @@ class Purchase extends Model
         return $this->belongsTo(Addon::class);
     }
 
-    public function license()
+    public function purchase()
     {
-        return $this->hasOne(License::class);
-    }
-
-    public function isExpired(): bool
-    {
-        return $this->expires_at && $this->expires_at->isPast();
-    }
-
-    public function license()
-    {
-        return $this->hasOne(License::class, 'key', 'download_token');
+        return $this->belongsTo(Purchase::class);
     }
 }

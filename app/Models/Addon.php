@@ -33,4 +33,9 @@ class Addon extends Model
     {
         return $this->hasMany(Purchase::class);
     }
+
+    public function licenses()
+    {
+        return $this->hasMany(License::class);
+    }
 }

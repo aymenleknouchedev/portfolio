@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Addon;
+use App\Models\License;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -68,6 +69,16 @@ class CheckoutController extends Controller
                     'download_token' => Str::random(64),
                     'expires_at' => now()->addHours(config('fraxionfx.download_token_expiry_hours', 24)),
                 ]);
+
+                // Create a lifetime license for this paid purchase
+                License::create([
+                    'key' => Str::upper(Str::random(32)),
+                    'addon_id' => $addon->id,
+                    'user_id' => auth()->id(),
+                    'purchase_id' => $purchase->id,
+                    'status' => 'active',
+                    'is_lifetime' => true,
+                ]);
             } catch (\Exception $e) {
                 // Stripe error handled gracefully
             }
@@ -114,6 +125,34 @@ class CheckoutController extends Controller
         if (!$addon->file_path) {
             return redirect()->route('shop.show', $addon->slug)
                 ->with('download_error', 'This add-on does not have a downloadable file yet. Please check back soon.');
+        }
+
+        // Create purchase + license for authenticated users
+        if (auth()->check()) {
+            $existingPurchase = Purchase::where('user_id', auth()->id())
+                ->where('addon_id', $addon->id)
+                ->where('status', 'completed')
+                ->first();
+
+            if (!$existingPurchase) {
+                $purchase = Purchase::create([
+                    'user_id' => auth()->id(),
+                    'addon_id' => $addon->id,
+                    'amount' => 0,
+                    'status' => 'completed',
+                    'download_token' => Str::random(64),
+                    'expires_at' => now()->addHours(config('fraxionfx.download_token_expiry_hours', 24)),
+                ]);
+
+                License::create([
+                    'key' => Str::upper(Str::random(32)),
+                    'addon_id' => $addon->id,
+                    'user_id' => auth()->id(),
+                    'purchase_id' => $purchase->id,
+                    'status' => 'active',
+                    'is_lifetime' => true,
+                ]);
+            }
         }
 
         // External URL — redirect the browser to it directly

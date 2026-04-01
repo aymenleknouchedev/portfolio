@@ -29,6 +29,16 @@
                             <h3 class="font-semibold">{{ $purchase->addon->name }}</h3>
                             <span class="text-sm text-gray-400">Purchased {{ $purchase->created_at->format('M d, Y') }}
                                 · ${{ number_format($purchase->amount, 2) }}</span>
+                            @if($purchase->license)
+                            <div class="mt-1 flex items-center gap-2">
+                                <span class="text-xs text-gray-500">License:</span>
+                                <code class="text-xs bg-white/5 text-emerald-400 px-2 py-0.5 rounded font-mono select-all">{{ $purchase->license->key }}</code>
+                                <button onclick="navigator.clipboard.writeText('{{ $purchase->license->key }}')"
+                                    class="text-xs text-gray-500 hover:text-white transition" title="Copy license key">
+                                    📋
+                                </button>
+                            </div>
+                            @endif
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
