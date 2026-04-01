@@ -40,12 +40,12 @@ class LicenseController extends Controller
 
         try {
             // Find license by key (case-insensitive) and addon slug
-            $license = License::whereRaw('UPPER(key) = ?', [strtoupper(trim($validated['license_key']))])
+            $license = License::whereRaw('UPPER(`key`) = ?', [strtoupper(trim($validated['license_key']))])
                 ->whereHas('addon', fn ($q) => $q->where('slug', $addonSlug))
                 ->first();
 
             if (!$license) {
-                $keyExists = License::whereRaw('UPPER(key) = ?', [strtoupper(trim($validated['license_key']))])->exists();
+                $keyExists = License::whereRaw('UPPER(`key`) = ?', [strtoupper(trim($validated['license_key']))])->exists();
 
                 return response()->json([
                     'valid' => false,
