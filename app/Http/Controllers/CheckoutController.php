@@ -153,6 +153,9 @@ class CheckoutController extends Controller
                     'is_lifetime' => true,
                 ]);
             }
+
+            return redirect()->route('client.dashboard')
+                ->with('success', 'Free add-on added to your purchases! Your license key is ready.');
         }
 
         // External URL — redirect the browser to it directly

@@ -51,7 +51,7 @@ Route::post('/waitlist', function (Request $request) {
 
 // Download
 Route::get('/download/{token}', [CheckoutController::class , 'download'])->name('download');
-Route::get('/download/free/{addon:slug}', [CheckoutController::class , 'freeDownload'])->name('download.free');
+Route::get('/download/free/{addon:slug}', [CheckoutController::class , 'freeDownload'])->middleware('auth')->name('download.free');
 
 /*
  |--------------------------------------------------------------------------
