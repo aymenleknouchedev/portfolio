@@ -144,9 +144,16 @@ class LicenseController extends Controller
                 'message' => 'License validated successfully'
             ], 200);
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('License validate 500', [
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ]);
+
             return response()->json([
-                'valid' => false,
-                'error' => 'Unexpected error occurred.',
+                'valid'  => false,
+                'error'  => 'Unexpected error occurred.',
+                'detail' => $e->getMessage(),
             ], 500);
         }
     }
