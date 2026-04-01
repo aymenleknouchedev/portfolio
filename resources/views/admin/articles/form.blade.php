@@ -78,10 +78,8 @@ document.addEventListener('DOMContentLoaded', function() {
         images_upload_url: '{{ route("admin.articles.upload-image") }}',
         images_upload_credentials: true,
         automatic_uploads: true,
-        paste_data_images: true,
         file_picker_types: 'image media',
         media_live_embeds: true,
-        convert_urls: false,
         setup: function(editor) {
             editor.on('init', function() {
                 var token = document.querySelector('meta[name="csrf-token"]');
@@ -90,49 +88,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         },
-        images_upload_handler: function(blobInfo, progress) {
-            return new Promise(function(resolve, reject) {
-                var formData = new FormData();
-                formData.append('file', blobInfo.blob(), blobInfo.filename());
-                formData.append('_token', document.querySelector('input[name="_token"]').value);
+        images_upload_handler: function(blobInfo, success, failure) {
+            var formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+            formData.append('_token', document.querySelector('input[name="_token"]').value);
 
-                fetch('{{ route("admin.articles.upload-image") }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                        'Accept': 'application/json',
-                    }
-                })
-                .then(function(response) {
-                    if (!response.ok) {
-                        throw new Error('Upload failed: ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(function(result) {
-                    if (result.location) {
-                        resolve(result.location);
-                    } else {
-                        reject('No image URL returned');
-                    }
-                })
-                .catch(function(err) {
-                    reject('Image upload failed: ' + err.message);
-                });
-            });
+            fetch('{{ route("admin.articles.upload-image") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(result => success(result.location))
+            .catch(() => failure('Image upload failed'));
         },
     });
 
-    // Ensure TinyMCE content syncs to textarea before form submit
-    var form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (tinymce.get('article-content')) {
-            tinymce.get('article-content').save();
-        }
+    document.querySelector('form').addEventListener('submit', function() {
         tinymce.triggerSave();
-        form.submit();
     });
 });
 </script>

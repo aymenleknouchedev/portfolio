@@ -29,7 +29,7 @@ class ProjectController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:16777215',
+            'description' => 'nullable|string',
             'category_id' => 'nullable|exists:project_categories,id',
             'hero_image' => 'nullable|image|max:51200',
             'hero_video' => 'nullable|url',
@@ -74,7 +74,7 @@ class ProjectController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:16777215',
+            'description' => 'nullable|string',
             'category_id' => 'nullable|exists:project_categories,id',
             'hero_image' => 'nullable|image|max:51200',
             'hero_video' => 'nullable|url',
