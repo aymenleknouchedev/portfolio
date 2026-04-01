@@ -113,6 +113,21 @@
             </div>
         </div>
 
+        <div class="rounded-2xl bg-gray-900 border border-white/5 p-6 space-y-6">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+                <i class="fa-solid fa-pen-nib text-purple-400"></i>
+                Footer
+            </h2>
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Footer Description</label>
+                <textarea name="footer_description" rows="3"
+                    class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none"
+                    placeholder="Crafting stunning 3D visuals and digital experiences.">{{ old('footer_description', $settings['footer_description'] ?? '') }}</textarea>
+                <p class="text-xs text-gray-500 mt-2">Short description shown in the footer below the logo · max 200 characters</p>
+                @error('footer_description') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
+            </div>
+        </div>
+
         <div class="flex gap-3">
             <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white font-medium px-8 py-3 rounded-xl transition-all hover:shadow-lg hover:shadow-purple-500/25">
                 Save Settings

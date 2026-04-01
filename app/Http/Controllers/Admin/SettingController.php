@@ -98,6 +98,7 @@ class SettingController extends Controller
             'auth_description' => Setting::get('auth_description', 'Access exclusive add-ons, tutorials, and professional-grade assets crafted for creators and studios worldwide.'),
             'auth_feature_1' => Setting::get('auth_feature_1', 'Premium Add-ons'),
             'auth_feature_2' => Setting::get('auth_feature_2', 'In-depth Tutorials'),
+            'footer_description' => Setting::get('footer_description', ''),
         ];
 
         return view('admin.settings.general', compact('settings'));
@@ -114,6 +115,7 @@ class SettingController extends Controller
             'auth_description' => 'nullable|string|max:500',
             'auth_feature_1' => 'nullable|string|max:100',
             'auth_feature_2' => 'nullable|string|max:100',
+            'footer_description' => 'nullable|string|max:200',
         ]);
 
         Setting::set('site_name', $request->site_name);
@@ -123,6 +125,7 @@ class SettingController extends Controller
         Setting::set('auth_description', $request->auth_description);
         Setting::set('auth_feature_1', $request->auth_feature_1);
         Setting::set('auth_feature_2', $request->auth_feature_2);
+        Setting::set('footer_description', $request->footer_description);
 
         if ($request->hasFile('favicon')) {
             $old = Setting::get('favicon');
