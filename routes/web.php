@@ -91,6 +91,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('addons', Admin\AddonController::class)->except(['show']);
     Route::resource('project-categories', Admin\ProjectCategoryController::class)->except(['show']);
     Route::resource('projects', Admin\ProjectController::class)->except(['show']);
+    Route::post('/projects/upload-image', [Admin\ProjectController::class, 'uploadImage'])->name('projects.upload-image');
     Route::resource('services', Admin\ServiceController::class)->except(['show']);
     Route::resource('brands', Admin\BrandController::class)->except(['show']);
     Route::resource('articles', Admin\ArticleController::class)->except(['show']);

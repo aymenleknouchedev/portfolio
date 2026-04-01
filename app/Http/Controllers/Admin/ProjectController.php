@@ -129,4 +129,17 @@ class ProjectController extends Controller
         $project->delete();
         return redirect()->route('admin.projects.index')->with('success', 'Project deleted successfully.');
     }
+
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:jpg,jpeg,png,gif,webp,mp4,webm|max:51200',
+        ]);
+
+        $path = $request->file('file')->store('projects/content', 'public');
+
+        return response()->json([
+            'location' => asset('storage/' . $path),
+        ]);
+    }
 }

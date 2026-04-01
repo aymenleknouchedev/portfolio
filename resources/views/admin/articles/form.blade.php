@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
         skin: 'oxide-dark',
         content_css: 'dark',
         menubar: false,
-        plugins: 'lists link image code table media hr autolink',
+        plugins: 'lists link image code table media hr autolink paste',
         toolbar: 'undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright | bullist numlist | link image media hr | table | code',
         height: 500,
         branding: false,
@@ -80,11 +80,38 @@ document.addEventListener('DOMContentLoaded', function() {
         automatic_uploads: true,
         file_picker_types: 'image media',
         media_live_embeds: true,
+        paste_data_images: true,
+        contextmenu: 'link image embedimage inserttable | cell row column deletetable',
         setup: function(editor) {
-            editor.on('init', function() {
-                var token = document.querySelector('meta[name="csrf-token"]');
-                if (token) {
-                    editor.getDoc().cookie = 'XSRF-TOKEN=' + token.content;
+            // Right-click "Embed Image" menu item
+            editor.ui.registry.addMenuItem('embedimage', {
+                text: 'Embed Image',
+                icon: 'image',
+                onAction: function() {
+                    var input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = function() {
+                        var file = input.files[0];
+                        if (!file) return;
+                        var formData = new FormData();
+                        formData.append('file', file, file.name);
+                        formData.append('_token', document.querySelector('input[name="_token"]').value);
+                        fetch('{{ route("admin.articles.upload-image") }}', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                                'Accept': 'application/json',
+                            }
+                        })
+                        .then(function(resp) { return resp.json(); })
+                        .then(function(result) {
+                            editor.insertContent('<img src="' + result.location + '" alt="" style="max-width:100%;height:auto;" />');
+                        })
+                        .catch(function() { alert('Image upload failed'); });
+                    };
+                    input.click();
                 }
             });
         },
@@ -101,9 +128,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Accept': 'application/json',
                 }
             })
-            .then(response => response.json())
-            .then(result => success(result.location))
-            .catch(() => failure('Image upload failed'));
+            .then(function(resp) { return resp.json(); })
+            .then(function(result) { success(result.location); })
+            .catch(function() { failure('Image upload failed'); });
         },
     });
 

@@ -232,12 +232,69 @@
             selector: '#description-editor',
             skin: 'oxide-dark',
             content_css: 'dark',
-            height: 400,
+            height: 500,
             menubar: false,
-            plugins: 'lists link image code table media',
-            toolbar: 'undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright | bullist numlist | link image media | table | code',
-            content_style: 'body { font-family: Inter, sans-serif; font-size: 14px; color: #e5e7eb; background-color: #111827; }',
+            plugins: 'lists link image code table media autolink hr paste',
+            toolbar: 'undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright | bullist numlist | link image media hr | table | code',
+            content_style: 'body { font-family: Inter, sans-serif; font-size: 14px; color: #e5e7eb; background-color: #111827; } img { max-width: 100%; height: auto; } video { max-width: 100%; height: auto; }',
             branding: false,
+            images_upload_url: '{{ route("admin.projects.upload-image") }}',
+            images_upload_credentials: true,
+            automatic_uploads: true,
+            file_picker_types: 'image media',
+            media_live_embeds: true,
+            paste_data_images: true,
+            contextmenu: 'link image embedimage inserttable | cell row column deletetable',
+            setup: function(editor) {
+                // Right-click "Embed Image" menu item
+                editor.ui.registry.addMenuItem('embedimage', {
+                    text: 'Embed Image',
+                    icon: 'image',
+                    onAction: function() {
+                        var input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.onchange = function() {
+                            var file = input.files[0];
+                            if (!file) return;
+                            var formData = new FormData();
+                            formData.append('file', file, file.name);
+                            formData.append('_token', document.querySelector('input[name="_token"]').value);
+                            fetch('{{ route("admin.projects.upload-image") }}', {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                                    'Accept': 'application/json',
+                                }
+                            })
+                            .then(function(resp) { return resp.json(); })
+                            .then(function(result) {
+                                editor.insertContent('<img src="' + result.location + '" alt="" style="max-width:100%;height:auto;" />');
+                            })
+                            .catch(function() { alert('Image upload failed'); });
+                        };
+                        input.click();
+                    }
+                });
+            },
+            images_upload_handler: function(blobInfo, success, failure) {
+                var formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                formData.append('_token', document.querySelector('input[name="_token"]').value);
+
+                fetch('{{ route("admin.projects.upload-image") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                        'Accept': 'application/json',
+                    }
+                })
+                .then(function(resp) { return resp.json(); })
+                .then(function(result) { success(result.location); })
+                .catch(function() { failure('Image upload failed'); });
+            },
         });
     } catch (err) {
         console.error('TinyMCE init error:', err);
