@@ -41,9 +41,4 @@ class Purchase extends Model
     {
         return $this->expires_at && $this->expires_at->isPast();
     }
-
-    public function license()
-    {
-        return $this->hasOne(License::class, 'key', 'download_token');
-    }
 }
