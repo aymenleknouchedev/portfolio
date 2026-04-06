@@ -57,49 +57,66 @@ class CheckoutController extends Controller
     public function success(Request $request)
     {
         $addon = Addon::where('slug', $request->addon)->firstOrFail();
-        $purchase = null;
         $quantity = max(1, (int) $request->input('qty', 1));
         $tierLabel = $request->input('tier', 'Standard License');
         $tierPrice = (float) $request->input('tier_price', $addon->price);
         $paypalOrderId = $request->input('token'); // PayPal sends ?token=ORDER_ID
 
-        if ($paypalOrderId && auth()->check()) {
+        // Check if this order was already processed (page refresh / double-visit)
+        $purchase = $paypalOrderId
+            ? Purchase::where('paypal_order_id', $paypalOrderId)->first()
+            : null;
+
+        if (!$purchase && $paypalOrderId && auth()->check()) {
             try {
                 $paypal = new PayPalService();
                 $capture = $paypal->captureOrder($paypalOrderId);
 
                 $status = $capture['status'] ?? null;
 
-                if ($status === 'COMPLETED') {
+                // Accept COMPLETED or already-captured
+                $captured = $status === 'COMPLETED'
+                    || ($capture['details'][0]['issue'] ?? null) === 'ORDER_ALREADY_CAPTURED';
+
+                if ($captured) {
                     $totalAmount = $addon->requires_license ? $tierPrice : $addon->price;
 
                     $purchase = Purchase::create([
-                        'user_id'        => auth()->id(),
-                        'addon_id'       => $addon->id,
+                        'user_id'         => auth()->id(),
+                        'addon_id'        => $addon->id,
                         'paypal_order_id' => $paypalOrderId,
-                        'amount'         => $totalAmount,
-                        'quantity'       => $quantity,
-                        'license_tier'   => $addon->requires_license ? $tierLabel : null,
-                        'status'         => 'completed',
-                        'download_token' => Str::random(64),
-                        'expires_at'     => now()->addHours(config('fraxionfx.download_token_expiry_hours', 24)),
+                        'amount'          => $totalAmount,
+                        'quantity'        => $quantity,
+                        'license_tier'    => $addon->requires_license ? $tierLabel : null,
+                        'status'          => 'completed',
+                        'download_token'  => Str::random(64),
+                        'expires_at'      => now()->addHours(config('fraxionfx.download_token_expiry_hours', 24)),
                     ]);
 
                     if ($addon->requires_license) {
                         for ($i = 0; $i < $quantity; $i++) {
                             License::create([
-                                'key'        => Str::upper(Str::random(32)),
-                                'addon_id'   => $addon->id,
-                                'user_id'    => auth()->id(),
+                                'key'         => Str::upper(Str::random(32)),
+                                'addon_id'    => $addon->id,
+                                'user_id'     => auth()->id(),
                                 'purchase_id' => $purchase->id,
-                                'status'     => 'active',
+                                'status'      => 'active',
                                 'is_lifetime' => true,
                             ]);
                         }
                     }
+                } else {
+                    // Log the unexpected response for debugging
+                    \Illuminate\Support\Facades\Log::warning('PayPal capture unexpected status', [
+                        'order_id' => $paypalOrderId,
+                        'response' => $capture,
+                    ]);
                 }
             } catch (\Exception $e) {
-                // Payment capture failed — show page without purchase
+                \Illuminate\Support\Facades\Log::error('PayPal capture error', [
+                    'order_id' => $paypalOrderId,
+                    'error'    => $e->getMessage(),
+                ]);
             }
         }
 

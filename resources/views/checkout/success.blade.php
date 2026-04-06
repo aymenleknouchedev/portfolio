@@ -10,7 +10,13 @@
                 <svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
             </div>
             <h1 class="text-3xl font-bold mb-3">Payment Successful!</h1>
-            <p class="text-gray-400 mb-8">Thank you for your purchase. Your add-on is ready to download.</p>
+            <p class="text-gray-400 mb-8">Thank you for your purchase. Your add-on is ready below.</p>
+
+            @if(!$purchase)
+            <div class="mb-6 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm text-left">
+                <strong>Note:</strong> Your payment was received but we couldn't finalize your download automatically. Please <a href="{{ route('client.dashboard') }}" class="underline">check your dashboard</a> or contact support with your PayPal order reference.
+            </div>
+            @endif
 
             <div class="p-4 rounded-xl bg-white/5 border border-white/5 mb-8 text-left">
                 <div class="flex items-center justify-between gap-4 flex-wrap">
