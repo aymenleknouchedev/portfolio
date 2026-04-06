@@ -29,6 +29,12 @@
             <h1 class="text-2xl font-bold mb-2">Checkout</h1>
             <p class="text-gray-400 mb-8">Complete your purchase to get instant access.</p>
 
+            @if(session('error'))
+            <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+                {{ session('error') }}
+            </div>
+            @endif
+
             {{-- Addon summary --}}
             <div class="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5 mb-6">
                 <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500/20 to-violet-500/20 flex items-center justify-center shrink-0">
@@ -83,7 +89,7 @@
                 @auth
                     <form action="{{ route('checkout.process', $addon->slug) }}" method="POST">
                         @csrf
-                        <input type="hidden" name="tier_index" :value="tierIndex">
+                        <input type="hidden" name="tier_index" x-model="tierIndex">
                         <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-4 rounded-xl transition-all hover:shadow-xl hover:shadow-purple-500/25 flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                             Pay with PayPal
