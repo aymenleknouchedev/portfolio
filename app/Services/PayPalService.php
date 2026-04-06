@@ -27,7 +27,17 @@ class PayPalService
             ->asForm()
             ->post("{$this->baseUrl}/v1/oauth2/token", ['grant_type' => 'client_credentials']);
 
-        return $response->json('access_token');
+        if (!$response->successful()) {
+            throw new \RuntimeException('PayPal authentication failed: ' . $response->status() . ' — ' . $response->body());
+        }
+
+        $token = $response->json('access_token');
+
+        if (!$token) {
+            throw new \RuntimeException('PayPal returned no access token. Check your Client ID and Secret in Settings → Payment.');
+        }
+
+        return $token;
     }
 
     public function createOrder(string $description, float $amount, string $returnUrl, string $cancelUrl): array
