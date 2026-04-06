@@ -14,7 +14,8 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = Project::latest()->get();
-        return view('admin.projects.index', compact('projects'));
+        $featuredProjects = Project::where('is_featured', true)->orderBy('sort_order')->orderBy('published_at', 'desc')->get();
+        return view('admin.projects.index', compact('projects', 'featuredProjects'));
     }
 
     public function create()
@@ -128,6 +129,20 @@ class ProjectController extends Controller
         }
         $project->delete();
         return redirect()->route('admin.projects.index')->with('success', 'Project deleted successfully.');
+    }
+
+    public function reorder(Request $request)
+    {
+        $request->validate([
+            'order' => 'required|array',
+            'order.*' => 'integer|exists:projects,id',
+        ]);
+
+        foreach ($request->order as $index => $id) {
+            Project::where('id', $id)->update(['sort_order' => $index]);
+        }
+
+        return response()->json(['success' => true]);
     }
 
     public function uploadImage(Request $request)

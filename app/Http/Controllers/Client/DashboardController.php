@@ -11,7 +11,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $purchases = $request->user()->purchases()
-            ->with(['addon', 'license'])
+            ->with(['addon', 'licenses'])
             ->where('status', 'completed')
             ->latest()
             ->get();

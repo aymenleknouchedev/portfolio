@@ -34,13 +34,18 @@ class AddonController extends Controller
             'demo_video_url' => 'nullable|string|max:500',
             'features' => 'nullable|string',
             'is_featured' => 'boolean',
+            'requires_license' => 'boolean',
+            'license_price' => 'nullable|numeric|min:0',
             'file' => 'nullable|file|max:102400',
             'download_url' => 'nullable|url|max:1000',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
         $validated['is_featured'] = $request->has('is_featured');
+        $validated['requires_license'] = $request->has('requires_license');
+        $validated['license_price'] = $request->filled('license_price') ? $request->license_price : null;
         $validated['features'] = $request->features ? json_decode($request->features, true) : [];
+        $validated['license_tiers'] = $this->parseLicenseTiers($request->input('license_tiers'));
         unset($validated['download_url']);
 
         if ($request->hasFile('cover_image')) {
@@ -83,13 +88,18 @@ class AddonController extends Controller
             'demo_video_url' => 'nullable|string|max:500',
             'features' => 'nullable|string',
             'is_featured' => 'boolean',
+            'requires_license' => 'boolean',
+            'license_price' => 'nullable|numeric|min:0',
             'file' => 'nullable|file|max:102400',
             'download_url' => 'nullable|url|max:1000',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
         $validated['is_featured'] = $request->has('is_featured');
+        $validated['requires_license'] = $request->has('requires_license');
+        $validated['license_price'] = $request->filled('license_price') ? $request->license_price : null;
         $validated['features'] = $request->features ? json_decode($request->features, true) : [];
+        $validated['license_tiers'] = $this->parseLicenseTiers($request->input('license_tiers'));
         unset($validated['download_url']);
 
         if ($request->hasFile('cover_image')) {
@@ -137,5 +147,19 @@ class AddonController extends Controller
     {
         $addon->delete();
         return redirect()->route('admin.addons.index')->with('success', 'Add-on deleted successfully.');
+    }
+
+    private function parseLicenseTiers(?string $json): array
+    {
+        if (!$json) return [];
+        $decoded = json_decode($json, true);
+        if (!is_array($decoded)) return [];
+        return array_values(array_filter(array_map(function ($tier) {
+            $label = trim($tier['label'] ?? '');
+            $quantity = isset($tier['quantity']) ? max(1, (int) $tier['quantity']) : 1;
+            $price = isset($tier['price']) ? (float) $tier['price'] : null;
+            if ($label === '' || $price === null) return null;
+            return ['label' => $label, 'quantity' => $quantity, 'price' => $price];
+        }, $decoded)));
     }
 }

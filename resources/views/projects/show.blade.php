@@ -140,13 +140,13 @@
         <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
             <div class="lg:col-span-2">
                 <h2 class="text-xl font-semibold mb-4">About This Project</h2>
-                <div class="prose prose-invert prose-purple max-w-none
+                <div id="project-description" class="prose prose-invert prose-purple max-w-none
                     prose-headings:font-bold prose-headings:text-white
                     prose-p:text-gray-400 prose-p:leading-relaxed
                     prose-a:text-purple-400 prose-a:no-underline hover:prose-a:text-purple-300
                     prose-strong:text-white
                     prose-li:text-gray-400
-                    prose-img:rounded-xl prose-img:border prose-img:border-white/10">
+                    prose-img:rounded-xl prose-img:border prose-img:border-white/10 prose-img:cursor-pointer prose-img:transition-transform prose-img:duration-300 hover:prose-img:scale-[1.02]">
                     {!! $project->description !!}
                 </div>
 
@@ -181,4 +181,33 @@
         </div>
     </div>
 </div>
+
+{{-- Description Image Zoom Lightbox --}}
+<div id="desc-lightbox" class="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-xl items-center justify-center p-4 hidden cursor-zoom-out" onclick="this.classList.add('hidden');this.classList.remove('flex');document.body.style.overflow='';">
+    <img id="desc-lightbox-img" src="" alt="Zoomed image" class="max-w-full max-h-[90vh] rounded-xl object-contain select-none">
+    <button onclick="event.stopPropagation();document.getElementById('desc-lightbox').classList.add('hidden');document.getElementById('desc-lightbox').classList.remove('flex');document.body.style.overflow='';" class="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+</div>
+<script>
+document.querySelectorAll('#project-description img').forEach(function(img) {
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', function(e) {
+        e.preventDefault();
+        var lb = document.getElementById('desc-lightbox');
+        document.getElementById('desc-lightbox-img').src = this.src;
+        lb.classList.remove('hidden');
+        lb.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    });
+});
+document.addEventListener('keydown', function(e) {
+    var lb = document.getElementById('desc-lightbox');
+    if (lb && !lb.classList.contains('hidden') && e.key === 'Escape') {
+        lb.classList.add('hidden');
+        lb.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+});
+</script>
 @endsection

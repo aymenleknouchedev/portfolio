@@ -13,7 +13,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $projects = Project::with('projectCategory')->published()->where('is_featured', true)->latest('published_at')->take(6)->get();
+        $projects = Project::with('projectCategory')->published()->where('is_featured', true)->orderBy('sort_order')->latest('published_at')->take(6)->get();
+        $projectCategories = $projects->pluck('projectCategory')->filter()->unique('id')->values();
         $featuredAddons = Addon::where('is_featured', true)->with('category')->take(3)->get();
         $services = Service::where('is_active', true)->get();
         $articles = Article::published()->latest('published_at')->take(3)->get();
@@ -46,6 +47,6 @@ class HomeController extends Controller
             'avatar_title' => Setting::get('about_avatar_title', '3D Artist & FX Designer'),
         ];
 
-        return view('home', compact('projects', 'featuredAddons', 'services', 'articles', 'hero', 'about', 'brands'));
+        return view('home', compact('projects', 'projectCategories', 'featuredAddons', 'services', 'articles', 'hero', 'about', 'brands'));
     }
 }

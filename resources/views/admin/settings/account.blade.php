@@ -16,6 +16,7 @@
         <a href="{{ route('admin.settings.social') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">Social Media</a>
         <a href="{{ route('admin.settings.about') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">About Section</a>
         <a href="{{ route('admin.settings.account') }}" class="px-4 py-2 rounded-lg text-sm font-medium bg-purple-600 text-white">Account</a>
+        <a href="{{ route('admin.settings.payment') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">Payment</a>
     </div>
 
     @if($errors->any())

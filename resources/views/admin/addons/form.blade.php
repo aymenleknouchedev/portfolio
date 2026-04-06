@@ -25,7 +25,7 @@
     </div>
     <div class="grid grid-cols-2 gap-6">
         <div>
-            <label class="block text-sm font-medium text-gray-300 mb-2">Price ($)</label>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Offer Price ($)</label>
             <input type="number" step="0.01" name="price" value="{{ old('price', $addon->price ?? '') }}" required class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
         </div>
         <div>
@@ -113,11 +113,131 @@
             <span class="text-sm text-gray-300">Featured</span>
         </label>
     </div>
+    <div x-data="{ requiresLicense: {{ old('requires_license', $addon->requires_license ?? true) ? 'true' : 'false' }} }">
+        <label class="flex items-center gap-3">
+            <input type="checkbox" name="requires_license" value="1" x-model="requiresLicense" {{ old('requires_license', $addon->requires_license ?? true) ? 'checked' : '' }} class="w-5 h-5 rounded bg-white/5 border-white/10 text-purple-600 focus:ring-purple-500">
+            <span class="text-sm text-gray-300">Requires License</span>
+        </label>
+        <p class="text-xs text-gray-500 mt-1 ml-8">Uncheck if this product doesn't need a license key (e.g. templates, presets).</p>
+
+        <div x-show="requiresLicense" x-transition class="mt-5 space-y-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300">License Tiers</label>
+                    <p class="text-xs text-gray-500 mt-0.5">Define one or more license types with their own prices (e.g. Personal, Commercial, Studio). Clients pick a tier at checkout.</p>
+                </div>
+                <button type="button" id="add-tier-btn" class="text-xs bg-purple-600/20 hover:bg-purple-600/40 text-purple-400 border border-purple-500/30 px-3 py-1.5 rounded-lg transition-all">+ Add Tier</button>
+            </div>
+
+            <div id="license-tiers-list" class="space-y-2">
+                {{-- Rendered by JS from hidden JSON --}}
+            </div>
+
+            <input type="hidden" name="license_tiers" id="license_tiers_input">
+
+        </div>
+    </div>
     <div class="flex gap-3">
         <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white font-medium px-6 py-3 rounded-xl transition-all">{{ isset($addon) ? 'Update' : 'Create' }} Add-on</button>
         <a href="{{ route('admin.addons.index') }}" class="bg-white/5 hover:bg-white/10 text-gray-300 font-medium px-6 py-3 rounded-xl transition-all">Cancel</a>
     </div>
 </form>
+
+{{-- License Tiers Builder --}}
+<script>
+(function() {
+    var existing = @json(old('license_tiers_raw', isset($addon) ? ($addon->license_tiers ? json_encode($addon->license_tiers) : '[]') : '[]'));
+    var tiers = [];
+    try { tiers = JSON.parse(existing); } catch(e) { tiers = []; }
+
+    var list = document.getElementById('license-tiers-list');
+    var input = document.getElementById('license_tiers_input');
+    var addBtn = document.getElementById('add-tier-btn');
+    if (!list || !addBtn) return;
+
+    function syncInput() {
+        input.value = JSON.stringify(tiers);
+    }
+
+    function renderTiers() {
+        list.innerHTML = '';
+        if (tiers.length === 0) {
+            list.innerHTML = '<p class="text-xs text-gray-600 italic">No tiers defined — add one above.</p>';
+            syncInput();
+            return;
+        }
+
+        // Header
+        var header = document.createElement('div');
+        header.className = 'grid grid-cols-[1fr_80px_100px_32px] gap-2 px-1';
+        header.innerHTML =
+            '<span class="text-xs text-gray-500">Label</span>' +
+            '<span class="text-xs text-gray-500 text-center">Licenses</span>' +
+            '<span class="text-xs text-gray-500 text-center">Price ($)</span>' +
+            '<span></span>';
+        list.appendChild(header);
+
+        tiers.forEach(function(tier, idx) {
+            var row = document.createElement('div');
+            row.className = 'grid grid-cols-[1fr_80px_100px_32px] gap-2 items-center p-3 rounded-xl bg-white/5 border border-white/5';
+            row.innerHTML =
+                '<input type="text" placeholder="e.g. Personal" value="' + escHtml(tier.label) + '" data-idx="' + idx + '" data-field="label" ' +
+                    'class="bg-gray-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none placeholder-gray-600">' +
+                '<input type="number" min="1" placeholder="1" value="' + (tier.quantity ?? 1) + '" data-idx="' + idx + '" data-field="quantity" ' +
+                    'class="bg-gray-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none text-center">' +
+                '<div class="relative">' +
+                    '<span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm pointer-events-none">$</span>' +
+                    '<input type="number" step="0.01" min="0" placeholder="0.00" value="' + (tier.price !== undefined ? tier.price : '') + '" data-idx="' + idx + '" data-field="price" ' +
+                        'class="w-full bg-gray-950 border border-white/10 rounded-lg pl-6 pr-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none">' +
+                '</div>' +
+                '<button type="button" data-remove="' + idx + '" class="w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/30 text-red-400 flex items-center justify-center text-sm transition-colors">&times;</button>';
+            list.appendChild(row);
+        });
+
+        list.querySelectorAll('input[data-field]').forEach(function(inp) {
+            inp.addEventListener('input', function() {
+                var i = parseInt(this.dataset.idx);
+                var field = this.dataset.field;
+                if (field === 'price') {
+                    tiers[i][field] = parseFloat(this.value) || 0;
+                } else if (field === 'quantity') {
+                    tiers[i][field] = Math.max(1, parseInt(this.value) || 1);
+                } else {
+                    tiers[i][field] = this.value;
+                }
+                syncInput();
+            });
+        });
+
+        list.querySelectorAll('[data-remove]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                tiers.splice(parseInt(this.dataset.remove), 1);
+                renderTiers();
+            });
+        });
+
+        syncInput();
+    }
+
+    function escHtml(str) {
+        return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    addBtn.addEventListener('click', function() {
+        tiers.push({ label: '', quantity: 1, price: 0 });
+        renderTiers();
+        var inputs = list.querySelectorAll('input[data-field="label"]');
+        if (inputs.length) inputs[inputs.length - 1].focus();
+    });
+
+    var form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function() { syncInput(); });
+    }
+
+    renderTiers();
+})();
+</script>
 
 {{-- Screenshots Uploader --}}
 <script>

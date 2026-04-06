@@ -14,22 +14,37 @@
         $heroDesc = \App\Models\Setting::get('hero_description', 'Crafting cinematic visual effects, immersive 3D environments, and premium digital assets for creators worldwide.');
         $portrait = \App\Models\Setting::get('hero_portrait');
         $siteLogo = \App\Models\Setting::get('site_logo');
-        $ogTitle = $title ?? $siteName . ' — ' . $heroLine2 . ' & ' . $heroLine3;
-        $ogDescription = $metaDescription ?? $heroDesc;
+        $ogTitle = $title ?? $heroLine1 . ' — ' . $heroLine2 . ' & ' . $heroLine3 . ' | ' . $siteName;
+        $ogDescription = $metaDescription ?? $heroLine1 . ' — ' . $heroDesc;
         $ogImage = $ogImage ?? ($portrait ? asset('storage/' . $portrait) : ($siteLogo ? asset('storage/' . $siteLogo) : ''));
     @endphp
-    <title>{{ $title ?? $siteName . ' — ' . $heroLine2 . ' & ' . $heroLine3 }}</title>
+    <title>{{ $title ?? $heroLine1 . ' — ' . $heroLine2 . ' & ' . $heroLine3 . ' | ' . $siteName }}</title>
 
     {{-- Favicon --}}
     @if($favicon)
-    <link rel="icon" href="{{ asset('storage/' . $favicon) }}" type="image/png">
-    <link rel="icon" href="{{ asset('storage/' . $favicon) }}" sizes="32x32" type="image/png">
-    <link rel="apple-touch-icon" href="{{ asset('storage/' . $favicon) }}">
+    @php
+        $faviconUrl = asset('storage/' . $favicon);
+        $faviconExt = strtolower(pathinfo($favicon, PATHINFO_EXTENSION));
+        $faviconType = match($faviconExt) {
+            'ico' => 'image/x-icon',
+            'svg' => 'image/svg+xml',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'webp' => 'image/webp',
+            default => 'image/png',
+        };
+    @endphp
+    <link rel="icon" href="{{ $faviconUrl }}" type="{{ $faviconType }}">
+    <link rel="icon" href="{{ $faviconUrl }}" sizes="32x32" type="{{ $faviconType }}">
+    <link rel="icon" href="{{ $faviconUrl }}" sizes="16x16" type="{{ $faviconType }}">
+    <link rel="apple-touch-icon" href="{{ $faviconUrl }}">
+    <link rel="shortcut icon" href="{{ $faviconUrl }}" type="{{ $faviconType }}">
     @endif
 
     {{-- SEO Meta --}}
     <meta name="description" content="{{ $ogDescription }}">
-    <meta name="keywords" content="3D artist, VFX, visual effects, motion graphics, {{ $siteName }}, 3D design, particle simulation, digital assets, Blender, Houdini">
+    <meta name="keywords" content="{{ $heroLine1 }}, {{ $siteName }}, 3D artist, VFX, visual effects, motion graphics, 3D design, particle simulation, digital assets, Blender, Houdini">
     <meta name="author" content="{{ $heroLine1 }}">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url()->current() }}">

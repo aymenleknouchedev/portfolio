@@ -92,6 +92,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('project-categories', Admin\ProjectCategoryController::class)->except(['show']);
     Route::resource('projects', Admin\ProjectController::class)->except(['show']);
     Route::post('/projects/upload-image', [Admin\ProjectController::class, 'uploadImage'])->name('projects.upload-image');
+    Route::post('/projects/reorder', [Admin\ProjectController::class, 'reorder'])->name('projects.reorder');
     Route::get('/projects/{project}/download-images', [Admin\ProjectController::class, 'downloadImages'])->name('projects.download-images');
     Route::resource('services', Admin\ServiceController::class)->except(['show']);
     Route::resource('brands', Admin\BrandController::class)->except(['show']);
@@ -115,6 +116,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/settings/account', [Admin\SettingController::class , 'account'])->name('settings.account');
     Route::put('/settings/account', [Admin\SettingController::class , 'updateAccount'])->name('settings.account.update');
+
+    Route::get('/settings/payment', [Admin\SettingController::class , 'payment'])->name('settings.payment');
+    Route::put('/settings/payment', [Admin\SettingController::class , 'updatePayment'])->name('settings.payment.update');
 
     Route::get('/contact-messages', [Admin\ContactMessageController::class , 'index'])->name('contact-messages.index');
     Route::get('/contact-messages/{contactMessage}', [Admin\ContactMessageController::class , 'show'])->name('contact-messages.show');

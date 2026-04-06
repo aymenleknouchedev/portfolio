@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Addon;
 use App\Models\License;
 use App\Models\Purchase;
+use App\Services\PayPalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Stripe\Stripe;
-use Stripe\Checkout\Session as StripeSession;
 
 class CheckoutController extends Controller
 {
@@ -23,65 +22,89 @@ class CheckoutController extends Controller
 
     public function process(Addon $addon, Request $request)
     {
-        Stripe::setApiKey(config('services.stripe.secret'));
-
-        $session = StripeSession::create([
-            'payment_method_types' => ['card'],
-            'line_items' => [[
-                'price_data' => [
-                    'currency' => 'usd',
-                    'product_data' => [
-                        'name' => $addon->name,
-                        'description' => Str::limit($addon->description, 200),
-                    ],
-                    'unit_amount' => (int) ($addon->price * 100),
-                ],
-                'quantity' => 1,
-            ]],
-            'mode' => 'payment',
-            'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}&addon=' . $addon->slug,
-            'cancel_url' => route('checkout.cancel') . '?addon=' . $addon->slug,
-            'metadata' => [
-                'addon_id' => $addon->id,
-                'user_id' => auth()->id(),
-            ],
+        $request->validate([
+            'tier_index' => 'nullable|integer|min:0',
         ]);
 
-        return redirect($session->url);
+        $tiers = $addon->getEffectiveLicenseTiers();
+        $tierIndex = max(0, min((int) $request->input('tier_index', 0), count($tiers) - 1));
+        $selectedTier = $tiers[$tierIndex] ?? ['label' => 'Standard License', 'quantity' => 1, 'price' => (float) $addon->price];
+        $tierPrice = (float) $selectedTier['price'];
+        $tierLabel = $selectedTier['label'];
+        $quantity = $addon->requires_license ? max(1, (int) ($selectedTier['quantity'] ?? 1)) : 0;
+
+        $totalAmount = $addon->requires_license ? $tierPrice : $addon->price;
+
+        $description = $addon->name . ($addon->requires_license ? ' — ' . $tierLabel . ' (' . $quantity . ' lic.)' : '');
+
+        $returnUrl = route('checkout.success') . '?addon=' . $addon->slug . '&qty=' . $quantity . '&tier=' . urlencode($tierLabel) . '&tier_price=' . $tierPrice;
+        $cancelUrl = route('checkout.cancel') . '?addon=' . $addon->slug;
+
+        try {
+            $paypal = new PayPalService();
+            $order = $paypal->createOrder($description, $totalAmount, $returnUrl, $cancelUrl);
+
+            if (!$order['approval_url']) {
+                return back()->with('error', 'Could not connect to PayPal. Please try again.');
+            }
+
+            return redirect()->away($order['approval_url']);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Payment error: ' . $e->getMessage());
+        }
     }
 
     public function success(Request $request)
     {
         $addon = Addon::where('slug', $request->addon)->firstOrFail();
         $purchase = null;
+        $quantity = max(1, (int) $request->input('qty', 1));
+        $tierLabel = $request->input('tier', 'Standard License');
+        $tierPrice = (float) $request->input('tier_price', $addon->price);
+        $paypalOrderId = $request->input('token'); // PayPal sends ?token=ORDER_ID
 
-        if ($request->session_id && auth()->check()) {
+        if ($paypalOrderId && auth()->check()) {
             try {
-                Stripe::setApiKey(config('services.stripe.secret'));
-                $session = StripeSession::retrieve($request->session_id);
+                $paypal = new PayPalService();
+                $capture = $paypal->captureOrder($paypalOrderId);
 
-                $purchase = Purchase::create([
-                    'user_id' => auth()->id(),
-                    'addon_id' => $addon->id,
-                    'stripe_payment_intent_id' => $session->payment_intent,
-                    'amount' => $addon->price,
-                    'status' => 'completed',
-                    'download_token' => Str::random(64),
-                    'expires_at' => now()->addHours(config('fraxionfx.download_token_expiry_hours', 24)),
-                ]);
+                $status = $capture['status'] ?? null;
 
-                // Create a lifetime license for this paid purchase
-                License::create([
-                    'key' => Str::upper(Str::random(32)),
-                    'addon_id' => $addon->id,
-                    'user_id' => auth()->id(),
-                    'purchase_id' => $purchase->id,
-                    'status' => 'active',
-                    'is_lifetime' => true,
-                ]);
+                if ($status === 'COMPLETED') {
+                    $totalAmount = $addon->requires_license ? $tierPrice : $addon->price;
+
+                    $purchase = Purchase::create([
+                        'user_id'        => auth()->id(),
+                        'addon_id'       => $addon->id,
+                        'paypal_order_id' => $paypalOrderId,
+                        'amount'         => $totalAmount,
+                        'quantity'       => $quantity,
+                        'license_tier'   => $addon->requires_license ? $tierLabel : null,
+                        'status'         => 'completed',
+                        'download_token' => Str::random(64),
+                        'expires_at'     => now()->addHours(config('fraxionfx.download_token_expiry_hours', 24)),
+                    ]);
+
+                    if ($addon->requires_license) {
+                        for ($i = 0; $i < $quantity; $i++) {
+                            License::create([
+                                'key'        => Str::upper(Str::random(32)),
+                                'addon_id'   => $addon->id,
+                                'user_id'    => auth()->id(),
+                                'purchase_id' => $purchase->id,
+                                'status'     => 'active',
+                                'is_lifetime' => true,
+                            ]);
+                        }
+                    }
+                }
             } catch (\Exception $e) {
-                // Stripe error handled gracefully
+                // Payment capture failed — show page without purchase
             }
+        }
+
+        if ($purchase) {
+            $purchase->load('licenses');
         }
 
         return view('checkout.success', compact('addon', 'purchase'));
@@ -144,14 +167,16 @@ class CheckoutController extends Controller
                     'expires_at' => now()->addHours(config('fraxionfx.download_token_expiry_hours', 24)),
                 ]);
 
-                License::create([
-                    'key' => Str::upper(Str::random(32)),
-                    'addon_id' => $addon->id,
-                    'user_id' => auth()->id(),
-                    'purchase_id' => $purchase->id,
-                    'status' => 'active',
-                    'is_lifetime' => true,
-                ]);
+                if ($addon->requires_license) {
+                    License::create([
+                        'key' => Str::upper(Str::random(32)),
+                        'addon_id' => $addon->id,
+                        'user_id' => auth()->id(),
+                        'purchase_id' => $purchase->id,
+                        'status' => 'active',
+                        'is_lifetime' => true,
+                    ]);
+                }
             }
 
             return redirect()->route('client.dashboard')

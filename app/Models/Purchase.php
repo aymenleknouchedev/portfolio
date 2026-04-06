@@ -10,8 +10,8 @@ class Purchase extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'addon_id', 'stripe_payment_intent_id',
-        'amount', 'status', 'download_token', 'expires_at',
+        'user_id', 'addon_id', 'paypal_order_id',
+        'amount', 'quantity', 'license_tier', 'status', 'download_token', 'expires_at',
     ];
 
     protected function casts(): array
@@ -35,6 +35,11 @@ class Purchase extends Model
     public function license()
     {
         return $this->hasOne(License::class);
+    }
+
+    public function licenses()
+    {
+        return $this->hasMany(License::class);
     }
 
     public function isExpired(): bool

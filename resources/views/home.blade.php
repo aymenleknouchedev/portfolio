@@ -329,9 +329,9 @@
 @endif
 
 {{-- Featured Work / Portfolio --}}
-<section class="py-24 px-4" id="portfolio">
+<section class="py-24 px-4" id="portfolio" x-data="{ activeTab: 'all' }">
     <div class="max-w-7xl mx-auto">
-        <div class="flex items-center justify-between mb-16" data-aos="fade-up">
+        <div class="flex items-center justify-between mb-8" data-aos="fade-up">
             <div>
                 <span class="text-purple-400 text-sm font-semibold uppercase tracking-widest">Portfolio</span>
                 <h2 class="font-display text-5xl lg:text-6xl mt-2">FEATURED WORK</h2>
@@ -345,9 +345,31 @@
             </a>
         </div>
 
+        {{-- Category Tabs --}}
+        @if($projectCategories->count() > 1)
+        <div class="flex flex-wrap gap-2 mb-10" data-aos="fade-up" data-aos-delay="50">
+            <button @click="activeTab = 'all'"
+                :class="activeTab === 'all' ? 'bg-purple-600 text-white border-purple-500' : 'bg-white/5 text-gray-400 border-white/10 hover:border-white/20 hover:text-white'"
+                class="px-5 py-2 rounded-xl text-sm font-medium border transition-all duration-300">
+                All
+            </button>
+            @foreach($projectCategories as $cat)
+            <button @click="activeTab = '{{ $cat->slug }}'"
+                :class="activeTab === '{{ $cat->slug }}' ? 'bg-purple-600 text-white border-purple-500' : 'bg-white/5 text-gray-400 border-white/10 hover:border-white/20 hover:text-white'"
+                class="px-5 py-2 rounded-xl text-sm font-medium border transition-all duration-300">
+                {{ $cat->name }}
+            </button>
+            @endforeach
+        </div>
+        @endif
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach($projects as $project)
             <a href="{{ route('portfolio.show', $project->slug) }}"
+                x-show="activeTab === 'all' || activeTab === '{{ $project->projectCategory->slug ?? '' }}'"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
                 class="group glass-card overflow-hidden hover:border-purple-500/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10"
                 data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
                 <div class="aspect-video bg-gradient-to-br from-purple-900/30 to-gray-800 overflow-hidden">

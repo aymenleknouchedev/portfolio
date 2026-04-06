@@ -247,4 +247,30 @@ class SettingController extends Controller
 
         return redirect()->route('admin.settings.account')->with('success', 'Account updated successfully.');
     }
+
+    public function payment()
+    {
+        $settings = [
+            'paypal_mode'          => Setting::get('paypal_mode', 'sandbox'),
+            'paypal_client_id'     => Setting::get('paypal_client_id', ''),
+            'paypal_client_secret' => Setting::get('paypal_client_secret', ''),
+        ];
+
+        return view('admin.settings.payment', compact('settings'));
+    }
+
+    public function updatePayment(Request $request)
+    {
+        $request->validate([
+            'paypal_mode'          => 'required|in:sandbox,live',
+            'paypal_client_id'     => 'required|string|max:500',
+            'paypal_client_secret' => 'required|string|max:500',
+        ]);
+
+        Setting::set('paypal_mode', $request->paypal_mode);
+        Setting::set('paypal_client_id', $request->paypal_client_id);
+        Setting::set('paypal_client_secret', $request->paypal_client_secret);
+
+        return redirect()->route('admin.settings.payment')->with('success', 'PayPal settings saved successfully.');
+    }
 }

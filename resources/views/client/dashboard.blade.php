@@ -44,38 +44,48 @@
                                 @else
                                 <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">Free</span>
                                 @endif
+                                @if($purchase->license_tier)
+                                <span class="text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full">{{ $purchase->license_tier }}</span>
+                                @endif
                             </div>
-                            {{-- License key --}}
-                            @if($purchase->license)
-                            <div class="mt-2 flex items-center gap-2">
-                                <svg class="w-3.5 h-3.5 text-gray-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                                </svg>
-                                <code class="text-xs bg-white/5 text-emerald-400 px-2 py-0.5 rounded font-mono select-all tracking-wide">{{ $purchase->license->key }}</code>
-                                <button
-                                    x-data="{ copied: false }"
-                                    @click="
-                                        navigator.clipboard.writeText('{{ $purchase->license->key }}');
-                                        copied = true;
-                                        setTimeout(() => copied = false, 2000)
-                                    "
-                                    class="flex items-center gap-1 text-xs text-gray-500 hover:text-white transition-colors duration-150"
-                                    title="Copy license key">
-                                    <span x-show="!copied" class="flex items-center gap-1">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                        </svg>
-                                        Copy
-                                    </span>
-                                    <span x-show="copied" x-cloak class="flex items-center gap-1 text-emerald-400">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        Copied!
-                                    </span>
-                                </button>
+                            {{-- License keys --}}
+                            @if($purchase->licenses->count() > 0)
+                            <div class="mt-2 space-y-1.5">
+                                @foreach($purchase->licenses as $license)
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-3.5 h-3.5 text-gray-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                    </svg>
+                                    <code class="text-xs bg-white/5 text-emerald-400 px-2 py-0.5 rounded font-mono select-all tracking-wide">{{ $license->key }}</code>
+                                    <button
+                                        x-data="{ copied: false }"
+                                        @click="
+                                            navigator.clipboard.writeText('{{ $license->key }}');
+                                            copied = true;
+                                            setTimeout(() => copied = false, 2000)
+                                        "
+                                        class="flex items-center gap-1 text-xs text-gray-500 hover:text-white transition-colors duration-150"
+                                        title="Copy license key">
+                                        <span x-show="!copied" class="flex items-center gap-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
+                                            Copy
+                                        </span>
+                                        <span x-show="copied" x-cloak class="flex items-center gap-1 text-emerald-400">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            Copied!
+                                        </span>
+                                    </button>
+                                    @if($purchase->licenses->count() > 1)
+                                    <span class="text-xs text-gray-600">#{{ $loop->iteration }}</span>
+                                    @endif
+                                </div>
+                                @endforeach
                             </div>
                             @endif
                         </div>
