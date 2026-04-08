@@ -95,6 +95,8 @@
             --color-violet-900: color-mix(in srgb, var(--clr-brand) 50%, black);
         }
 
+        [x-cloak] { display: none !important; }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -217,7 +219,7 @@
     </div>
 
     {{-- Navigation --}}
-    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" id="main-nav" style="top: 32px;">
+    <nav class="fixed top-0 left-0 right-0 z-[60] transition-all duration-300" id="main-nav" style="top: 32px;">
         <div class="glass-nav">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16 lg:h-20">
@@ -281,37 +283,48 @@
                 </div>
             </div>
         </div>
-        <div x-show="mobileMenu" x-transition class="lg:hidden backdrop-blur-xl bg-gray-950/95 border-b border-white/5"
-            @click.outside="mobileMenu = false">
-            <div class="px-4 pt-2 pb-6 space-y-1">
-                <a href="{{ route('home') }}"
-                    class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg">Home</a>
-                <a href="{{ route('portfolio.index') }}"
-                    class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg">Portfolio</a>
-                <a href="{{ route('shop.index') }}"
-                    class="block px-4 py-3 text-purple-400 font-medium hover:bg-white/5 rounded-lg">Shop Now</a>
-                <a href="{{ route('services.index') }}"
-                    class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg">Services</a>
-                <a href="{{ route('learn.index') }}"
-                    class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg">Learn</a>
-                <a href="{{ route('about') }}"
-                    class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg">About</a>
-                <a href="{{ route('contact.show') }}"
-                    class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg">Contact</a>
-                <div class="border-t border-white/10 mt-3 pt-3">
+    </nav>
+
+    {{-- Fullscreen Mobile Menu Overlay --}}
+    <div x-show="mobileMenu" x-cloak
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        x-init="$watch('mobileMenu', val => document.body.classList.toggle('overflow-hidden', val))"
+        class="lg:hidden fixed inset-0 z-[55] backdrop-blur-2xl bg-gray-950/98 flex flex-col items-center justify-center">
+        <div class="w-full max-w-sm px-6 space-y-2 text-center">
+                <a href="{{ route('home') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3.5 text-lg text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors {{ request()->routeIs('home') ? 'text-purple-400 font-semibold' : '' }}">Home</a>
+                <a href="{{ route('portfolio.index') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3.5 text-lg text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors {{ request()->routeIs('portfolio.*') ? 'text-purple-400 font-semibold' : '' }}">Portfolio</a>
+                <a href="{{ route('shop.index') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3.5 text-lg text-purple-400 font-medium hover:bg-white/5 rounded-xl transition-colors">
+                    <span class="flex items-center justify-center gap-2">Shop Now <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span></span>
+                </a>
+                <a href="{{ route('services.index') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3.5 text-lg text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors {{ request()->routeIs('services.*') ? 'text-purple-400 font-semibold' : '' }}">Services</a>
+                <a href="{{ route('learn.index') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3.5 text-lg text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors {{ request()->routeIs('learn.*') ? 'text-purple-400 font-semibold' : '' }}">Learn</a>
+                <a href="{{ route('about') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3.5 text-lg text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors {{ request()->routeIs('about') ? 'text-purple-400 font-semibold' : '' }}">About</a>
+                <a href="{{ route('contact.show') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3.5 text-lg text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors {{ request()->routeIs('contact.*') ? 'text-purple-400 font-semibold' : '' }}">Contact</a>
+                <div class="border-t border-white/10 mt-4 pt-4 space-y-2">
                     @guest
-                    <a href="{{ route('login') }}"
-                        class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg"><i class="fa-solid fa-bag-shopping mr-2 text-xs"></i>My Purchases</a>
-                    <a href="{{ route('register') }}"
-                        class="block px-4 py-3 text-purple-400 hover:bg-purple-500/10 rounded-lg">Get Started</a>
+                    <a href="{{ route('login') }}" @click="mobileMenu = false"
+                        class="block px-4 py-3.5 text-lg text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors"><i class="fa-solid fa-bag-shopping mr-2 text-sm"></i>My Purchases</a>
+                    <a href="{{ route('register') }}" @click="mobileMenu = false"
+                        class="block mx-auto mt-2 text-center text-lg bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl transition-all">Get Started</a>
                     @else
-                    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('client.dashboard') }}"
-                        class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg"><i class="fa-solid fa-bag-shopping mr-2 text-xs"></i>My Purchases</a>
-                    @endguest
-                </div>
+                    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('client.dashboard') }}" @click="mobileMenu = false"
+                        class="block px-4 py-3.5 text-lg text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors"><i class="fa-solid fa-bag-shopping mr-2 text-sm"></i>My Purchases</a>
+                @endguest
             </div>
         </div>
-    </nav>
+    </div>
 
     @if(session('success'))
     <div class="fixed top-28 right-4 z-50 bg-green-500/20 border border-green-500/30 text-green-300 px-6 py-3 rounded-xl backdrop-blur-sm"
