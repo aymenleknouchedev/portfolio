@@ -116,6 +116,8 @@
             background-color: var(--color-purple-500);
             color: #ffffff;
         }
+
+        [x-cloak] { display: none !important; }
     </style>
 
     {{-- JSON-LD Structured Data --}}
@@ -281,37 +283,61 @@
                 </div>
             </div>
         </div>
-        <div x-show="mobileMenu" x-transition class="lg:hidden bg-gray-950 border-b border-white/10"
-            @click.outside="mobileMenu = false">
-            <div class="px-4 pt-2 pb-6 space-y-1">
-                <a href="{{ route('home') }}"
-                    class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg">Home</a>
-                <a href="{{ route('portfolio.index') }}"
-                    class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg">Portfolio</a>
-                <a href="{{ route('shop.index') }}"
-                    class="block px-4 py-3 text-purple-400 font-medium hover:bg-white/5 rounded-lg">Shop Now</a>
-                <a href="{{ route('services.index') }}"
-                    class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg">Services</a>
-                <a href="{{ route('learn.index') }}"
-                    class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg">Learn</a>
-                <a href="{{ route('about') }}"
-                    class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg">About</a>
-                <a href="{{ route('contact.show') }}"
-                    class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg">Contact</a>
-                <div class="border-t border-white/10 mt-3 pt-3">
+    </nav>
+
+    {{-- Fullscreen Mobile Menu --}}
+    <div
+        x-cloak
+        x-show="mobileMenu"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 -translate-y-3"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-3"
+        x-effect="document.body.classList.toggle('overflow-hidden', mobileMenu)"
+        class="lg:hidden fixed inset-0 z-[45] bg-gray-950 flex flex-col"
+        style="padding-top: calc(32px + 4rem);">
+        <div class="flex-1 overflow-y-auto px-4 py-6">
+            <div class="space-y-1 max-w-sm mx-auto">
+                <a href="{{ route('home') }}" @click="mobileMenu = false"
+                    class="flex items-center px-4 py-4 text-base rounded-xl transition-colors {{ request()->routeIs('home') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">Home</a>
+                <a href="{{ route('portfolio.index') }}" @click="mobileMenu = false"
+                    class="flex items-center px-4 py-4 text-base rounded-xl transition-colors {{ request()->routeIs('portfolio.*') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">Portfolio</a>
+                <a href="{{ route('shop.index') }}" @click="mobileMenu = false"
+                    class="flex items-center justify-between px-4 py-4 text-base rounded-xl transition-colors {{ request()->routeIs('shop.*') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-purple-400 hover:bg-purple-500/10 font-medium' }}">
+                    <span>Shop Now</span>
+                    <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                </a>
+                <a href="{{ route('services.index') }}" @click="mobileMenu = false"
+                    class="flex items-center px-4 py-4 text-base rounded-xl transition-colors {{ request()->routeIs('services.*') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">Services</a>
+                <a href="{{ route('learn.index') }}" @click="mobileMenu = false"
+                    class="flex items-center px-4 py-4 text-base rounded-xl transition-colors {{ request()->routeIs('learn.*') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">Learn</a>
+                <a href="{{ route('about') }}" @click="mobileMenu = false"
+                    class="flex items-center px-4 py-4 text-base rounded-xl transition-colors {{ request()->routeIs('about') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">About</a>
+                <a href="{{ route('contact.show') }}" @click="mobileMenu = false"
+                    class="flex items-center px-4 py-4 text-base rounded-xl transition-colors {{ request()->routeIs('contact.*') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">Contact</a>
+
+                <div class="border-t border-white/10 mt-4 pt-4 space-y-1">
                     @guest
-                    <a href="{{ route('login') }}"
-                        class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg"><i class="fa-solid fa-bag-shopping mr-2 text-xs"></i>My Purchases</a>
-                    <a href="{{ route('register') }}"
-                        class="block px-4 py-3 text-purple-400 hover:bg-purple-500/10 rounded-lg">Get Started</a>
+                    <a href="{{ route('login') }}" @click="mobileMenu = false"
+                        class="flex items-center gap-3 px-4 py-4 text-base text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+                        <i class="fa-solid fa-bag-shopping text-sm"></i> My Purchases
+                    </a>
+                    <a href="{{ route('register') }}" @click="mobileMenu = false"
+                        class="flex items-center justify-center px-4 py-4 mt-2 text-base bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl transition-all">
+                        Get Started
+                    </a>
                     @else
-                    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('client.dashboard') }}"
-                        class="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg"><i class="fa-solid fa-bag-shopping mr-2 text-xs"></i>My Purchases</a>
+                    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('client.dashboard') }}" @click="mobileMenu = false"
+                        class="flex items-center gap-3 px-4 py-4 text-base text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+                        <i class="fa-solid fa-bag-shopping text-sm"></i> My Purchases
+                    </a>
                     @endguest
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
 
     @if(session('success'))
     <div class="fixed top-28 right-4 z-50 bg-green-500/20 border border-green-500/30 text-green-300 px-6 py-3 rounded-xl backdrop-blur-sm"
