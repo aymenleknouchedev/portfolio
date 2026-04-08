@@ -35,13 +35,42 @@
                         @endphp
                         <iframe src="{{ $embedUrl }}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     @elseif($addon->cover_image)
-                        <img src="{{ asset('storage/' . $addon->cover_image) }}" alt="{{ $addon->name }}" class="w-full h-full object-cover">
+                        <img src="{{ asset('storage/' . $addon->cover_image) }}" alt="{{ $addon->name }}" class="w-full h-full object-cover cursor-pointer" onclick="openAddonSingleImage('{{ asset('storage/' . $addon->cover_image) }}')">
                     @else
                         <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900/20 to-gray-800">
                             <svg class="w-20 h-20 text-purple-500/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
                         </div>
                     @endif
                 </div>
+
+                {{-- Single Image Fullscreen Modal --}}
+                <div id="addon-single-lightbox" class="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-xl hidden items-center justify-center p-4" onclick="closeAddonSingleImage()">
+                    <div class="relative" onclick="event.stopPropagation()">
+                        <img id="addon-single-lightbox-img" src="" alt="Full view" class="max-w-full max-h-[90vh] rounded-xl object-contain select-none mx-auto block">
+                    </div>
+                    <button onclick="closeAddonSingleImage()" class="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <script>
+                window.openAddonSingleImage = function(src) {
+                    var lb = document.getElementById('addon-single-lightbox');
+                    document.getElementById('addon-single-lightbox-img').src = src;
+                    lb.classList.remove('hidden');
+                    lb.classList.add('flex');
+                    document.body.style.overflow = 'hidden';
+                };
+                window.closeAddonSingleImage = function() {
+                    var lb = document.getElementById('addon-single-lightbox');
+                    lb.classList.add('hidden');
+                    lb.classList.remove('flex');
+                    document.body.style.overflow = '';
+                };
+                document.addEventListener('keydown', function(e) {
+                    var lb = document.getElementById('addon-single-lightbox');
+                    if (lb && !lb.classList.contains('hidden') && e.key === 'Escape') closeAddonSingleImage();
+                });
+                </script>
 
                 {{-- Screenshots --}}
                 @if($addon->screenshots && count($addon->screenshots) > 0)
@@ -53,7 +82,7 @@
                     @endforeach
                 </div>
 
-                {{-- Lightbox --}}
+                {{-- Fullscreen Image Lightbox --}}
                 <div id="addon-lightbox" class="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-xl hidden items-center justify-center p-4" onclick="closeAddonLightbox()">
                     <div class="relative" onclick="event.stopPropagation()">
                         <img id="addon-lightbox-img" src="" alt="Screenshot" class="max-w-full max-h-[90vh] rounded-xl object-contain select-none mx-auto block">
@@ -113,7 +142,15 @@
                 {{-- Description --}}
                 <div class="mt-8">
                     <h2 class="text-xl font-semibold mb-4">Description</h2>
-                    <p class="text-gray-400 leading-relaxed">{!! $addon->description !!}</p>
+                    <div class="prose prose-invert prose-purple max-w-none
+                        prose-headings:font-bold prose-headings:text-white
+                        prose-p:text-gray-400 prose-p:leading-relaxed
+                        prose-a:text-purple-400 prose-a:no-underline hover:prose-a:text-purple-300
+                        prose-strong:text-white
+                        prose-li:text-gray-400
+                        prose-ul:list-disc prose-ol:list-decimal">
+                        {!! $addon->description !!}
+                    </div>
                 </div>
             </div>
 
@@ -125,10 +162,12 @@
                         <h1 class="text-2xl font-bold mt-2">{{ $addon->name }}</h1>
 
                         <div class="flex items-center gap-2 mt-4">
+                            @if($addon->badge_text)
                             <span class="inline-flex items-center gap-1 bg-blue-500/10 text-blue-400 text-xs font-medium px-3 py-1 rounded-full border border-blue-500/20">
                                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                                Made for Blender
+                                {{ $addon->badge_text }}
                             </span>
+                            @endif
                         </div>
 
                         <div class="border-t border-white/5 mt-6 pt-6">
@@ -138,7 +177,14 @@
                                     Download Free
                                 </a>
                             @else
-                                <div class="text-4xl font-bold text-white">${{ number_format($addon->price, 2) }}</div>
+                                <div class="flex items-baseline gap-3">
+                                    <span class="text-4xl font-bold text-white">${{ number_format($addon->price, 2) }}</span>
+                                    @if($addon->original_price && $addon->original_price > $addon->price)
+                                        <span class="text-xl text-gray-500 line-through">${{ number_format($addon->original_price, 2) }}</span>
+                                        @php $discount = round((($addon->original_price - $addon->price) / $addon->original_price) * 100); @endphp
+                                        <span class="text-sm font-semibold text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full">-{{ $discount }}%</span>
+                                    @endif
+                                </div>
                                 <a href="{{ route('checkout.show', $addon->slug) }}" class="block w-full text-center bg-purple-600 hover:bg-purple-500 text-white font-semibold py-4 rounded-xl mt-4 transition-all hover:shadow-xl hover:shadow-purple-500/25">
                                     Buy Now
                                 </a>

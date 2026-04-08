@@ -147,6 +147,11 @@ class CheckoutController extends Controller
             abort(404, 'Download file not available.');
         }
 
+        // External URL - redirect to it
+        if (str_starts_with($purchase->addon->file_path, 'http')) {
+            return redirect()->away($purchase->addon->file_path);
+        }
+
         $filePath = Storage::disk('local')->path($purchase->addon->file_path);
 
         if (!file_exists($filePath)) {

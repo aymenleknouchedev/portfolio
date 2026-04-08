@@ -49,7 +49,12 @@
                             @if($addon->price <= 0)
                                 <span class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">Free</span>
                             @else
-                                <span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">${{ number_format($addon->price, 2) }}</span>
+                                <span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                    @if($addon->original_price && $addon->original_price > $addon->price)
+                                        <span class="line-through opacity-60">${{ number_format($addon->original_price, 2) }}</span>
+                                    @endif
+                                    ${{ number_format($addon->price, 2) }}
+                                </span>
                             @endif
                         </div>
                         @if($addon->is_featured)
@@ -61,7 +66,7 @@
                     <div class="p-6">
                         <span class="text-xs text-purple-400 font-medium uppercase tracking-wider">{{ $addon->category->name }}</span>
                         <h3 class="text-lg font-semibold mt-2">{{ $addon->name }}</h3>
-                        <p class="text-gray-400 text-sm mt-2 line-clamp-2">{{ $addon->description }}</p>
+                        <p class="text-gray-400 text-sm mt-2 line-clamp-2">{{ strip_tags($addon->description) }}</p>
                         <div class="flex items-center gap-3 mt-6">
                             <a href="{{ route('shop.show', $addon->slug) }}" class="flex-1 text-center text-sm bg-white/5 hover:bg-white/10 border border-white/10 text-white py-2.5 rounded-lg transition-all">View Details</a>
                             @if($addon->price <= 0)

@@ -100,6 +100,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/articles/upload-image', [Admin\ArticleController::class, 'uploadImage'])->name('articles.upload-image');
 
     Route::get('/purchases', [Admin\PurchaseController::class , 'index'])->name('purchases.index');
+    Route::get('/users', [Admin\UserController::class , 'index'])->name('users.index');
+    Route::get('/users/export', [Admin\UserController::class , 'exportEmails'])->name('users.export');
     Route::get('/waitlist', [Admin\WaitlistController::class , 'index'])->name('waitlist.index');
 
     Route::get('/settings/hero', [Admin\SettingController::class , 'hero'])->name('settings.hero');

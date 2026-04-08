@@ -29,8 +29,18 @@
             <input type="number" step="0.01" name="price" value="{{ old('price', $addon->price ?? '') }}" required class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
         </div>
         <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Original Price ($) <span class="text-xs text-gray-500">— leave empty for no discount</span></label>
+            <input type="number" step="0.01" name="original_price" value="{{ old('original_price', $addon->original_price ?? '') }}" placeholder="e.g. 49.99" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
+        </div>
+    </div>
+    <div class="grid grid-cols-2 gap-6">
+        <div>
             <label class="block text-sm font-medium text-gray-300 mb-2">YouTube Video URL</label>
             <input type="text" name="demo_video_url" value="{{ old('demo_video_url', $addon->demo_video_url ?? '') }}" placeholder="https://www.youtube.com/watch?v=..." class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Badge Text <span class="text-xs text-gray-500">— e.g. "Made for Blender"</span></label>
+            <input type="text" name="badge_text" value="{{ old('badge_text', $addon->badge_text ?? '') }}" placeholder="e.g. Made for Blender" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none">
         </div>
     </div>
     <div>
@@ -96,7 +106,21 @@
         <label class="block text-sm font-medium text-gray-300 mb-2">Downloadable File</label>
         <input type="file" name="file" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none file:bg-purple-600 file:text-white file:border-0 file:rounded-lg file:px-4 file:py-1 file:mr-4 file:cursor-pointer">
         @if(isset($addon) && $addon->file_path && !str_starts_with($addon->file_path, 'http'))
-            <p class="text-sm text-gray-500 mt-1">Current: {{ basename($addon->file_path) }}</p>
+            <div class="mt-2 flex items-center gap-3">
+                <p class="text-sm text-gray-500">Current: {{ basename($addon->file_path) }}</p>
+                <label class="inline-flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 cursor-pointer transition-colors">
+                    <input type="checkbox" name="remove_file" value="1" class="w-4 h-4 rounded bg-white/5 border-white/10 text-red-600 focus:ring-red-500">
+                    Remove file
+                </label>
+            </div>
+        @elseif(isset($addon) && $addon->file_path && str_starts_with($addon->file_path, 'http'))
+            <div class="mt-2 flex items-center gap-3">
+                <p class="text-sm text-gray-500">Current: External URL</p>
+                <label class="inline-flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 cursor-pointer transition-colors">
+                    <input type="checkbox" name="remove_file" value="1" class="w-4 h-4 rounded bg-white/5 border-white/10 text-red-600 focus:ring-red-500">
+                    Remove file
+                </label>
+            </div>
         @endif
         <div class="mt-3">
             <label class="block text-xs font-medium text-gray-400 mb-1">— or paste an external download URL (Google Drive, Dropbox, GitHub, etc.)</label>

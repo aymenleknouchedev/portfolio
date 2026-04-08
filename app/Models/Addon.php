@@ -11,14 +11,15 @@ class Addon extends Model
 
     protected $fillable = [
         'category_id', 'name', 'slug', 'description', 'cover_image', 'price',
-        'demo_video_url', 'features', 'screenshots', 'is_featured', 'file_path',
-        'requires_license', 'license_price', 'license_tiers',
+        'original_price', 'demo_video_url', 'features', 'screenshots', 'is_featured',
+        'badge_text', 'file_path', 'requires_license', 'license_price', 'license_tiers',
     ];
 
     protected function casts(): array
     {
         return [
             'price' => 'decimal:2',
+            'original_price' => 'decimal:2',
             'license_price' => 'decimal:2',
             'features' => 'array',
             'screenshots' => 'array',

@@ -80,9 +80,21 @@
             </div>
         </div>
 
-        {{-- Intro Video 16:9 with Glassmorphism --}}
+        {{-- Intro Video 16:9 with Glassmorphism + macOS Navbar --}}
         <div class="glass-card-strong p-2 sm:p-3" data-aos="fade-up" data-aos-delay="500">
-            <div class="relative aspect-video rounded-xl overflow-hidden bg-gray-900">
+            {{-- macOS-style Title Bar --}}
+            <div class="flex items-center gap-3 px-3 py-2.5 bg-gray-800/80 rounded-t-lg border-b border-white/5">
+                <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+                </div>
+                <div class="flex-1 text-center">
+                    <span class="text-xs text-gray-400 font-medium">{{ \App\Models\Setting::get('site_name', 'FraxionFX') }} — Showreel {{ date('Y') }}</span>
+                </div>
+                <div class="w-[54px]"></div>
+            </div>
+            <div class="relative aspect-video rounded-b-xl overflow-hidden bg-gray-900">
                 @if($hero['intro_video'])
                 <video id="hero-video" class="w-full h-full object-cover" loop playsinline>
                     <source src="{{ asset('storage/' . $hero['intro_video']) }}" type="video/mp4">
@@ -450,8 +462,12 @@
                         @if($addon->price <= 0)
                         <span class="glass text-green-400 text-xs font-bold px-3 py-1 rounded-full">Free</span>
                         @else
-                        <span class="glass text-amber-300 text-xs font-bold px-3 py-1 rounded-full">${{
-                            number_format($addon->price, 2) }}</span>
+                        <span class="glass text-amber-300 text-xs font-bold px-3 py-1 rounded-full">
+                            @if($addon->original_price && $addon->original_price > $addon->price)
+                                <span class="line-through opacity-60">${{ number_format($addon->original_price, 2) }}</span>
+                            @endif
+                            ${{ number_format($addon->price, 2) }}
+                        </span>
                         @endif
                     </div>
                 </div>
@@ -459,7 +475,7 @@
                     <span class="text-xs text-purple-400 font-medium uppercase tracking-wider">{{ $addon->category->name
                         }}</span>
                     <h3 class="text-lg font-semibold mt-2">{{ $addon->name }}</h3>
-                    <p class="text-gray-400 text-sm mt-2 line-clamp-2">{{ $addon->description }}</p>
+                    <p class="text-gray-400 text-sm mt-2 line-clamp-2">{{ strip_tags($addon->description) }}</p>
                     <div class="flex items-center gap-3 mt-6">
                         <a href="{{ route('shop.show', $addon->slug) }}"
                             class="flex-1 text-center text-sm glass hover:bg-white/10 text-white py-2.5 rounded-lg transition-all">View

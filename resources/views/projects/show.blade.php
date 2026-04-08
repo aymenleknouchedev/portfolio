@@ -146,6 +146,7 @@
                     prose-a:text-purple-400 prose-a:no-underline hover:prose-a:text-purple-300
                     prose-strong:text-white
                     prose-li:text-gray-400
+                    prose-ul:list-disc prose-ol:list-decimal
                     prose-img:rounded-xl prose-img:border prose-img:border-white/10 prose-img:cursor-pointer prose-img:transition-transform prose-img:duration-300 hover:prose-img:scale-[1.02]">
                     {!! $project->description !!}
                 </div>

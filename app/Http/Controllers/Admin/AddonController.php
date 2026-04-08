@@ -31,9 +31,11 @@ class AddonController extends Controller
             'description' => 'nullable|string',
             'cover_image' => 'nullable|image|max:51200',
             'price' => 'required|numeric|min:0',
+            'original_price' => 'nullable|numeric|min:0',
             'demo_video_url' => 'nullable|string|max:500',
             'features' => 'nullable|string',
             'is_featured' => 'boolean',
+            'badge_text' => 'nullable|string|max:100',
             'requires_license' => 'boolean',
             'license_price' => 'nullable|numeric|min:0',
             'file' => 'nullable|file|max:102400',
@@ -44,6 +46,8 @@ class AddonController extends Controller
         $validated['is_featured'] = $request->has('is_featured');
         $validated['requires_license'] = $request->has('requires_license');
         $validated['license_price'] = $request->filled('license_price') ? $request->license_price : null;
+        $validated['original_price'] = $request->filled('original_price') ? $request->original_price : null;
+        $validated['badge_text'] = $request->filled('badge_text') ? $request->badge_text : null;
         $validated['features'] = $request->features ? json_decode($request->features, true) : [];
         $validated['license_tiers'] = $this->parseLicenseTiers($request->input('license_tiers'));
         unset($validated['download_url']);
@@ -85,9 +89,11 @@ class AddonController extends Controller
             'description' => 'nullable|string',
             'cover_image' => 'nullable|image|max:51200',
             'price' => 'required|numeric|min:0',
+            'original_price' => 'nullable|numeric|min:0',
             'demo_video_url' => 'nullable|string|max:500',
             'features' => 'nullable|string',
             'is_featured' => 'boolean',
+            'badge_text' => 'nullable|string|max:100',
             'requires_license' => 'boolean',
             'license_price' => 'nullable|numeric|min:0',
             'file' => 'nullable|file|max:102400',
@@ -98,6 +104,8 @@ class AddonController extends Controller
         $validated['is_featured'] = $request->has('is_featured');
         $validated['requires_license'] = $request->has('requires_license');
         $validated['license_price'] = $request->filled('license_price') ? $request->license_price : null;
+        $validated['original_price'] = $request->filled('original_price') ? $request->original_price : null;
+        $validated['badge_text'] = $request->filled('badge_text') ? $request->badge_text : null;
         $validated['features'] = $request->features ? json_decode($request->features, true) : [];
         $validated['license_tiers'] = $this->parseLicenseTiers($request->input('license_tiers'));
         unset($validated['download_url']);
@@ -133,9 +141,21 @@ class AddonController extends Controller
         }
 
         if ($request->hasFile('file')) {
+            // Delete old local file if exists
+            if ($addon->file_path && !str_starts_with($addon->file_path, 'http')) {
+                Storage::disk('local')->delete($addon->file_path);
+            }
             $validated['file_path'] = $request->file('file')->store('addons', 'local');
         } elseif ($request->filled('download_url')) {
+            if ($addon->file_path && !str_starts_with($addon->file_path, 'http')) {
+                Storage::disk('local')->delete($addon->file_path);
+            }
             $validated['file_path'] = $request->download_url;
+        } elseif ($request->has('remove_file')) {
+            if ($addon->file_path && !str_starts_with($addon->file_path, 'http')) {
+                Storage::disk('local')->delete($addon->file_path);
+            }
+            $validated['file_path'] = null;
         }
 
         $addon->update($validated);

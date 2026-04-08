@@ -57,6 +57,7 @@
                 prose-a:text-purple-400 prose-a:no-underline hover:prose-a:text-purple-300
                 prose-strong:text-white
                 prose-li:text-gray-400
+                prose-ul:list-disc prose-ol:list-decimal
                 prose-code:bg-white/5 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-purple-300">
                 {!! $article->content ?? '' !!}
             </div>
