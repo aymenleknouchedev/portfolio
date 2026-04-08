@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Addon;
 use App\Models\License;
+use App\Models\PromoCode;
 use App\Models\Purchase;
 use App\Services\PayPalService;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ class CheckoutController extends Controller
     {
         $request->validate([
             'tier_index' => 'nullable|integer|min:0',
+            'promo_code' => 'nullable|string|max:50',
         ]);
 
         $tiers = $addon->getEffectiveLicenseTiers();
@@ -33,11 +35,24 @@ class CheckoutController extends Controller
         $tierLabel = $selectedTier['label'];
         $quantity = $addon->requires_license ? max(1, (int) ($selectedTier['quantity'] ?? 1)) : 0;
 
-        $totalAmount = $addon->requires_license ? $tierPrice : $addon->price;
+        $subtotal = $addon->requires_license ? $tierPrice : $addon->price;
+
+        // Apply promo code if provided
+        $promoDiscount = 0;
+        $promoCodeStr = '';
+        if ($request->filled('promo_code')) {
+            $promo = PromoCode::where('code', strtoupper(trim($request->promo_code)))->first();
+            if ($promo && $promo->isValid()) {
+                $promoDiscount = $promo->calculateDiscount($subtotal);
+                $promoCodeStr = $promo->code;
+            }
+        }
+
+        $totalAmount = max(0.01, round($subtotal - $promoDiscount, 2));
 
         $description = $addon->name . ($addon->requires_license ? ' — ' . $tierLabel . ' (' . $quantity . ' lic.)' : '');
 
-        $returnUrl = route('checkout.success') . '?addon=' . $addon->slug . '&qty=' . $quantity . '&tier=' . urlencode($tierLabel) . '&tier_price=' . $tierPrice;
+        $returnUrl = route('checkout.success') . '?addon=' . $addon->slug . '&qty=' . $quantity . '&tier=' . urlencode($tierLabel) . '&tier_price=' . $tierPrice . '&promo=' . urlencode($promoCodeStr) . '&promo_discount=' . $promoDiscount;
         $cancelUrl = route('checkout.cancel') . '?addon=' . $addon->slug;
 
         try {
@@ -60,6 +75,8 @@ class CheckoutController extends Controller
         $quantity = max(1, (int) $request->input('qty', 1));
         $tierLabel = $request->input('tier', 'Standard License');
         $tierPrice = (float) $request->input('tier_price', $addon->price);
+        $promoCodeStr = $request->input('promo', '');
+        $promoDiscount = (float) $request->input('promo_discount', 0);
         $paypalOrderId = $request->input('token'); // PayPal sends ?token=ORDER_ID
 
         // Check if this order was already processed (page refresh / double-visit)
@@ -79,7 +96,8 @@ class CheckoutController extends Controller
                     || ($capture['details'][0]['issue'] ?? null) === 'ORDER_ALREADY_CAPTURED';
 
                 if ($captured) {
-                    $totalAmount = $addon->requires_license ? $tierPrice : $addon->price;
+                    $subtotal = $addon->requires_license ? $tierPrice : $addon->price;
+                    $totalAmount = max(0.01, round($subtotal - $promoDiscount, 2));
 
                     $purchase = Purchase::create([
                         'user_id'         => auth()->id(),
@@ -88,10 +106,17 @@ class CheckoutController extends Controller
                         'amount'          => $totalAmount,
                         'quantity'        => $quantity,
                         'license_tier'    => $addon->requires_license ? $tierLabel : null,
+                        'promo_code'      => $promoCodeStr ?: null,
+                        'promo_discount'  => $promoDiscount > 0 ? $promoDiscount : null,
                         'status'          => 'completed',
                         'download_token'  => Str::random(64),
                         'expires_at'      => now()->addHours(config('fraxionfx.download_token_expiry_hours', 24)),
                     ]);
+
+                    // Increment promo code usage
+                    if ($promoCodeStr) {
+                        PromoCode::where('code', $promoCodeStr)->increment('used_count');
+                    }
 
                     if ($addon->requires_license) {
                         for ($i = 0; $i < $quantity; $i++) {

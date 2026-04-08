@@ -12,12 +12,14 @@ class Purchase extends Model
     protected $fillable = [
         'user_id', 'addon_id', 'paypal_order_id',
         'amount', 'quantity', 'license_tier', 'status', 'download_token', 'expires_at',
+        'promo_code', 'promo_discount',
     ];
 
     protected function casts(): array
     {
         return [
             'amount' => 'decimal:2',
+            'promo_discount' => 'decimal:2',
             'expires_at' => 'datetime',
         ];
     }

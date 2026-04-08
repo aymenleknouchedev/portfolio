@@ -50,11 +50,12 @@
                                 <span class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">Free</span>
                             @else
                                 <span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                                    @if($addon->original_price && $addon->original_price > $addon->price)
-                                        <span class="line-through opacity-60">${{ number_format($addon->original_price, 2) }}</span>
-                                    @endif
                                     ${{ number_format($addon->price, 2) }}
                                 </span>
+                                @if($addon->original_price && $addon->original_price > $addon->price)
+                                    @php $discount = round((($addon->original_price - $addon->price) / $addon->original_price) * 100); @endphp
+                                    <span class="ml-1 text-xs font-bold px-2.5 py-1 rounded-full" style="background: rgba(34,197,94,0.2); color: #4ade80;">-{{ $discount }}%</span>
+                                @endif
                             @endif
                         </div>
                         @if($addon->is_featured)

@@ -99,6 +99,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('articles', Admin\ArticleController::class)->except(['show']);
     Route::post('/articles/upload-image', [Admin\ArticleController::class, 'uploadImage'])->name('articles.upload-image');
 
+    Route::resource('promo-codes', Admin\PromoCodeController::class)->except(['show']);
+
     Route::get('/purchases', [Admin\PurchaseController::class , 'index'])->name('purchases.index');
     Route::get('/users', [Admin\UserController::class , 'index'])->name('users.index');
     Route::get('/users/export', [Admin\UserController::class , 'exportEmails'])->name('users.export');

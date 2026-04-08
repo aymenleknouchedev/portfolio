@@ -83,11 +83,11 @@
         {{-- Intro Video 16:9 with Glassmorphism + macOS Navbar --}}
         <div class="glass-card-strong p-2 sm:p-3" data-aos="fade-up" data-aos-delay="500">
             {{-- macOS-style Title Bar --}}
-            <div class="flex items-center gap-3 px-3 py-2.5 bg-gray-800/80 rounded-t-lg border-b border-white/5">
+            <div class="flex items-center gap-3 px-3 py-2.5 bg-gray-800/80 rounded-t-lg border-b border-white/5 group/titlebar">
                 <div class="flex items-center gap-1.5">
-                    <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
-                    <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
-                    <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full inline-block relative" style="background:#ff5f57; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.15);"></span>
+                    <span class="w-3 h-3 rounded-full inline-block relative" style="background:#febc2e; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.15);"></span>
+                    <span class="w-3 h-3 rounded-full inline-block relative" style="background:#28c840; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.15);"></span>
                 </div>
                 <div class="flex-1 text-center">
                     <span class="text-xs text-gray-400 font-medium">{{ \App\Models\Setting::get('site_name', 'FraxionFX') }} — Showreel {{ date('Y') }}</span>

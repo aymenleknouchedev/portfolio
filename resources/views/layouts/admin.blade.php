@@ -109,6 +109,11 @@
                     <i class="fa-solid fa-credit-card w-5 text-center shrink-0"></i>
                     <span class="sidebar-label">Purchases</span>
                 </a>
+                <a href="{{ route('admin.promo-codes.index') }}" @click="closeMobile()"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm {{ request()->routeIs('admin.promo-codes.*') ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white' }} transition-colors">
+                    <i class="fa-solid fa-tags w-5 text-center shrink-0"></i>
+                    <span class="sidebar-label">Promo Codes</span>
+                </a>
                 <a href="{{ route('admin.users.index') }}" @click="closeMobile()"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm {{ request()->routeIs('admin.users.*') ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white' }} transition-colors">
                     <i class="fa-solid fa-user-group w-5 text-center shrink-0"></i>

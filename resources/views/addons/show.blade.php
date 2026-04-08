@@ -35,7 +35,7 @@
                         @endphp
                         <iframe src="{{ $embedUrl }}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     @elseif($addon->cover_image)
-                        <img src="{{ asset('storage/' . $addon->cover_image) }}" alt="{{ $addon->name }}" class="w-full h-full object-cover cursor-pointer" onclick="openAddonSingleImage('{{ asset('storage/' . $addon->cover_image) }}')">
+                        <img src="{{ asset('storage/' . $addon->cover_image) }}" alt="{{ $addon->name }}" class="w-full h-full object-cover cursor-pointer" onclick="openAddonGallery(0)">
                     @else
                         <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900/20 to-gray-800">
                             <svg class="w-20 h-20 text-purple-500/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
@@ -43,101 +43,79 @@
                     @endif
                 </div>
 
-                {{-- Single Image Fullscreen Modal --}}
-                <div id="addon-single-lightbox" class="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-xl hidden items-center justify-center p-4" onclick="closeAddonSingleImage()">
-                    <div class="relative" onclick="event.stopPropagation()">
-                        <img id="addon-single-lightbox-img" src="" alt="Full view" class="max-w-full max-h-[90vh] rounded-xl object-contain select-none mx-auto block">
-                    </div>
-                    <button onclick="closeAddonSingleImage()" class="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
-                <script>
-                window.openAddonSingleImage = function(src) {
-                    var lb = document.getElementById('addon-single-lightbox');
-                    document.getElementById('addon-single-lightbox-img').src = src;
-                    lb.classList.remove('hidden');
-                    lb.classList.add('flex');
-                    document.body.style.overflow = 'hidden';
-                };
-                window.closeAddonSingleImage = function() {
-                    var lb = document.getElementById('addon-single-lightbox');
-                    lb.classList.add('hidden');
-                    lb.classList.remove('flex');
-                    document.body.style.overflow = '';
-                };
-                document.addEventListener('keydown', function(e) {
-                    var lb = document.getElementById('addon-single-lightbox');
-                    if (lb && !lb.classList.contains('hidden') && e.key === 'Escape') closeAddonSingleImage();
-                });
-                </script>
-
                 {{-- Screenshots --}}
                 @if($addon->screenshots && count($addon->screenshots) > 0)
                 <div class="grid grid-cols-3 gap-3">
                     @foreach($addon->screenshots as $index => $screenshot)
-                    <div onclick="openAddonLightbox({{ $index }})" class="aspect-video rounded-lg overflow-hidden bg-gray-800 cursor-pointer hover:ring-2 hover:ring-purple-500 transition-all">
+                    @php $galleryIndex = $addon->cover_image ? $index + 1 : $index; @endphp
+                    <div onclick="openAddonGallery({{ $galleryIndex }})" class="aspect-video rounded-lg overflow-hidden bg-gray-800 cursor-pointer hover:ring-2 hover:ring-purple-500 transition-all">
                         <img src="{{ asset('storage/' . $screenshot) }}" alt="Screenshot {{ $index + 1 }}" class="w-full h-full object-cover">
                     </div>
                     @endforeach
                 </div>
+                @endif
 
-                {{-- Fullscreen Image Lightbox --}}
-                <div id="addon-lightbox" class="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-xl hidden items-center justify-center p-4" onclick="closeAddonLightbox()">
-                    <div class="relative" onclick="event.stopPropagation()">
-                        <img id="addon-lightbox-img" src="" alt="Screenshot" class="max-w-full max-h-[90vh] rounded-xl object-contain select-none mx-auto block">
+                {{-- Fullscreen Image Gallery Lightbox --}}
+                <div id="addon-gallery-lightbox" class="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-xl hidden items-center justify-center p-4" onclick="closeAddonGallery()">
+                    <div class="relative max-w-full max-h-full flex items-center justify-center" onclick="event.stopPropagation()">
+                        <img id="addon-gallery-img" src="" alt="Full view" class="max-w-full max-h-[90vh] rounded-xl object-contain select-none mx-auto block transition-opacity duration-200">
                     </div>
-                    <div id="addon-lightbox-counter" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 text-sm font-medium"></div>
-                    <button onclick="closeAddonLightbox()" class="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10">
+                    <div id="addon-gallery-counter" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 text-sm font-medium bg-black/40 px-4 py-1.5 rounded-full backdrop-blur-sm"></div>
+                    <button onclick="closeAddonGallery()" class="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10 cursor-pointer">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
-                    <button id="addon-lb-prev" onclick="event.stopPropagation(); addonLightboxNav(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10">
+                    <button id="addon-gallery-prev" onclick="event.stopPropagation(); addonGalleryNav(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10 cursor-pointer">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </button>
-                    <button id="addon-lb-next" onclick="event.stopPropagation(); addonLightboxNav(1)" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10">
+                    <button id="addon-gallery-next" onclick="event.stopPropagation(); addonGalleryNav(1)" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10 cursor-pointer">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
                 </div>
                 <script>
                 (function() {
-                    const urls = [
-                        @foreach($addon->screenshots as $screenshot)
-                        "{{ asset('storage/' . $screenshot) }}",
-                        @endforeach
+                    const allImages = [
+                        @if($addon->cover_image)"{{ asset('storage/' . $addon->cover_image) }}",@endif
+                        @if($addon->screenshots)@foreach($addon->screenshots as $screenshot)"{{ asset('storage/' . $screenshot) }}",@endforeach @endif
                     ];
                     let current = 0;
-                    window.openAddonLightbox = function(index) {
-                        current = index;
+                    const lb = document.getElementById('addon-gallery-lightbox');
+                    const img = document.getElementById('addon-gallery-img');
+                    const counter = document.getElementById('addon-gallery-counter');
+                    const prevBtn = document.getElementById('addon-gallery-prev');
+                    const nextBtn = document.getElementById('addon-gallery-next');
+
+                    function render() {
+                        img.src = allImages[current];
+                        counter.textContent = allImages.length > 1 ? (current + 1) + ' / ' + allImages.length : '';
+                        prevBtn.style.display = allImages.length > 1 ? '' : 'none';
+                        nextBtn.style.display = allImages.length > 1 ? '' : 'none';
+                    }
+
+                    window.openAddonGallery = function(index) {
+                        if (allImages.length === 0) return;
+                        current = Math.max(0, Math.min(index, allImages.length - 1));
                         render();
-                        const lb = document.getElementById('addon-lightbox');
                         lb.classList.remove('hidden');
                         lb.classList.add('flex');
                         document.body.style.overflow = 'hidden';
                     };
-                    window.closeAddonLightbox = function() {
-                        const lb = document.getElementById('addon-lightbox');
+                    window.closeAddonGallery = function() {
                         lb.classList.add('hidden');
                         lb.classList.remove('flex');
                         document.body.style.overflow = '';
                     };
-                    window.addonLightboxNav = function(dir) {
-                        current = (current + dir + urls.length) % urls.length;
+                    window.addonGalleryNav = function(dir) {
+                        current = (current + dir + allImages.length) % allImages.length;
                         render();
                     };
-                    function render() {
-                        document.getElementById('addon-lightbox-img').src = urls[current];
-                        document.getElementById('addon-lightbox-counter').textContent = (current + 1) + ' / ' + urls.length;
-                    }
                     document.addEventListener('keydown', function(e) {
-                        const lb = document.getElementById('addon-lightbox');
                         if (!lb || lb.classList.contains('hidden')) return;
-                        if (e.key === 'Escape') closeAddonLightbox();
-                        if (e.key === 'ArrowLeft') addonLightboxNav(-1);
-                        if (e.key === 'ArrowRight') addonLightboxNav(1);
+                        if (e.key === 'Escape') closeAddonGallery();
+                        if (e.key === 'ArrowLeft') addonGalleryNav(-1);
+                        if (e.key === 'ArrowRight') addonGalleryNav(1);
                     });
                 })();
                 </script>
-                @endif
 
                 {{-- Description --}}
                 <div class="mt-8">
@@ -177,12 +155,20 @@
                                     Download Free
                                 </a>
                             @else
+                                @if($addon->original_price && $addon->original_price > $addon->price)
+                                    @php $discount = round((($addon->original_price - $addon->price) / $addon->original_price) * 100); @endphp
+                                    <div class="mb-3 p-3 rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/5 border border-green-500/20">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
+                                            <span class="text-sm font-semibold text-green-400">Save {{ $discount }}%</span>
+                                            <span class="text-xs text-green-400/60">— You save ${{ number_format($addon->original_price - $addon->price, 2) }}</span>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="flex items-baseline gap-3">
                                     <span class="text-4xl font-bold text-white">${{ number_format($addon->price, 2) }}</span>
                                     @if($addon->original_price && $addon->original_price > $addon->price)
                                         <span class="text-xl text-gray-500 line-through">${{ number_format($addon->original_price, 2) }}</span>
-                                        @php $discount = round((($addon->original_price - $addon->price) / $addon->original_price) * 100); @endphp
-                                        <span class="text-sm font-semibold text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full">-{{ $discount }}%</span>
                                     @endif
                                 </div>
                                 <a href="{{ route('checkout.show', $addon->slug) }}" class="block w-full text-center bg-purple-600 hover:bg-purple-500 text-white font-semibold py-4 rounded-xl mt-4 transition-all hover:shadow-xl hover:shadow-purple-500/25">

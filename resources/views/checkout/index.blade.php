@@ -19,10 +19,48 @@
         tiers: {{ $tiersJson }},
         basePrice: {{ $addon->price }},
         requiresLicense: {{ $addon->requires_license ? 'true' : 'false' }},
+        promoCode: '',
+        promoApplied: null,
+        promoDiscount: 0,
+        promoError: '',
+        promoLoading: false,
         get selectedTier() { return this.tiers[this.tierIndex] ?? null; },
-        get total() {
+        get subtotal() {
             if (!this.requiresLicense) return this.basePrice;
             return this.selectedTier ? this.selectedTier.price : this.basePrice;
+        },
+        get total() {
+            return Math.max(0, this.subtotal - this.promoDiscount);
+        },
+        async applyPromo() {
+            if (!this.promoCode.trim()) return;
+            this.promoLoading = true;
+            this.promoError = '';
+            try {
+                const res = await fetch('/api/promo/validate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+                    body: JSON.stringify({ code: this.promoCode, price: this.subtotal })
+                });
+                const data = await res.json();
+                if (data.valid) {
+                    this.promoApplied = data;
+                    this.promoDiscount = data.discount;
+                } else {
+                    this.promoError = data.message || 'Invalid promo code.';
+                    this.promoApplied = null;
+                    this.promoDiscount = 0;
+                }
+            } catch {
+                this.promoError = 'Could not validate code. Try again.';
+            }
+            this.promoLoading = false;
+        },
+        removePromo() {
+            this.promoApplied = null;
+            this.promoDiscount = 0;
+            this.promoCode = '';
+            this.promoError = '';
         }
     }">
         <div class="rounded-2xl bg-gray-900 border border-white/5 p-8" data-aos="fade-up">
@@ -81,16 +119,63 @@
             @endif
 
             <div class="border-t border-white/5 pt-6">
-                <div class="flex justify-between items-center mb-6">
-                    <span class="text-gray-400">Total</span>
-                    <span class="text-2xl font-bold">$<span x-text="total.toFixed(2)">{{ number_format($addon->price, 2) }}</span></span>
+
+                {{-- Promo Code Input --}}
+                <div class="mb-6">
+                    <template x-if="!promoApplied">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Promo Code</label>
+                            <div class="flex gap-2">
+                                <input type="text" x-model="promoCode" @keydown.enter.prevent="applyPromo()" placeholder="Enter code" class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-purple-500 focus:outline-none uppercase placeholder:normal-case">
+                                <button type="button" @click="applyPromo()" :disabled="promoLoading || !promoCode.trim()" class="bg-white/10 hover:bg-white/15 text-white text-sm font-medium px-5 py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                                    <span x-show="!promoLoading">Apply</span>
+                                    <span x-show="promoLoading" class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                        ...
+                                    </span>
+                                </button>
+                            </div>
+                            <p x-show="promoError" x-text="promoError" class="text-red-400 text-xs mt-2"></p>
+                        </div>
+                    </template>
+                    <template x-if="promoApplied">
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-green-500/10 border border-green-500/20">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
+                                <span class="text-sm font-semibold text-green-400" x-text="promoApplied.code"></span>
+                                <span class="text-xs text-green-400/70" x-text="'— ' + promoApplied.label"></span>
+                            </div>
+                            <button type="button" @click="removePromo()" class="text-gray-400 hover:text-white transition-colors cursor-pointer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+
+                {{-- Price breakdown --}}
+                <div class="space-y-3 mb-6 text-sm">
+                    <div class="flex justify-between text-gray-400">
+                        <span>Subtotal</span>
+                        <span>$<span x-text="subtotal.toFixed(2)">{{ number_format($addon->price, 2) }}</span></span>
+                    </div>
+                    <template x-if="promoApplied">
+                        <div class="flex justify-between text-green-400">
+                            <span>Discount <span class="text-green-400/60" x-text="'(' + promoApplied.label + ')'"></span></span>
+                            <span>-$<span x-text="promoDiscount.toFixed(2)"></span></span>
+                        </div>
+                    </template>
+                    <div class="flex justify-between items-center pt-3 border-t border-white/5">
+                        <span class="text-white font-medium">Total</span>
+                        <span class="text-2xl font-bold">$<span x-text="total.toFixed(2)">{{ number_format($addon->price, 2) }}</span></span>
+                    </div>
                 </div>
 
                 @auth
                     <form action="{{ route('checkout.process', $addon->slug) }}" method="POST">
                         @csrf
                         <input type="hidden" name="tier_index" x-model="tierIndex">
-                        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-4 rounded-xl transition-all hover:shadow-xl hover:shadow-purple-500/25 flex items-center justify-center gap-2">
+                        <input type="hidden" name="promo_code" x-model="promoCode">
+                        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-4 rounded-xl transition-all hover:shadow-xl hover:shadow-purple-500/25 flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                             Pay with PayPal
                         </button>
