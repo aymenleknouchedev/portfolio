@@ -57,8 +57,8 @@
 
                 {{-- Fullscreen Image Gallery Lightbox --}}
                 <div id="addon-gallery-lightbox" class="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-xl hidden items-center justify-center p-4" onclick="closeAddonGallery()">
-                    <div class="relative max-w-full max-h-full flex items-center justify-center" onclick="event.stopPropagation()">
-                        <img id="addon-gallery-img" src="" alt="Full view" class="max-w-full max-h-[90vh] rounded-xl object-contain select-none mx-auto block transition-opacity duration-200">
+                    <div class="relative w-full h-full flex items-center justify-center" onclick="event.stopPropagation()">
+                        <img id="addon-gallery-img" src="" alt="Full view" class="w-full h-full object-contain select-none transition-opacity duration-200">
                     </div>
                     <div id="addon-gallery-counter" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 text-sm font-medium bg-black/40 px-4 py-1.5 rounded-full backdrop-blur-sm"></div>
                     <button onclick="closeAddonGallery()" class="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10 cursor-pointer">
