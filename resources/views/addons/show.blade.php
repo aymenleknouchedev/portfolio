@@ -84,6 +84,10 @@
                     const prevBtn = document.getElementById('addon-gallery-prev');
                     const nextBtn = document.getElementById('addon-gallery-next');
 
+                    if (lb && lb.parentElement !== document.body) {
+                        document.body.appendChild(lb);
+                    }
+
                     function render() {
                         img.src = allImages[current];
                         counter.textContent = allImages.length > 1 ? (current + 1) + ' / ' + allImages.length : '';
