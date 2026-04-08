@@ -58,7 +58,7 @@
                 {{-- Fullscreen Image Gallery Lightbox --}}
                 <div id="addon-gallery-lightbox" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/55 backdrop-blur-xl p-6 sm:p-10" onclick="closeAddonGallery()">
                     <div class="relative flex h-full w-full items-center justify-center" onclick="event.stopPropagation()">
-                        <img id="addon-gallery-img" src="" alt="Full view" class="max-w-[92vw] max-h-[82vh] rounded-2xl object-contain select-none border border-white/10 shadow-2xl shadow-black/60 transition-opacity duration-200 lg:max-w-[78vw] lg:max-h-[68vh] xl:max-w-[70vw] xl:max-h-[62vh]">
+                        <img id="addon-gallery-img" src="" alt="Full view" class="h-[85vw] w-auto w-auto max-w-[92vw] max-h-[82vh] rounded-2xl object-contain select-none border border-white/10 shadow-2xl shadow-black/60 transition-opacity duration-200 lg:max-w-[78vw] lg:max-h-[68vh] xl:max-w-[70vw] xl:max-h-[62vh]">
                     </div>
                     <div id="addon-gallery-counter" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 text-sm font-medium bg-black/40 px-4 py-1.5 rounded-full backdrop-blur-sm"></div>
                     <button onclick="closeAddonGallery()" class="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10 cursor-pointer">
