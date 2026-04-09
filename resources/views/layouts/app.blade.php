@@ -300,8 +300,8 @@
         x-effect="document.body.classList.toggle('overflow-hidden', mobileMenu)"
         class="lg:hidden fixed inset-0 z-[90] isolate"
         style="background-color: rgba(3, 7, 18, 0.985);">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(124,58,237,0.14),transparent_42%)]"></div>
-        <div class="relative flex min-h-full flex-col">
+        <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(124,58,237,0.14),transparent_42%)]"></div>
+        <div class="relative z-10 flex min-h-full flex-col pointer-events-auto">
             <div class="flex items-center justify-between px-4 py-4 border-b border-white/10">
                 <a href="{{ route('home') }}" @click="mobileMenu = false" class="flex items-center space-x-2 group">
                     @if($siteLogo)
