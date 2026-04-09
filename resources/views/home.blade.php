@@ -458,16 +458,14 @@
                         <span class="glass text-green-400 text-xs font-bold px-3 py-1 rounded-full">Featured</span>
                         @endif
                     </div>
-                    <div class="absolute top-3 right-3">
+                    <div class="absolute top-3 right-3 flex flex-col items-end gap-1.5">
                         @if($addon->price <= 0)
                         <span class="glass text-green-400 text-xs font-bold px-3 py-1 rounded-full">Free</span>
                         @else
-                        <span class="glass text-amber-300 text-xs font-bold px-3 py-1 rounded-full">
-                            @if($addon->original_price && $addon->original_price > $addon->price)
-                                <span class="line-through opacity-60">${{ number_format($addon->original_price, 2) }}</span>
-                            @endif
-                            ${{ number_format($addon->price, 2) }}
-                        </span>
+                        <span class="glass text-amber-300 text-xs font-bold px-3 py-1 rounded-full">${{ number_format($addon->price, 2) }}</span>
+                        @if($addon->original_price && $addon->original_price > $addon->price)
+                        <span class="rounded-full bg-black/45 px-3 py-1 text-[11px] font-semibold text-white/55 line-through backdrop-blur-sm">${{ number_format($addon->original_price, 2) }}</span>
+                        @endif
                         @endif
                     </div>
                 </div>
