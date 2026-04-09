@@ -296,7 +296,7 @@
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 -translate-y-3"
         x-effect="document.body.classList.toggle('overflow-hidden', mobileMenu)"
-        class="lg:hidden fixed inset-0 z-[45] bg-gray-950 flex flex-col"
+        class="lg:hidden fixed inset-0 z-[49] bg-gray-950 flex flex-col"
         style="padding-top: calc(32px + 4rem);">
         <div class="flex-1 overflow-y-auto px-4 py-6">
             <div class="space-y-1 max-w-sm mx-auto">
