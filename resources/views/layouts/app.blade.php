@@ -285,81 +285,49 @@
         </div>
     </nav>
 
-    {{-- Fullscreen Mobile Menu --}}
+    {{-- Mobile Dropdown Menu --}}
     <div
         x-cloak
         x-show="mobileMenu"
-        @click.self="mobileMenu = false"
         @keydown.escape.window="mobileMenu = false"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        x-effect="document.body.classList.toggle('overflow-hidden', mobileMenu)"
-        class="lg:hidden fixed inset-0 z-[90] isolate"
-        style="background-color: rgba(3, 7, 18, 0.985);">
-        <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(124,58,237,0.14),transparent_42%)]"></div>
-        <div class="relative z-10 flex min-h-full flex-col pointer-events-auto">
-            <div class="flex items-center justify-between px-4 py-4 border-b border-white/10">
-                <a href="{{ route('home') }}" @click="mobileMenu = false" class="flex items-center space-x-2 group">
-                    @if($siteLogo)
-                        <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ $siteName }}" class="h-10 w-auto object-contain">
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2"
+        class="lg:hidden fixed inset-x-0 z-[49] px-4 pt-3"
+        style="top: calc(32px + 4rem);">
+        <div
+            @click.outside="mobileMenu = false"
+            class="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/50"
+            style="background-color: rgba(3, 7, 18, 0.98);">
+            <div class="px-4 py-4 space-y-1">
+                <a href="{{ route('home') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3 text-base rounded-xl transition-colors {{ request()->routeIs('home') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">Home</a>
+                <a href="{{ route('portfolio.index') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3 text-base rounded-xl transition-colors {{ request()->routeIs('portfolio.*') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">Portfolio</a>
+                <a href="{{ route('shop.index') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3 text-base rounded-xl transition-colors {{ request()->routeIs('shop.*') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-purple-400 hover:bg-purple-500/10 font-medium' }}">Shop Now</a>
+                <a href="{{ route('services.index') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3 text-base rounded-xl transition-colors {{ request()->routeIs('services.*') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">Services</a>
+                <a href="{{ route('learn.index') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3 text-base rounded-xl transition-colors {{ request()->routeIs('learn.*') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">Learn</a>
+                <a href="{{ route('about') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3 text-base rounded-xl transition-colors {{ request()->routeIs('about') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">About</a>
+                <a href="{{ route('contact.show') }}" @click="mobileMenu = false"
+                    class="block px-4 py-3 text-base rounded-xl transition-colors {{ request()->routeIs('contact.*') ? 'text-purple-400 bg-purple-500/10 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">Contact</a>
+
+                <div class="mt-3 border-t border-white/10 pt-3 space-y-1">
+                    @guest
+                    <a href="{{ route('login') }}" @click="mobileMenu = false"
+                        class="block px-4 py-3 text-base text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors"><i class="fa-solid fa-bag-shopping mr-2 text-xs"></i>My Purchases</a>
+                    <a href="{{ route('register') }}" @click="mobileMenu = false"
+                        class="block px-4 py-3 text-base text-purple-400 hover:bg-purple-500/10 rounded-xl transition-colors">Get Started</a>
                     @else
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center font-bold text-lg">
-                            {{ substr($siteName, 0, 1) }}
-                        </div>
-                        <span class="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{{ $siteName }}</span>
-                    @endif
-                </a>
-                <button @click="mobileMenu = false" type="button" aria-label="Close mobile menu"
-                    class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:bg-white/10">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-
-            <div class="flex-1 overflow-y-auto px-4 py-6">
-                <div class="mx-auto flex min-h-full w-full max-w-sm flex-col justify-center gap-2">
-                    <a href="{{ route('home') }}" @click="mobileMenu = false"
-                        class="flex items-center px-4 py-4 text-lg rounded-2xl transition-colors {{ request()->routeIs('home') ? 'text-white bg-purple-500/15 border border-purple-500/20 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 border border-transparent' }}">Home</a>
-                    <a href="{{ route('portfolio.index') }}" @click="mobileMenu = false"
-                        class="flex items-center px-4 py-4 text-lg rounded-2xl transition-colors {{ request()->routeIs('portfolio.*') ? 'text-white bg-purple-500/15 border border-purple-500/20 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 border border-transparent' }}">Portfolio</a>
-                    <a href="{{ route('shop.index') }}" @click="mobileMenu = false"
-                        class="flex items-center justify-between px-4 py-4 text-lg rounded-2xl transition-colors {{ request()->routeIs('shop.*') ? 'text-white bg-purple-500/15 border border-purple-500/20 font-semibold' : 'text-purple-300 hover:text-white hover:bg-purple-500/10 border border-transparent font-medium' }}">
-                        <span>Shop Now</span>
-                        <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
-                    </a>
-                    <a href="{{ route('services.index') }}" @click="mobileMenu = false"
-                        class="flex items-center px-4 py-4 text-lg rounded-2xl transition-colors {{ request()->routeIs('services.*') ? 'text-white bg-purple-500/15 border border-purple-500/20 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 border border-transparent' }}">Services</a>
-                    <a href="{{ route('learn.index') }}" @click="mobileMenu = false"
-                        class="flex items-center px-4 py-4 text-lg rounded-2xl transition-colors {{ request()->routeIs('learn.*') ? 'text-white bg-purple-500/15 border border-purple-500/20 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 border border-transparent' }}">Learn</a>
-                    <a href="{{ route('about') }}" @click="mobileMenu = false"
-                        class="flex items-center px-4 py-4 text-lg rounded-2xl transition-colors {{ request()->routeIs('about') ? 'text-white bg-purple-500/15 border border-purple-500/20 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 border border-transparent' }}">About</a>
-                    <a href="{{ route('contact.show') }}" @click="mobileMenu = false"
-                        class="flex items-center px-4 py-4 text-lg rounded-2xl transition-colors {{ request()->routeIs('contact.*') ? 'text-white bg-purple-500/15 border border-purple-500/20 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 border border-transparent' }}">Contact</a>
-
-                    <div class="mt-4 border-t border-white/10 pt-4 space-y-2">
-                        @guest
-                        <a href="{{ route('login') }}" @click="mobileMenu = false"
-                            class="flex items-center gap-3 px-4 py-4 text-base text-gray-300 hover:text-white hover:bg-white/5 rounded-2xl transition-colors border border-transparent">
-                            <i class="fa-solid fa-bag-shopping text-sm"></i>
-                            <span>My Purchases</span>
-                        </a>
-                        <a href="{{ route('register') }}" @click="mobileMenu = false"
-                            class="flex items-center justify-center px-4 py-4 text-base bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-2xl transition-all">
-                            Get Started
-                        </a>
-                        @else
-                        <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('client.dashboard') }}" @click="mobileMenu = false"
-                            class="flex items-center gap-3 px-4 py-4 text-base text-gray-300 hover:text-white hover:bg-white/5 rounded-2xl transition-colors border border-transparent">
-                            <i class="fa-solid fa-bag-shopping text-sm"></i>
-                            <span>My Purchases</span>
-                        </a>
-                        @endguest
-                    </div>
+                    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('client.dashboard') }}" @click="mobileMenu = false"
+                        class="block px-4 py-3 text-base text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors"><i class="fa-solid fa-bag-shopping mr-2 text-xs"></i>My Purchases</a>
+                    @endguest
                 </div>
             </div>
         </div>
