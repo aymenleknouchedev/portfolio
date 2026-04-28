@@ -16,7 +16,16 @@ class DashboardController extends Controller
             ->latest()
             ->get();
 
-        return view('client.dashboard', compact('purchases'));
+        // Surface pending / failed purchases so users (and we) can see
+        // checkouts that started but never completed capture.
+        $pendingPurchases = $request->user()->purchases()
+            ->with('addon')
+            ->whereIn('status', ['pending', 'failed'])
+            ->latest()
+            ->take(10)
+            ->get();
+
+        return view('client.dashboard', compact('purchases', 'pendingPurchases'));
     }
 
     public function regenerateToken(Request $request, $purchaseId)

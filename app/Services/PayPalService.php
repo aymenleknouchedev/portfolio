@@ -116,12 +116,22 @@ class PayPalService
     {
         $token = $this->getAccessToken();
 
+        // PayPal /capture requires a JSON body. An empty body or wrong
+        // content-type causes silent failures. We send `{}` explicitly.
         $response = Http::withToken($token)
             ->timeout(20)
-            ->withHeaders(['Content-Type' => 'application/json'])
+            ->withBody('{}', 'application/json')
             ->post("{$this->baseUrl}/v2/checkout/orders/{$orderId}/capture");
 
         $data = is_array($response->json()) ? $response->json() : [];
+
+        // Always log the raw capture response — silent failures here are the
+        // single most common cause of "payment success but no money" reports.
+        Log::info('PayPal capture response', [
+            'order_id' => $orderId,
+            'status'   => $response->status(),
+            'body'     => $data,
+        ]);
 
         $status = $data['status'] ?? null;
         $alreadyCaptured = ($data['details'][0]['issue'] ?? null) === 'ORDER_ALREADY_CAPTURED';

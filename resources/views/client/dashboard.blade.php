@@ -134,6 +134,41 @@
             </div>
             @endif
         </div>
+
+        {{-- Pending / failed checkouts --}}
+        @if(isset($pendingPurchases) && $pendingPurchases->count() > 0)
+        <div class="mt-8 rounded-2xl bg-gray-900 border border-yellow-500/20 overflow-hidden">
+            <div class="p-6 border-b border-white/5 flex items-center gap-2">
+                <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <h2 class="text-lg font-semibold">Incomplete Checkouts</h2>
+            </div>
+            <div class="divide-y divide-white/5">
+                @foreach($pendingPurchases as $p)
+                <div class="p-6 flex items-center justify-between gap-4 flex-wrap">
+                    <div>
+                        <h3 class="font-semibold">{{ $p->addon->name ?? 'Removed addon' }}</h3>
+                        <div class="text-xs text-gray-500 mt-1 font-mono">Order: {{ $p->paypal_order_id }}</div>
+                        <div class="text-xs mt-1">
+                            <span class="px-2 py-0.5 rounded-full {{ $p->status === 'pending' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400' }}">{{ ucfirst($p->status) }}</span>
+                            <span class="text-gray-500 ml-2">${{ number_format($p->amount, 2) }} — {{ $p->created_at->diffForHumans() }}</span>
+                        </div>
+                    </div>
+                    @if($p->addon)
+                    <a href="{{ route('checkout.show', $p->addon->slug) }}"
+                       class="text-sm bg-white/10 hover:bg-white/15 text-white font-medium px-4 py-2 rounded-lg transition-all">
+                        Try Again
+                    </a>
+                    @endif
+                </div>
+                @endforeach
+            </div>
+            <div class="px-6 py-3 bg-black/20 text-xs text-gray-500">
+                These orders were started but never completed. No charge was confirmed on your account for these.
+            </div>
+        </div>
+        @endif
     </div>
 </div>
 @endsection
