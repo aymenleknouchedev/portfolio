@@ -28,12 +28,18 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $redirect = match ($request->user()->role) {
+        return redirect()->intended(self::dashboardFor($request->user()));
+    }
+
+    /**
+     * Resolve the correct dashboard URL based on the user's role.
+     */
+    public static function dashboardFor(\App\Models\User $user): string
+    {
+        return match ($user->role) {
             'admin' => route('admin.dashboard', absolute: false),
             default => route('client.dashboard', absolute: false),
         };
-
-        return redirect()->intended($redirect);
     }
 
     /**
