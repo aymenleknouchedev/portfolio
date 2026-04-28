@@ -480,9 +480,7 @@
                         <span class="glass text-green-400 text-xs font-bold px-3 py-1 rounded-full">Free</span>
                         @else
                         <span class="glass text-amber-300 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
-                            @if($addon->original_price && $addon->original_price > $addon->price)
-                            <span class="line-through text-white/45 font-medium">${{ number_format($addon->original_price, 2) }}</span>
-                            @endif
+                          
                             ${{ number_format($addon->price, 2) }}
                         </span>
                         @endif
