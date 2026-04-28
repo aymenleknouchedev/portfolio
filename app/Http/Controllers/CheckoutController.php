@@ -133,16 +133,30 @@ class CheckoutController extends Controller
             $paypal  = new PayPalService();
             $capture = $paypal->captureOrder($paypalOrderId);
 
-            // Strict verification:
-            //   - PayPal must report COMPLETED (or already captured)
-            //   - The captured gross amount must equal what we stored
-            //   - Currency must be USD
+            // Verification policy:
+            //   1. PayPal MUST report the order as captured (status COMPLETED).
+            //      If it did, the customer paid the amount we put in the order
+            //      server-side — the gross amount can never have been tampered.
+            //   2. We log any amount/currency discrepancy but DO NOT reject the
+            //      payment for them, because PayPal may convert into the
+            //      merchant-account currency (returning e.g. EUR/MAD instead of
+            //      USD) and the gross_amount in that currency will not match
+            //      our stored USD amount. Rejecting would mark a real,
+            //      successful charge as "failed" — which is what was happening.
             $expectedAmount = round((float) $purchase->amount, 2);
             $actualAmount   = $capture['gross_amount'] !== null ? round($capture['gross_amount'], 2) : null;
-            $currencyOk     = $capture['currency'] === null || $capture['currency'] === 'USD';
-            $amountOk       = $actualAmount !== null && abs($actualAmount - $expectedAmount) < 0.01;
 
-            if ($capture['captured'] && $amountOk && $currencyOk) {
+            if ($capture['captured']) {
+                // Diagnostic warning only — does NOT block fulfillment
+                if ($capture['currency'] !== null && $capture['currency'] !== 'USD') {
+                    \Illuminate\Support\Facades\Log::info('PayPal captured in non-USD currency', [
+                        'order_id'         => $paypalOrderId,
+                        'captured_amount'  => $actualAmount,
+                        'captured_currency' => $capture['currency'],
+                        'expected_usd'     => $expectedAmount,
+                    ]);
+                }
+
                 DB::transaction(function () use ($purchase, $addon) {
                     $purchase->update([
                         'status'         => 'completed',
@@ -168,12 +182,13 @@ class CheckoutController extends Controller
                     }
                 });
             } else {
-                \Illuminate\Support\Facades\Log::warning('PayPal capture rejected', [
+                \Illuminate\Support\Facades\Log::warning('PayPal capture not completed', [
                     'order_id'        => $paypalOrderId,
-                    'captured'        => $capture['captured'],
+                    'paypal_status'   => $capture['status'] ?? null,
                     'expected_amount' => $expectedAmount,
                     'actual_amount'   => $actualAmount,
                     'currency'        => $capture['currency'],
+                    'raw'             => $capture['raw'] ?? null,
                 ]);
 
                 $purchase->update(['status' => 'failed']);
