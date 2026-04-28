@@ -66,12 +66,14 @@ Route::get('/download/free/{addon:slug}', [CheckoutController::class , 'freeDown
  */
 
 Route::middleware('auth')->group(function () {
+    // Static routes MUST be declared before the wildcard {addon:slug} route,
+    // otherwise "success" / "cancel" are interpreted as addon slugs and 404.
+    Route::get('/checkout/success', [CheckoutController::class , 'success'])->name('checkout.success');
+    Route::get('/checkout/cancel', [CheckoutController::class , 'cancel'])->name('checkout.cancel');
     Route::get('/checkout/{addon:slug}', [CheckoutController::class , 'show'])->name('checkout.show');
     Route::post('/checkout/{addon:slug}', [CheckoutController::class , 'process'])
         ->middleware('throttle:10,1')
         ->name('checkout.process');
-    Route::get('/checkout/success', [CheckoutController::class , 'success'])->name('checkout.success');
-    Route::get('/checkout/cancel', [CheckoutController::class , 'cancel'])->name('checkout.cancel');
 });
 
 /*
