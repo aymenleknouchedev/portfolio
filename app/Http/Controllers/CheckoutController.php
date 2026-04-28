@@ -129,58 +129,44 @@ class CheckoutController extends Controller
             return view('checkout.success', compact('addon', 'purchase'));
         }
 
+        // Recovery: if this purchase was previously marked failed but PayPal
+        // actually captured the money (e.g. due to the old strict-currency
+        // check), fix it now by re-querying the order.
+        if ($purchase->status === 'failed') {
+            try {
+                $details = (new PayPalService())->getOrder($paypalOrderId);
+                if (($details['status'] ?? null) === 'COMPLETED') {
+                    $this->fulfillPurchase($purchase, $addon);
+                    $purchase->refresh()->load('licenses');
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('PayPal recovery check failed', [
+                    'order_id' => $paypalOrderId,
+                    'error'    => $e->getMessage(),
+                ]);
+            }
+
+            return view('checkout.success', compact('addon', 'purchase'));
+        }
+
         try {
             $paypal  = new PayPalService();
             $capture = $paypal->captureOrder($paypalOrderId);
 
-            // Verification policy:
-            //   1. PayPal MUST report the order as captured (status COMPLETED).
-            //      If it did, the customer paid the amount we put in the order
-            //      server-side — the gross amount can never have been tampered.
-            //   2. We log any amount/currency discrepancy but DO NOT reject the
-            //      payment for them, because PayPal may convert into the
-            //      merchant-account currency (returning e.g. EUR/MAD instead of
-            //      USD) and the gross_amount in that currency will not match
-            //      our stored USD amount. Rejecting would mark a real,
-            //      successful charge as "failed" — which is what was happening.
             $expectedAmount = round((float) $purchase->amount, 2);
             $actualAmount   = $capture['gross_amount'] !== null ? round($capture['gross_amount'], 2) : null;
 
             if ($capture['captured']) {
-                // Diagnostic warning only — does NOT block fulfillment
                 if ($capture['currency'] !== null && $capture['currency'] !== 'USD') {
                     \Illuminate\Support\Facades\Log::info('PayPal captured in non-USD currency', [
-                        'order_id'         => $paypalOrderId,
-                        'captured_amount'  => $actualAmount,
+                        'order_id'          => $paypalOrderId,
+                        'captured_amount'   => $actualAmount,
                         'captured_currency' => $capture['currency'],
-                        'expected_usd'     => $expectedAmount,
+                        'expected_usd'      => $expectedAmount,
                     ]);
                 }
 
-                DB::transaction(function () use ($purchase, $addon) {
-                    $purchase->update([
-                        'status'         => 'completed',
-                        'download_token' => Str::random(64),
-                        'expires_at'     => now()->addHours(config('fraxionfx.download_token_expiry_hours', 24)),
-                    ]);
-
-                    if ($purchase->promo_code) {
-                        PromoCode::where('code', $purchase->promo_code)->increment('used_count');
-                    }
-
-                    if ($addon->requires_license) {
-                        for ($i = 0; $i < max(1, (int) $purchase->quantity); $i++) {
-                            License::create([
-                                'key'         => Str::upper(Str::random(32)),
-                                'addon_id'    => $addon->id,
-                                'user_id'     => $purchase->user_id,
-                                'purchase_id' => $purchase->id,
-                                'status'      => 'active',
-                                'is_lifetime' => true,
-                            ]);
-                        }
-                    }
-                });
+                $this->fulfillPurchase($purchase, $addon);
             } else {
                 \Illuminate\Support\Facades\Log::warning('PayPal capture not completed', [
                     'order_id'        => $paypalOrderId,
@@ -203,6 +189,41 @@ class CheckoutController extends Controller
         $purchase->refresh()->load('licenses');
 
         return view('checkout.success', compact('addon', 'purchase'));
+    }
+
+    /**
+     * Mark the purchase as completed and issue licenses if needed.
+     */
+    private function fulfillPurchase(Purchase $purchase, ?Addon $addon): void
+    {
+        if (!$addon) {
+            return;
+        }
+
+        DB::transaction(function () use ($purchase, $addon) {
+            $purchase->update([
+                'status'         => 'completed',
+                'download_token' => Str::random(64),
+                'expires_at'     => now()->addHours(config('fraxionfx.download_token_expiry_hours', 24)),
+            ]);
+
+            if ($purchase->promo_code) {
+                PromoCode::where('code', $purchase->promo_code)->increment('used_count');
+            }
+
+            if ($addon->requires_license && $purchase->licenses()->count() === 0) {
+                for ($i = 0; $i < max(1, (int) $purchase->quantity); $i++) {
+                    License::create([
+                        'key'         => Str::upper(Str::random(32)),
+                        'addon_id'    => $addon->id,
+                        'user_id'     => $purchase->user_id,
+                        'purchase_id' => $purchase->id,
+                        'status'      => 'active',
+                        'is_lifetime' => true,
+                    ]);
+                }
+            }
+        });
     }
 
     public function cancel(Request $request)
