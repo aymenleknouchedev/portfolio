@@ -6,7 +6,8 @@
     <a href="{{ route('admin.promo-codes.create') }}" class="bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-all">+ New Promo Code</a>
 </div>
 <div class="rounded-xl bg-gray-900 border border-white/5 overflow-hidden">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[720px]">
         <thead><tr class="text-gray-400 border-b border-white/5"><th class="text-left p-4">Code</th><th class="text-left p-4">Discount</th><th class="text-left p-4">Used</th><th class="text-left p-4">Expires</th><th class="text-left p-4">Status</th><th class="text-right p-4">Actions</th></tr></thead>
         <tbody>
             @foreach($promoCodes as $promo)
@@ -36,6 +37,7 @@
             @endforeach
         </tbody>
     </table>
+    </div>
     @if($promoCodes->isEmpty()) <p class="p-8 text-center text-gray-400">No promo codes yet.</p> @endif
 </div>
 @endsection

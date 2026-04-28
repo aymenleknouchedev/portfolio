@@ -6,7 +6,8 @@
     <a href="{{ route('admin.brands.create') }}" class="bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-all">+ New Brand</a>
 </div>
 <div class="rounded-xl bg-gray-900 border border-white/5 overflow-hidden">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[640px]">
         <thead>
             <tr class="text-gray-400 border-b border-white/5">
                 <th class="text-left p-4">Logo</th>
@@ -38,6 +39,7 @@
             @endforeach
         </tbody>
     </table>
+    </div>
     @if($brands->isEmpty()) <p class="p-8 text-center text-gray-400">No brands yet.</p> @endif
 </div>
 @endsection

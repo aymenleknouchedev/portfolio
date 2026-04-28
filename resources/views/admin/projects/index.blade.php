@@ -16,7 +16,8 @@
     {{-- All Projects Tab --}}
     <div x-show="tab === 'all'" x-transition>
         <div class="rounded-xl bg-gray-900 border border-white/5 overflow-hidden">
-            <table class="w-full text-sm">
+            <div class="overflow-x-auto">
+            <table class="w-full text-sm min-w-[720px]">
                 <thead><tr class="text-gray-400 border-b border-white/5"><th class="text-left p-4">Title</th><th class="text-left p-4">Category</th><th class="text-left p-4">Featured</th><th class="text-left p-4">Published</th><th class="text-right p-4">Actions</th></tr></thead>
                 <tbody>
                     @foreach($projects as $project)
@@ -40,6 +41,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
             @if($projects->isEmpty()) <p class="p-8 text-center text-gray-400">No projects yet.</p> @endif
         </div>
     </div>

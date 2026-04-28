@@ -7,7 +7,8 @@
 </div>
 
 <div class="rounded-xl bg-gray-900 border border-white/5 overflow-hidden">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[640px]">
         <thead><tr class="text-gray-400 border-b border-white/5"><th class="text-left p-4">Name</th><th class="text-left p-4">Slug</th><th class="text-left p-4">Projects</th><th class="text-left p-4">Status</th><th class="text-right p-4">Actions</th></tr></thead>
         <tbody>
             @foreach($categories as $category)
@@ -24,6 +25,7 @@
             @endforeach
         </tbody>
     </table>
+    </div>
     @if($categories->isEmpty()) <p class="p-8 text-center text-gray-400">No project categories yet.</p> @endif
 </div>
 @endsection

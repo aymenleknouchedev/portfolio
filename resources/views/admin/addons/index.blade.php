@@ -6,7 +6,8 @@
     <a href="{{ route('admin.addons.create') }}" class="bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-all">+ New Add-on</a>
 </div>
 <div class="rounded-xl bg-gray-900 border border-white/5 overflow-hidden">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[640px]">
         <thead><tr class="text-gray-400 border-b border-white/5"><th class="text-left p-4">Name</th><th class="text-left p-4">Category</th><th class="text-left p-4">Price</th><th class="text-left p-4">Featured</th><th class="text-right p-4">Actions</th></tr></thead>
         <tbody>
             @foreach($addons as $addon)
@@ -32,6 +33,7 @@
             @endforeach
         </tbody>
     </table>
+    </div>
     @if($addons->isEmpty()) <p class="p-8 text-center text-gray-400">No add-ons yet.</p> @endif
 </div>
 @endsection

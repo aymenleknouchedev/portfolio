@@ -16,6 +16,10 @@
             <div class="mb-6 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm text-left">
                 <strong>Note:</strong> Your payment was received but we couldn't finalize your download automatically. Please <a href="{{ route('client.dashboard') }}" class="underline">check your dashboard</a> or contact support with your PayPal order reference.
             </div>
+            @elseif($purchase->status !== 'completed')
+            <div class="mb-6 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm text-left">
+                <strong>Note:</strong> Your payment is being verified. If this persists, please <a href="{{ route('client.dashboard') }}" class="underline">check your dashboard</a> or contact support and reference order <code class="font-mono">{{ $purchase->paypal_order_id }}</code>.
+            </div>
             @endif
 
             <div class="p-4 rounded-xl bg-white/5 border border-white/5 mb-8 text-left">

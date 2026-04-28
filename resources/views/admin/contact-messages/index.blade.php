@@ -10,7 +10,8 @@
     </div>
 
     <div class="rounded-2xl bg-gray-900 border border-white/5 overflow-hidden">
-        <table class="w-full text-sm text-left">
+        <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left min-w-[720px]">
             <thead class="bg-white/5 text-gray-400 uppercase text-xs tracking-wider">
                 <tr>
                     <th class="px-6 py-4">Status</th>
@@ -57,6 +58,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 
     <div class="mt-6">{{ $messages->links() }}</div>

@@ -3,7 +3,8 @@
 @section('content')
 <h1 class="text-2xl font-bold mb-6">Purchases</h1>
 <div class="rounded-xl bg-gray-900 border border-white/5 overflow-hidden">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[640px]">
         <thead><tr class="text-gray-400 border-b border-white/5"><th class="text-left p-4">User</th><th class="text-left p-4">Add-on</th><th class="text-left p-4">Amount</th><th class="text-left p-4">Status</th><th class="text-left p-4">Token</th><th class="text-left p-4">Date</th></tr></thead>
         <tbody>
             @foreach($purchases as $purchase)
@@ -18,6 +19,7 @@
             @endforeach
         </tbody>
     </table>
+    </div>
     @if($purchases->isEmpty()) <p class="p-8 text-center text-gray-400">No purchases yet.</p> @endif
 </div>
 <div class="mt-6">{{ $purchases->links() }}</div>

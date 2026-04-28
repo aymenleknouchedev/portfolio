@@ -8,6 +8,7 @@ use App\Models\PromoCode;
 use App\Models\Purchase;
 use App\Services\PayPalService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -28,126 +29,163 @@ class CheckoutController extends Controller
             'promo_code' => 'nullable|string|max:50',
         ]);
 
+        if ($addon->price <= 0) {
+            return redirect()->route('download.free', $addon->slug);
+        }
+
+        // Resolve tier server-side — never trust pricing from the client
         $tiers = $addon->getEffectiveLicenseTiers();
-        $tierIndex = max(0, min((int) $request->input('tier_index', 0), count($tiers) - 1));
+        $tierIndex = max(0, min((int) $request->input('tier_index', 0), max(0, count($tiers) - 1)));
         $selectedTier = $tiers[$tierIndex] ?? ['label' => 'Standard License', 'quantity' => 1, 'price' => (float) $addon->price];
         $tierPrice = (float) $selectedTier['price'];
-        $tierLabel = $selectedTier['label'];
-        $quantity = $addon->requires_license ? max(1, (int) ($selectedTier['quantity'] ?? 1)) : 0;
+        $tierLabel = (string) $selectedTier['label'];
+        $quantity  = $addon->requires_license ? max(1, (int) ($selectedTier['quantity'] ?? 1)) : 1;
 
-        $subtotal = $addon->requires_license ? $tierPrice : $addon->price;
+        $subtotal = $addon->requires_license ? $tierPrice : (float) $addon->price;
 
-        // Apply promo code if provided
-        $promoDiscount = 0;
-        $promoCodeStr = '';
+        // Validate promo server-side
+        $promoDiscount = 0.0;
+        $promoCodeStr  = null;
         if ($request->filled('promo_code')) {
-            $promo = PromoCode::where('code', strtoupper(trim($request->promo_code)))->first();
+            $promo = PromoCode::where('code', strtoupper(trim($request->input('promo_code'))))->first();
             if ($promo && $promo->isValid()) {
-                $promoDiscount = $promo->calculateDiscount($subtotal);
-                $promoCodeStr = $promo->code;
+                $promoDiscount = (float) $promo->calculateDiscount($subtotal);
+                if ($promoDiscount > 0) {
+                    $promoCodeStr = $promo->code;
+                }
             }
         }
 
         $totalAmount = max(0.01, round($subtotal - $promoDiscount, 2));
 
-        $description = $addon->name . ($addon->requires_license ? ' — ' . $tierLabel . ' (' . $quantity . ' lic.)' : '');
-
-        $returnUrl = route('checkout.success') . '?addon=' . $addon->slug . '&qty=' . $quantity . '&tier=' . urlencode($tierLabel) . '&tier_price=' . $tierPrice . '&promo=' . urlencode($promoCodeStr) . '&promo_discount=' . $promoDiscount;
-        $cancelUrl = route('checkout.cancel') . '?addon=' . $addon->slug;
-
         try {
             $paypal = new PayPalService();
-            $order = $paypal->createOrder($description, $totalAmount, $returnUrl, $cancelUrl);
 
-            if (!$order['approval_url']) {
+            // Create the PayPal order first so we have its ID
+            $description = $addon->name . ($addon->requires_license ? ' — ' . $tierLabel . ' (' . $quantity . ' lic.)' : '');
+            $returnUrl   = route('checkout.success');
+            $cancelUrl   = route('checkout.cancel') . '?addon=' . urlencode($addon->slug);
+
+            $order = $paypal->createOrder(
+                $description,
+                $totalAmount,
+                $returnUrl,
+                $cancelUrl,
+                customId: 'user:' . auth()->id() . '|addon:' . $addon->id
+            );
+
+            if (empty($order['id']) || empty($order['approval_url'])) {
                 return back()->with('error', 'Could not connect to PayPal. Please try again.');
             }
 
+            // Persist a server-trusted pending purchase. This eliminates any
+            // possibility of price/quantity tampering through the return URL.
+            Purchase::create([
+                'user_id'         => auth()->id(),
+                'addon_id'        => $addon->id,
+                'paypal_order_id' => $order['id'],
+                'amount'          => $totalAmount,
+                'quantity'        => $quantity,
+                'license_tier'    => $addon->requires_license ? $tierLabel : null,
+                'promo_code'      => $promoCodeStr,
+                'promo_discount'  => $promoDiscount > 0 ? $promoDiscount : null,
+                'status'          => 'pending',
+            ]);
+
             return redirect()->away($order['approval_url']);
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('PayPal create error', ['error' => $e->getMessage()]);
             return back()->with('error', 'Payment error: ' . $e->getMessage());
         }
     }
 
     public function success(Request $request)
     {
-        $addon = Addon::where('slug', $request->addon)->firstOrFail();
-        $quantity = max(1, (int) $request->input('qty', 1));
-        $tierLabel = $request->input('tier', 'Standard License');
-        $tierPrice = (float) $request->input('tier_price', $addon->price);
-        $promoCodeStr = $request->input('promo', '');
-        $promoDiscount = (float) $request->input('promo_discount', 0);
-        $paypalOrderId = $request->input('token'); // PayPal sends ?token=ORDER_ID
+        // PayPal sends ?token=ORDER_ID
+        $paypalOrderId = $request->input('token');
 
-        // Check if this order was already processed (page refresh / double-visit)
-        $purchase = $paypalOrderId
-            ? Purchase::where('paypal_order_id', $paypalOrderId)->first()
-            : null;
+        if (!$paypalOrderId) {
+            abort(404);
+        }
 
-        if (!$purchase && $paypalOrderId && auth()->check()) {
-            try {
-                $paypal = new PayPalService();
-                $capture = $paypal->captureOrder($paypalOrderId);
+        $purchase = Purchase::with('addon')
+            ->where('paypal_order_id', $paypalOrderId)
+            ->first();
 
-                $status = $capture['status'] ?? null;
+        // Order must exist locally and belong to the current user
+        if (!$purchase) {
+            abort(404, 'Order not found.');
+        }
 
-                // Accept COMPLETED or already-captured
-                $captured = $status === 'COMPLETED'
-                    || ($capture['details'][0]['issue'] ?? null) === 'ORDER_ALREADY_CAPTURED';
+        if (!auth()->check() || (int) $purchase->user_id !== (int) auth()->id()) {
+            abort(403, 'You are not authorized to view this order.');
+        }
 
-                if ($captured) {
-                    $subtotal = $addon->requires_license ? $tierPrice : $addon->price;
-                    $totalAmount = max(0.01, round($subtotal - $promoDiscount, 2));
+        $addon = $purchase->addon;
 
-                    $purchase = Purchase::create([
-                        'user_id'         => auth()->id(),
-                        'addon_id'        => $addon->id,
-                        'paypal_order_id' => $paypalOrderId,
-                        'amount'          => $totalAmount,
-                        'quantity'        => $quantity,
-                        'license_tier'    => $addon->requires_license ? $tierLabel : null,
-                        'promo_code'      => $promoCodeStr ?: null,
-                        'promo_discount'  => $promoDiscount > 0 ? $promoDiscount : null,
-                        'status'          => 'completed',
-                        'download_token'  => Str::random(64),
-                        'expires_at'      => now()->addHours(config('fraxionfx.download_token_expiry_hours', 24)),
+        // Already completed (page refresh / double-visit) — just render
+        if ($purchase->status === 'completed') {
+            $purchase->load('licenses');
+            return view('checkout.success', compact('addon', 'purchase'));
+        }
+
+        try {
+            $paypal  = new PayPalService();
+            $capture = $paypal->captureOrder($paypalOrderId);
+
+            // Strict verification:
+            //   - PayPal must report COMPLETED (or already captured)
+            //   - The captured gross amount must equal what we stored
+            //   - Currency must be USD
+            $expectedAmount = round((float) $purchase->amount, 2);
+            $actualAmount   = $capture['gross_amount'] !== null ? round($capture['gross_amount'], 2) : null;
+            $currencyOk     = $capture['currency'] === null || $capture['currency'] === 'USD';
+            $amountOk       = $actualAmount !== null && abs($actualAmount - $expectedAmount) < 0.01;
+
+            if ($capture['captured'] && $amountOk && $currencyOk) {
+                DB::transaction(function () use ($purchase, $addon) {
+                    $purchase->update([
+                        'status'         => 'completed',
+                        'download_token' => Str::random(64),
+                        'expires_at'     => now()->addHours(config('fraxionfx.download_token_expiry_hours', 24)),
                     ]);
 
-                    // Increment promo code usage
-                    if ($promoCodeStr) {
-                        PromoCode::where('code', $promoCodeStr)->increment('used_count');
+                    if ($purchase->promo_code) {
+                        PromoCode::where('code', $purchase->promo_code)->increment('used_count');
                     }
 
                     if ($addon->requires_license) {
-                        for ($i = 0; $i < $quantity; $i++) {
+                        for ($i = 0; $i < max(1, (int) $purchase->quantity); $i++) {
                             License::create([
                                 'key'         => Str::upper(Str::random(32)),
                                 'addon_id'    => $addon->id,
-                                'user_id'     => auth()->id(),
+                                'user_id'     => $purchase->user_id,
                                 'purchase_id' => $purchase->id,
                                 'status'      => 'active',
                                 'is_lifetime' => true,
                             ]);
                         }
                     }
-                } else {
-                    // Log the unexpected response for debugging
-                    \Illuminate\Support\Facades\Log::warning('PayPal capture unexpected status', [
-                        'order_id' => $paypalOrderId,
-                        'response' => $capture,
-                    ]);
-                }
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('PayPal capture error', [
-                    'order_id' => $paypalOrderId,
-                    'error'    => $e->getMessage(),
+                });
+            } else {
+                \Illuminate\Support\Facades\Log::warning('PayPal capture rejected', [
+                    'order_id'        => $paypalOrderId,
+                    'captured'        => $capture['captured'],
+                    'expected_amount' => $expectedAmount,
+                    'actual_amount'   => $actualAmount,
+                    'currency'        => $capture['currency'],
                 ]);
+
+                $purchase->update(['status' => 'failed']);
             }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('PayPal capture error', [
+                'order_id' => $paypalOrderId,
+                'error'    => $e->getMessage(),
+            ]);
         }
 
-        if ($purchase) {
-            $purchase->load('licenses');
-        }
+        $purchase->refresh()->load('licenses');
 
         return view('checkout.success', compact('addon', 'purchase'));
     }
@@ -155,6 +193,16 @@ class CheckoutController extends Controller
     public function cancel(Request $request)
     {
         $addon = Addon::where('slug', $request->addon)->first();
+
+        // Mark any matching pending purchase as failed (best-effort cleanup)
+        $token = $request->input('token');
+        if ($token && auth()->check()) {
+            Purchase::where('paypal_order_id', $token)
+                ->where('user_id', auth()->id())
+                ->where('status', 'pending')
+                ->update(['status' => 'failed']);
+        }
+
         return view('checkout.cancel', compact('addon'));
     }
 

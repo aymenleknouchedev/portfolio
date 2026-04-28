@@ -37,21 +37,27 @@ Route::get('/learn/{article:slug}', [ArticleController::class , 'show'])->name('
 Route::get('/about', [AboutController::class , 'index'])->name('about');
 
 Route::get('/contact', [ContactController::class , 'show'])->name('contact.show');
-Route::post('/contact', [ContactController::class , 'submit'])->name('contact.submit');
+Route::post('/contact', [ContactController::class , 'submit'])
+    ->middleware('throttle:5,1')
+    ->name('contact.submit');
 
 // Waitlist
 Route::post('/waitlist', function (Request $request) {
     $request->validate([
-        'email' => 'required|email',
+        'email' => 'required|email|max:255',
         'course_name' => 'required|string|max:255',
     ]);
     Waitlist::create($request->only('email', 'course_name'));
     return back()->with('success', 'You\'ve been added to the waitlist!');
-})->name('waitlist.store');
+})->middleware('throttle:5,1')->name('waitlist.store');
 
 // Download
-Route::get('/download/{token}', [CheckoutController::class , 'download'])->name('download');
-Route::get('/download/free/{addon:slug}', [CheckoutController::class , 'freeDownload'])->middleware('auth')->name('download.free');
+Route::get('/download/{token}', [CheckoutController::class , 'download'])
+    ->middleware('throttle:30,1')
+    ->name('download');
+Route::get('/download/free/{addon:slug}', [CheckoutController::class , 'freeDownload'])
+    ->middleware(['auth', 'throttle:20,1'])
+    ->name('download.free');
 
 /*
  |--------------------------------------------------------------------------
@@ -61,11 +67,12 @@ Route::get('/download/free/{addon:slug}', [CheckoutController::class , 'freeDown
 
 Route::middleware('auth')->group(function () {
     Route::get('/checkout/{addon:slug}', [CheckoutController::class , 'show'])->name('checkout.show');
-    Route::post('/checkout/{addon:slug}', [CheckoutController::class , 'process'])->name('checkout.process');
+    Route::post('/checkout/{addon:slug}', [CheckoutController::class , 'process'])
+        ->middleware('throttle:10,1')
+        ->name('checkout.process');
+    Route::get('/checkout/success', [CheckoutController::class , 'success'])->name('checkout.success');
+    Route::get('/checkout/cancel', [CheckoutController::class , 'cancel'])->name('checkout.cancel');
 });
-
-Route::get('/checkout/success', [CheckoutController::class , 'success'])->name('checkout.success');
-Route::get('/checkout/cancel', [CheckoutController::class , 'cancel'])->name('checkout.cancel');
 
 /*
  |--------------------------------------------------------------------------

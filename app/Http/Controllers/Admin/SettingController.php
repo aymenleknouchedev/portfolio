@@ -250,10 +250,12 @@ class SettingController extends Controller
 
     public function payment()
     {
+        // PayPal credentials are locked to the .env file (see PayPalService).
+        // The form is rendered as read-only; updates are rejected.
         $settings = [
-            'paypal_mode'          => Setting::get('paypal_mode', 'sandbox'),
-            'paypal_client_id'     => Setting::get('paypal_client_id', ''),
-            'paypal_client_secret' => Setting::get('paypal_client_secret', ''),
+            'paypal_mode'          => config('services.paypal.mode', 'sandbox'),
+            'paypal_client_id'     => config('services.paypal.client_id', ''),
+            'paypal_client_secret' => config('services.paypal.client_secret', ''),
         ];
 
         return view('admin.settings.payment', compact('settings'));
@@ -261,16 +263,9 @@ class SettingController extends Controller
 
     public function updatePayment(Request $request)
     {
-        $request->validate([
-            'paypal_mode'          => 'required|in:sandbox,live',
-            'paypal_client_id'     => 'required|string|max:500',
-            'paypal_client_secret' => 'required|string|max:500',
-        ]);
-
-        Setting::set('paypal_mode', $request->paypal_mode);
-        Setting::set('paypal_client_id', $request->paypal_client_id);
-        Setting::set('paypal_client_secret', $request->paypal_client_secret);
-
-        return redirect()->route('admin.settings.payment')->with('success', 'PayPal settings saved successfully.');
+        // Credentials are managed via .env only. Reject any update attempts
+        // so the live PayPal account cannot be swapped from the admin UI.
+        return redirect()->route('admin.settings.payment')
+            ->with('error', 'PayPal credentials are locked to the server configuration (.env) and cannot be changed from the admin panel.');
     }
 }

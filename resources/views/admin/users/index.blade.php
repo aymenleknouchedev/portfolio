@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="flex items-center justify-between mb-6">
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
     <h1 class="text-2xl font-bold">Users</h1>
     <a href="{{ route('admin.users.export') }}{{ request('search') ? '?search=' . urlencode(request('search')) : '' }}"
-        class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-all">
+        class="inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-all w-full sm:w-auto">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
         </svg>
@@ -14,12 +14,12 @@
 
 {{-- Search --}}
 <form method="GET" action="{{ route('admin.users.index') }}" class="mb-6">
-    <div class="flex gap-3">
+    <div class="flex flex-col sm:flex-row gap-3">
         <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or email..."
             class="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:border-purple-500 focus:outline-none placeholder-gray-500">
         <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white font-medium px-6 py-3 rounded-xl transition-all">Search</button>
         @if(request('search'))
-        <a href="{{ route('admin.users.index') }}" class="bg-white/5 hover:bg-white/10 text-gray-300 font-medium px-6 py-3 rounded-xl transition-all">Clear</a>
+        <a href="{{ route('admin.users.index') }}" class="bg-white/5 hover:bg-white/10 text-gray-300 font-medium px-6 py-3 rounded-xl transition-all text-center">Clear</a>
         @endif
     </div>
 </form>
