@@ -427,20 +427,37 @@
                 data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}" x-data="{ hovering: false }"
                 @mouseenter="hovering = true" @mouseleave="hovering = false">
                 <div class="aspect-video bg-gradient-to-br from-purple-900/20 to-gray-800 overflow-hidden relative">
-                    @if($addon->demo_video_url)
                     @php
-                        $addonUrl = $addon->demo_video_url;
+                        // Extract YouTube video ID from various URL formats
                         $addonVideoId = null;
-                        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/', $addonUrl, $m)) {
-                            $addonVideoId = $m[1];
-                        } elseif (preg_match('/youtube\.com\/embed\/([\w-]+)/', $addonUrl, $m)) {
-                            $addonVideoId = $m[1];
+                        $addonUrl = $addon->demo_video_url ?? '';
+                        
+                        if ($addonUrl) {
+                            // Match: youtube.com/watch?v=ID or youtu.be/ID
+                            if (preg_match('/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/i', $addonUrl, $m)) {
+                                $addonVideoId = $m[1];
+                            } 
+                            // Match: youtube.com/embed/ID
+                            elseif (preg_match('/(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/i', $addonUrl, $m)) {
+                                $addonVideoId = $m[1];
+                            }
                         }
-                        $addonEmbedUrl = $addonVideoId ? 'https://www.youtube.com/embed/' . $addonVideoId : $addonUrl;
+                        
+                        $addonEmbedUrl = $addonVideoId 
+                            ? 'https://www.youtube.com/embed/' . htmlspecialchars($addonVideoId, ENT_QUOTES) 
+                            : null;
                     @endphp
-                    <iframe x-show="hovering" :src="hovering ? '{{ $addonEmbedUrl }}?autoplay=1&mute=1' : ''"
-                        class="w-full h-full absolute inset-0" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+                    
+                    @if($addonEmbedUrl)
+                    <iframe x-show="hovering" 
+                        :src="hovering ? '{{ $addonEmbedUrl }}?autoplay=1&mute=1' : ''"
+                        class="w-full h-full absolute inset-0" 
+                        frameborder="0" 
+                        allow="autoplay; encrypted-media" 
+                        allowfullscreen>
+                    </iframe>
                     @endif
+                    
                     <div class="w-full h-full flex items-center justify-center" x-show="!hovering">
                         @if($addon->cover_image)
                         <img src="{{ asset('storage/' . $addon->cover_image) }}" alt="{{ $addon->name }}" class="w-full h-full object-cover">

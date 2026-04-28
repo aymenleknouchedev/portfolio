@@ -78,19 +78,30 @@ class PayPalService
             $purchaseUnit['custom_id'] = mb_substr($customId, 0, 127);
         }
 
+        $payload = [
+            'intent' => 'CAPTURE',
+            'purchase_units' => [$purchaseUnit],
+            'application_context' => [
+                'return_url' => $returnUrl,
+                'cancel_url' => $cancelUrl,
+                'brand_name'  => mb_substr((string) config('app.name'), 0, 127),
+                'user_action' => 'PAY_NOW',
+                'shipping_preference' => 'NO_SHIPPING',
+            ],
+        ];
+
         $response = Http::withToken($token)
             ->timeout(20)
-            ->post("{$this->baseUrl}/v2/checkout/orders", [
-                'intent' => 'CAPTURE',
-                'purchase_units' => [$purchaseUnit],
-                'application_context' => [
-                    'return_url' => $returnUrl,
-                    'cancel_url' => $cancelUrl,
-                    'brand_name'  => mb_substr((string) config('app.name'), 0, 127),
-                    'user_action' => 'PAY_NOW',
-                    'shipping_preference' => 'NO_SHIPPING',
-                ],
-            ]);
+            ->post("{$this->baseUrl}/v2/checkout/orders", $payload);
+
+        Log::info('PayPal create order', [
+            'mode'     => $this->mode,
+            'status'   => $response->status(),
+            'amount'   => $payload['purchase_units'][0]['amount'],
+            'return'   => $returnUrl,
+            'cancel'   => $cancelUrl,
+            'response' => $response->json() ?: $response->body(),
+        ]);
 
         if (!$response->successful()) {
             Log::error('PayPal create order failed', ['status' => $response->status(), 'body' => $response->body()]);

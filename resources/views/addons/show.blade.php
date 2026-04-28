@@ -22,17 +22,28 @@
             {{-- Left: Video & Screenshots --}}
             <div class="lg:col-span-3" data-aos="fade-right">
                 <div class="aspect-video rounded-2xl overflow-hidden bg-gray-900 border border-white/5 mb-6">
-                    @if($addon->demo_video_url)
-                        @php
-                            $url = $addon->demo_video_url;
-                            $videoId = null;
-                            if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/', $url, $m)) {
+                    @php
+                        // Extract YouTube video ID from various URL formats
+                        $videoId = null;
+                        $url = $addon->demo_video_url ?? '';
+                        
+                        if ($url) {
+                            // Match: youtube.com/watch?v=ID or youtu.be/ID
+                            if (preg_match('/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/i', $url, $m)) {
                                 $videoId = $m[1];
-                            } elseif (preg_match('/youtube\.com\/embed\/([\w-]+)/', $url, $m)) {
+                            } 
+                            // Match: youtube.com/embed/ID
+                            elseif (preg_match('/(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/i', $url, $m)) {
                                 $videoId = $m[1];
                             }
-                            $embedUrl = $videoId ? 'https://www.youtube.com/embed/' . $videoId : $url;
-                        @endphp
+                        }
+                        
+                        $embedUrl = $videoId 
+                            ? 'https://www.youtube.com/embed/' . htmlspecialchars($videoId, ENT_QUOTES)
+                            : null;
+                    @endphp
+                    
+                    @if($embedUrl)
                         <iframe src="{{ $embedUrl }}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     @elseif($addon->cover_image)
                         <img src="{{ asset('storage/' . $addon->cover_image) }}" alt="{{ $addon->name }}" class="w-full h-full object-cover cursor-pointer" onclick="openAddonGallery(0)">
