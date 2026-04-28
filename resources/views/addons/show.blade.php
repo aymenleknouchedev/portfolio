@@ -181,7 +181,7 @@
                                     </div>
                                 @endif
                                 <div class="flex items-baseline gap-3">
-                                    <span class="text-4xl font-bold text-white">${{ number_format($addon->price, 2) }}</span>
+                                    <span style="text-decoration: line-through;" class="text-4xl font-bold text-white">${{ number_format($addon->price, 2) }}</span>
                                     @if($addon->original_price && $addon->original_price > $addon->price)
                                         <span class="text-xl text-gray-500 line-through">${{ number_format($addon->original_price, 2) }}</span>
                                     @endif
