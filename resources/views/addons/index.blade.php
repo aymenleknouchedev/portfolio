@@ -49,7 +49,7 @@
                             @if($addon->price <= 0)
                                 <span class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">Free</span>
                             @else
-                                <span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                <span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full" style="text-decoration: line-through">
                                     ${{ number_format($addon->price, 2) }}
                                 </span>
                                 @if($addon->original_price && $addon->original_price > $addon->price)
