@@ -56,7 +56,7 @@ Route::get('/download/{token}', [CheckoutController::class , 'download'])
     ->middleware('throttle:30,1')
     ->name('download');
 Route::get('/download/free/{addon:slug}', [CheckoutController::class , 'freeDownload'])
-    ->middleware(['auth', 'throttle:20,1'])
+    ->middleware(['auth', 'verified', 'throttle:20,1'])
     ->name('download.free');
 
 /*
@@ -65,7 +65,7 @@ Route::get('/download/free/{addon:slug}', [CheckoutController::class , 'freeDown
  |--------------------------------------------------------------------------
  */
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     // Static routes MUST be declared before the wildcard {addon:slug} route,
     // otherwise "success" / "cancel" are interpreted as addon slugs and 404.
     Route::get('/checkout/success', [CheckoutController::class , 'success'])->name('checkout.success');
@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function () {
  |--------------------------------------------------------------------------
  */
 
-Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:client'])->prefix('client')->name('client.')->group(function () {
     Route::get('/dashboard', [Client\DashboardController::class , 'index'])->name('dashboard');
     Route::post('/regenerate-token/{purchase}', [Client\DashboardController::class , 'regenerateToken'])->name('regenerate-token');
 });
@@ -93,7 +93,7 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
  |--------------------------------------------------------------------------
  */
 
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [Admin\DashboardController::class , 'index'])->name('dashboard');
 
     Route::resource('categories', Admin\AddonCategoryController::class)->except(['show']);
