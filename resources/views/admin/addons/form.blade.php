@@ -147,10 +147,10 @@
         <div x-show="requiresLicense" x-transition class="mt-5 space-y-3">
             <div class="flex items-center justify-between">
                 <div>
-                    <label class="block text-sm font-medium text-gray-300">License Tiers</label>
-                    <p class="text-xs text-gray-500 mt-0.5">Define one or more license types with their own prices (e.g. Personal, Commercial, Studio). Clients pick a tier at checkout.</p>
+                    <label class="block text-sm font-medium text-gray-300">License Packs</label>
+                    <p class="text-xs text-gray-500 mt-0.5">Define one or more packs (e.g. 1 license = $10, 2 licenses = $18). If only one pack is defined, it is auto-applied at checkout. With multiple packs, clients choose one.</p>
                 </div>
-                <button type="button" id="add-tier-btn" class="text-xs bg-purple-600/20 hover:bg-purple-600/40 text-purple-400 border border-purple-500/30 px-3 py-1.5 rounded-lg transition-all">+ Add Tier</button>
+                <button type="button" id="add-tier-btn" class="text-xs bg-purple-600/20 hover:bg-purple-600/40 text-purple-400 border border-purple-500/30 px-3 py-1.5 rounded-lg transition-all">+ Add Pack</button>
             </div>
 
             <div id="license-tiers-list" class="space-y-2">
@@ -186,7 +186,7 @@
     function renderTiers() {
         list.innerHTML = '';
         if (tiers.length === 0) {
-            list.innerHTML = '<p class="text-xs text-gray-600 italic">No tiers defined — add one above.</p>';
+            list.innerHTML = '<p class="text-xs text-gray-600 italic">No packs defined — add one above. If you add only one pack, it will be auto-applied at checkout.</p>';
             syncInput();
             return;
         }
@@ -195,7 +195,7 @@
         var header = document.createElement('div');
         header.className = 'grid grid-cols-[1fr_80px_100px_32px] gap-2 px-1';
         header.innerHTML =
-            '<span class="text-xs text-gray-500">Label</span>' +
+            '<span class="text-xs text-gray-500">Label <span class="text-gray-700">(optional)</span></span>' +
             '<span class="text-xs text-gray-500 text-center">Licenses</span>' +
             '<span class="text-xs text-gray-500 text-center">Price ($)</span>' +
             '<span></span>';

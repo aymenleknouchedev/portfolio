@@ -4,13 +4,7 @@
 @php
     use Illuminate\Support\Str;
     $tiers = $addon->getEffectiveLicenseTiers();
-    if ($addon->requires_license) {
-        array_unshift($tiers, [
-            'label' => 'Starter',
-            'quantity' => 1,
-            'price' => (float) $addon->price,
-        ]);
-    }
+    $hasMultipleTiers = $addon->requires_license && count($tiers) > 1;
     $tiersJson = json_encode($tiers);
 @endphp
 <div class="pt-32 pb-24 px-4">
@@ -87,20 +81,18 @@
                 </div>
             </div>
 
-            {{-- License selector --}}
-            @if($addon->requires_license)
+            {{-- Pack selector (only shown when multiple packs exist) --}}
+            @if($hasMultipleTiers)
             <div class="mb-6 space-y-4">
-
-                {{-- Tier cards (shown only when multiple tiers) --}}
                 <div>
-                    <h4 class="text-sm font-medium text-white mb-3">Choose Your License</h4>
+                    <h4 class="text-sm font-medium text-white mb-3">Choose Your Pack</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-{{ min(count($tiers), 3) }} gap-3">
                         @foreach($tiers as $i => $tier)
                         <button type="button"
                             @click="tierIndex = {{ $i }}"
                             :class="tierIndex === {{ $i }} ? 'border-purple-500 bg-purple-500/10 text-white' : 'border-white/10 bg-white/5 text-gray-400 hover:border-white/20'"
                             class="p-4 rounded-xl border text-left transition-all duration-200 cursor-pointer">
-                            <div class="font-semibold text-sm">{{ $tier['label'] }}</div>
+                            <div class="font-semibold text-sm">{{ $tier['label'] ?: ($tier['quantity'] ?? 1) . ' ' . Str::plural('License', $tier['quantity'] ?? 1) }}</div>
                             <div class="text-2xl font-bold mt-1 text-purple-400">${{ number_format($tier['price'], 2) }}</div>
                             <div class="text-xs text-gray-500 mt-1">{{ $tier['quantity'] ?? 1 }} {{ Str::plural('license', $tier['quantity'] ?? 1) }}</div>
                         </button>
@@ -108,13 +100,21 @@
                     </div>
                 </div>
 
-                {{-- Price breakdown --}}
                 <div class="text-xs text-gray-500 space-y-1 px-1" x-show="selectedTier">
                     <div class="flex justify-between">
-                        <span x-text="selectedTier ? selectedTier.label + ' — ' + selectedTier.quantity + ' lic.' : ''"></span>
+                        <span x-text="selectedTier ? (selectedTier.label || (selectedTier.quantity + ' lic.')) + ' — ' + selectedTier.quantity + ' lic.' : ''"></span>
                         <span x-text="selectedTier ? '$' + selectedTier.price.toFixed(2) : ''"></span>
                     </div>
                 </div>
+            </div>
+            @elseif($addon->requires_license && count($tiers) === 1)
+            {{-- Single offer: auto-applied, no selector --}}
+            <div class="mb-6 p-4 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between">
+                <div>
+                    <div class="text-sm font-medium text-white">{{ $tiers[0]['label'] ?: ($tiers[0]['quantity'] ?? 1) . ' ' . Str::plural('License', $tiers[0]['quantity'] ?? 1) }}</div>
+                    <div class="text-xs text-gray-500 mt-0.5">{{ $tiers[0]['quantity'] ?? 1 }} {{ Str::plural('license', $tiers[0]['quantity'] ?? 1) }} included</div>
+                </div>
+                <div class="text-lg font-bold text-purple-400">${{ number_format($tiers[0]['price'], 2) }}</div>
             </div>
             @endif
 
