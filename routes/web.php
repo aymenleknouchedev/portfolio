@@ -85,6 +85,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified', 'role:client'])->prefix('client')->name('client.')->group(function () {
     Route::get('/dashboard', [Client\DashboardController::class , 'index'])->name('dashboard');
     Route::post('/regenerate-token/{purchase}', [Client\DashboardController::class , 'regenerateToken'])->name('regenerate-token');
+
+    Route::get('/reclamations', [Client\ReclamationController::class , 'index'])->name('reclamations.index');
+    Route::post('/reclamations', [Client\ReclamationController::class , 'store'])->middleware('throttle:5,1')->name('reclamations.store');
+    Route::get('/reclamations/{reclamation}', [Client\ReclamationController::class , 'show'])->name('reclamations.show');
 });
 
 /*
@@ -136,6 +140,12 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('/contact-messages', [Admin\ContactMessageController::class , 'index'])->name('contact-messages.index');
     Route::get('/contact-messages/{contactMessage}', [Admin\ContactMessageController::class , 'show'])->name('contact-messages.show');
     Route::delete('/contact-messages/{contactMessage}', [Admin\ContactMessageController::class , 'destroy'])->name('contact-messages.destroy');
+
+    Route::get('/reclamations', [Admin\ReclamationController::class , 'index'])->name('reclamations.index');
+    Route::get('/reclamations/{reclamation}', [Admin\ReclamationController::class , 'show'])->name('reclamations.show');
+    Route::post('/reclamations/{reclamation}/reply', [Admin\ReclamationController::class , 'reply'])->name('reclamations.reply');
+    Route::patch('/reclamations/{reclamation}/status', [Admin\ReclamationController::class , 'updateStatus'])->name('reclamations.status');
+    Route::delete('/reclamations/{reclamation}', [Admin\ReclamationController::class , 'destroy'])->name('reclamations.destroy');
 });
 
 /*

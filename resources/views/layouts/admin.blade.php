@@ -9,6 +9,7 @@
         $primaryColor = \App\Models\Setting::get('primary_color', '#7c3aed');
         $siteName = \App\Models\Setting::get('site_name', 'FraxionFX');
         $unreadMessages = \App\Models\ContactMessage::where('is_read', false)->count();
+        $unreadReclamations = \App\Models\Reclamation::where('is_read_admin', false)->count();
         $favicon = \App\Models\Setting::get('favicon');
     @endphp
     <title>Admin - {{ $siteName }}</title>
@@ -125,6 +126,15 @@
                     <span class="sidebar-label">Messages</span>
                     @if($unreadMessages > 0)
                         <span class="ml-auto bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center sidebar-label">{{ $unreadMessages }}</span>
+                        <span x-show="!isExpanded()" class="absolute top-1.5 left-7 w-2 h-2 bg-red-500 rounded-full"></span>
+                    @endif
+                </a>
+                <a href="{{ route('admin.reclamations.index') }}" @click="closeMobile()"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm {{ request()->routeIs('admin.reclamations.*') ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white' }} transition-colors relative">
+                    <i class="fa-solid fa-circle-exclamation w-5 text-center shrink-0"></i>
+                    <span class="sidebar-label">Reclamations</span>
+                    @if($unreadReclamations > 0)
+                        <span class="ml-auto bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center sidebar-label">{{ $unreadReclamations }}</span>
                         <span x-show="!isExpanded()" class="absolute top-1.5 left-7 w-2 h-2 bg-red-500 rounded-full"></span>
                     @endif
                 </a>

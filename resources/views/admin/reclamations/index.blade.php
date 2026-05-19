@@ -1,0 +1,72 @@
+@extends('layouts.admin')
+
+@section('content')
+<div>
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold">Reclamations</h1>
+            <p class="text-gray-400 text-sm mt-1">{{ $unreadCount }} unread reclamation{{ $unreadCount !== 1 ? 's' : '' }}</p>
+        </div>
+    </div>
+
+    <div class="rounded-2xl bg-gray-900 border border-white/5 overflow-hidden">
+        <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left min-w-[820px]">
+            <thead class="bg-white/5 text-gray-400 uppercase text-xs tracking-wider">
+                <tr>
+                    <th class="px-6 py-4">Status</th>
+                    <th class="px-6 py-4">From</th>
+                    <th class="px-6 py-4">Subject</th>
+                    <th class="px-6 py-4">Addon</th>
+                    <th class="px-6 py-4">State</th>
+                    <th class="px-6 py-4">Date</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                @forelse($reclamations as $r)
+                <tr class="{{ !$r->is_read_admin ? 'bg-purple-500/5' : '' }} hover:bg-white/5 transition-colors">
+                    <td class="px-6 py-4">
+                        @if(!$r->is_read_admin)
+                            <span class="inline-flex items-center gap-1.5 text-purple-400 text-xs font-medium">
+                                <span class="w-2 h-2 rounded-full bg-purple-400"></span> New
+                            </span>
+                        @else
+                            <span class="text-gray-500 text-xs">Read</span>
+                        @endif
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="font-medium text-white">{{ $r->user->name ?? '—' }}</div>
+                        <div class="text-gray-500 text-xs">{{ $r->user->email ?? '' }}</div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-300">{{ Str::limit($r->subject, 50) }}</td>
+                    <td class="px-6 py-4 text-gray-400">{{ $r->purchase->addon->name ?? '—' }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-0.5 rounded-full border text-xs {{ $r->statusColor() }}">{{ $r->statusLabel() }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-400">{{ $r->created_at->format('M d, Y H:i') }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-3">
+                            <a href="{{ route('admin.reclamations.show', $r) }}"
+                                class="text-purple-400 hover:text-purple-300 text-xs font-medium">View</a>
+                            <form action="{{ route('admin.reclamations.destroy', $r) }}" method="POST"
+                                onsubmit="return confirm('Delete this reclamation?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="text-red-400 hover:text-red-300 text-xs font-medium">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-gray-500">No reclamations yet.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+    <div class="mt-6">{{ $reclamations->links() }}</div>
+</div>
+@endsection
