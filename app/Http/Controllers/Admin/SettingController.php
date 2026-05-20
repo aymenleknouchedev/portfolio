@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
 
 class SettingController extends Controller
 {
@@ -26,7 +27,7 @@ class SettingController extends Controller
             'hero_description_size' => Setting::get('hero_description_size', 'xl'),
         ];
 
-        return view('admin.settings.hero', compact('settings'));
+        return Inertia::render('Settings/Hero', compact('settings'));
     }
 
     public function updateHero(Request $request)
@@ -100,7 +101,7 @@ class SettingController extends Controller
             'auth_feature_2' => Setting::get('auth_feature_2', 'In-depth Tutorials'),
         ];
 
-        return view('admin.settings.general', compact('settings'));
+        return Inertia::render('Settings/General', compact('settings'));
     }
 
     public function updateGeneral(Request $request)
@@ -150,7 +151,7 @@ class SettingController extends Controller
             'social_sketchfab' => Setting::get('social_sketchfab', ''),
         ];
 
-        return view('admin.settings.social', compact('settings'));
+        return Inertia::render('Settings/Social', compact('settings'));
     }
 
     public function updateSocial(Request $request)
@@ -193,7 +194,7 @@ class SettingController extends Controller
             'about_avatar_title' => Setting::get('about_avatar_title', '3D Artist & FX Designer'),
         ];
 
-        return view('admin.settings.about', compact('settings'));
+        return Inertia::render('Settings/About', compact('settings'));
     }
 
     public function updateAbout(Request $request)
@@ -222,7 +223,7 @@ class SettingController extends Controller
 
     public function account()
     {
-        return view('admin.settings.account');
+        return Inertia::render('Settings/Account');
     }
 
     public function updateAccount(Request $request)
@@ -258,7 +259,7 @@ class SettingController extends Controller
             'paypal_client_secret' => config('services.paypal.client_secret', ''),
         ];
 
-        return view('admin.settings.payment', compact('settings'));
+        return Inertia::render('Settings/Payment', compact('settings'));
     }
 
     public function updatePayment(Request $request)

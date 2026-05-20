@@ -6,18 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class ArticleController extends Controller
 {
     public function index()
     {
         $articles = Article::latest()->get();
-        return view('admin.articles.index', compact('articles'));
+        return Inertia::render('Articles/Index', compact('articles'));
     }
 
     public function create()
     {
-        return view('admin.articles.form');
+        return Inertia::render('Articles/Form');
     }
 
     public function store(Request $request)
@@ -46,7 +47,7 @@ class ArticleController extends Controller
 
     public function edit(Article $article)
     {
-        return view('admin.articles.form', compact('article'));
+        return Inertia::render('Articles/Form', compact('article'));
     }
 
     public function update(Request $request, Article $article)

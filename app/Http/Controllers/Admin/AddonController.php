@@ -8,19 +8,20 @@ use App\Models\AddonCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class AddonController extends Controller
 {
     public function index()
     {
         $addons = Addon::with('category')->latest()->get();
-        return view('admin.addons.index', compact('addons'));
+        return Inertia::render('Addons/Index', compact('addons'));
     }
 
     public function create()
     {
         $categories = AddonCategory::where('is_active', true)->get();
-        return view('admin.addons.form', compact('categories'));
+        return Inertia::render('Addons/Form', compact('categories'));
     }
 
     public function store(Request $request)
@@ -78,7 +79,7 @@ class AddonController extends Controller
     public function edit(Addon $addon)
     {
         $categories = AddonCategory::where('is_active', true)->get();
-        return view('admin.addons.form', compact('addon', 'categories'));
+        return Inertia::render('Addons/Form', compact('addon', 'categories'));
     }
 
     public function update(Request $request, Addon $addon)

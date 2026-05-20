@@ -97,7 +97,7 @@ Route::middleware(['auth', 'verified', 'role:client'])->prefix('client')->name('
  |--------------------------------------------------------------------------
  */
 
-Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin', 'inertia'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [Admin\DashboardController::class , 'index'])->name('dashboard');
 
     Route::resource('categories', Admin\AddonCategoryController::class)->except(['show']);

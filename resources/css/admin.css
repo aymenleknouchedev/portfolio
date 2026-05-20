@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+
+@source "../js/admin/**/*.{ts,tsx}";
+@source "../views/admin.blade.php";
+
+/* ---------- Admin theme tokens ---------- */
+@theme {
+  --color-admin-bg: #0a0a0f;
+  --color-admin-surface: #12121a;
+  --color-admin-surface-2: #1a1a25;
+  --color-admin-border: #2a2a3a;
+  --color-admin-text: #e5e7eb;
+  --color-admin-text-muted: #9ca3af;
+}
+
+@layer base {
+  html, body, #admin-root {
+    background-color: #0a0a0f;
+    color: #e5e7eb;
+    min-height: 100vh;
+  }
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+}
+
+@layer components {
+  .a-card     { @apply rounded-xl border border-white/5 bg-white/[0.02] backdrop-blur-sm; }
+  .a-input    { @apply w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-[color:var(--admin-primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--admin-primary)]/30; }
+  .a-label    { @apply mb-1.5 block text-xs font-medium uppercase tracking-wider text-gray-400; }
+  .a-btn      { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition; }
+  .a-btn-pri  { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition bg-[color:var(--admin-primary)] text-white hover:opacity-90; }
+  .a-btn-sec  { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition border border-white/10 bg-white/[0.03] text-gray-200 hover:bg-white/[0.07]; }
+  .a-btn-danger { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition border border-red-500/30 bg-red-500/10 text-red-300 hover:bg-red-500/20; }
+  .a-th       { @apply px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400; }
+  .a-td       { @apply px-4 py-3 text-sm text-gray-200; }
+  .a-error    { @apply mt-1 text-xs text-red-400; }
+  .a-badge    { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
+}

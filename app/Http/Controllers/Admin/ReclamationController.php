@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Reclamation;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ReclamationController extends Controller
 {
@@ -16,7 +17,7 @@ class ReclamationController extends Controller
 
         $unreadCount = Reclamation::where('is_read_admin', false)->count();
 
-        return view('admin.reclamations.index', compact('reclamations', 'unreadCount'));
+        return Inertia::render('Reclamations/Index', compact('reclamations', 'unreadCount'));
     }
 
     public function show(Reclamation $reclamation)
@@ -27,7 +28,7 @@ class ReclamationController extends Controller
 
         $reclamation->load(['user', 'purchase.addon']);
 
-        return view('admin.reclamations.show', compact('reclamation'));
+        return Inertia::render('Reclamations/Show', compact('reclamation'));
     }
 
     public function reply(Request $request, Reclamation $reclamation)

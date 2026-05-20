@@ -13,7 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'role' => \App\Http\Middleware\CheckRole::class,
+            'role'    => \App\Http\Middleware\CheckRole::class,
+            'inertia' => \App\Http\Middleware\HandleInertiaRequests::class,
         ]);
         $middleware->web(append: [
             \App\Http\Middleware\TrackVisitor::class,

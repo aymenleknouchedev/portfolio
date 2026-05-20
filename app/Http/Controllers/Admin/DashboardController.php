@@ -10,6 +10,7 @@ use App\Models\Project;
 use App\Models\Service;
 use App\Models\SiteVisit;
 use App\Models\User;
+use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
@@ -51,6 +52,6 @@ class DashboardController extends Controller
             'visits_month' => SiteVisit::where('visited_date', '>=', now()->subDays(30)->toDateString())->count(),
         ];
 
-        return view('admin.dashboard', compact('stats'));
+        return Inertia::render('Dashboard', ['stats' => $stats]);
     }
 }

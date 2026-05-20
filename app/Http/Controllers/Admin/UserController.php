@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserController extends Controller
@@ -17,7 +18,10 @@ class UserController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        return view('admin.users.index', compact('users'));
+        return Inertia::render('Users/Index', [
+            'users' => $users,
+            'filters' => $request->only('search'),
+        ]);
     }
 
     public function exportEmails(Request $request)

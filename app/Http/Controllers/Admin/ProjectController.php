@@ -8,6 +8,7 @@ use App\Models\ProjectCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class ProjectController extends Controller
 {
@@ -15,13 +16,13 @@ class ProjectController extends Controller
     {
         $projects = Project::latest()->get();
         $featuredProjects = Project::where('is_featured', true)->orderBy('sort_order')->orderBy('published_at', 'desc')->get();
-        return view('admin.projects.index', compact('projects', 'featuredProjects'));
+        return Inertia::render('Projects/Index', compact('projects', 'featuredProjects'));
     }
 
     public function create()
     {
         $categories = ProjectCategory::where('is_active', true)->orderBy('name')->get();
-        return view('admin.projects.form', compact('categories'));
+        return Inertia::render('Projects/Form', compact('categories'));
     }
 
     public function store(Request $request)
@@ -68,7 +69,7 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         $categories = ProjectCategory::where('is_active', true)->orderBy('name')->get();
-        return view('admin.projects.form', compact('project', 'categories'));
+        return Inertia::render('Projects/Form', compact('project', 'categories'));
     }
 
     public function update(Request $request, Project $project)

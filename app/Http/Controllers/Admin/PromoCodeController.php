@@ -6,18 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\PromoCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class PromoCodeController extends Controller
 {
     public function index()
     {
         $promoCodes = PromoCode::latest()->get();
-        return view('admin.promo-codes.index', compact('promoCodes'));
+        return Inertia::render('PromoCodes/Index', compact('promoCodes'));
     }
 
     public function create()
     {
-        return view('admin.promo-codes.form');
+        return Inertia::render('PromoCodes/Form');
     }
 
     public function store(Request $request)
@@ -45,7 +46,7 @@ class PromoCodeController extends Controller
 
     public function edit(PromoCode $promoCode)
     {
-        return view('admin.promo-codes.form', compact('promoCode'));
+        return Inertia::render('PromoCodes/Form', compact('promoCode'));
     }
 
     public function update(Request $request, PromoCode $promoCode)

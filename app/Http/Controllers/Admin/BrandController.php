@@ -5,18 +5,19 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BrandController extends Controller
 {
     public function index()
     {
         $brands = Brand::orderBy('sort_order')->get();
-        return view('admin.brands.index', compact('brands'));
+        return Inertia::render('Brands/Index', compact('brands'));
     }
 
     public function create()
     {
-        return view('admin.brands.form');
+        return Inertia::render('Brands/Form');
     }
 
     public function store(Request $request)
@@ -40,7 +41,7 @@ class BrandController extends Controller
 
     public function edit(Brand $brand)
     {
-        return view('admin.brands.form', compact('brand'));
+        return Inertia::render('Brands/Form', compact('brand'));
     }
 
     public function update(Request $request, Brand $brand)

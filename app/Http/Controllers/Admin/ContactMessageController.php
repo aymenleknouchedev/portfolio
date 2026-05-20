@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
+use Inertia\Inertia;
 
 class ContactMessageController extends Controller
 {
@@ -12,7 +13,7 @@ class ContactMessageController extends Controller
         $messages = ContactMessage::latest()->paginate(20);
         $unreadCount = ContactMessage::where('is_read', false)->count();
 
-        return view('admin.contact-messages.index', compact('messages', 'unreadCount'));
+        return Inertia::render('ContactMessages/Index', compact('messages', 'unreadCount'));
     }
 
     public function show(ContactMessage $contactMessage)
@@ -21,7 +22,7 @@ class ContactMessageController extends Controller
             $contactMessage->update(['is_read' => true]);
         }
 
-        return view('admin.contact-messages.show', compact('contactMessage'));
+        return Inertia::render('ContactMessages/Show', compact('contactMessage'));
     }
 
     public function destroy(ContactMessage $contactMessage)

@@ -6,18 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class ServiceController extends Controller
 {
     public function index()
     {
         $services = Service::latest()->get();
-        return view('admin.services.index', compact('services'));
+        return Inertia::render('Services/Index', compact('services'));
     }
 
     public function create()
     {
-        return view('admin.services.form');
+        return Inertia::render('Services/Form');
     }
 
     public function store(Request $request)
@@ -45,7 +46,7 @@ class ServiceController extends Controller
 
     public function edit(Service $service)
     {
-        return view('admin.services.form', compact('service'));
+        return Inertia::render('Services/Form', compact('service'));
     }
 
     public function update(Request $request, Service $service)

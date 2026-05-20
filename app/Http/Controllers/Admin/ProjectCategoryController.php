@@ -6,18 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\ProjectCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class ProjectCategoryController extends Controller
 {
     public function index()
     {
         $categories = ProjectCategory::withCount('projects')->latest()->get();
-        return view('admin.project-categories.index', compact('categories'));
+        return Inertia::render('ProjectCategories/Index', ['categories' => $categories]);
     }
 
     public function create()
     {
-        return view('admin.project-categories.form');
+        return Inertia::render('ProjectCategories/Form');
     }
 
     public function store(Request $request)
@@ -38,7 +39,7 @@ class ProjectCategoryController extends Controller
 
     public function edit(ProjectCategory $projectCategory)
     {
-        return view('admin.project-categories.form', ['category' => $projectCategory]);
+        return Inertia::render('ProjectCategories/Form', ['category' => $projectCategory]);
     }
 
     public function update(Request $request, ProjectCategory $projectCategory)
