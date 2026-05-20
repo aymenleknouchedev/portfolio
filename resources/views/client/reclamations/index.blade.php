@@ -45,7 +45,7 @@
                             <select name="purchase_id" class="w-full bg-gray-950 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-purple-500 focus:outline-none">
                                 <option value="" class="bg-gray-950">— None —</option>
                                 @foreach($purchases as $p)
-                                <option value="{{ $p->id }}" {{ old('purchase_id') == $p->id ? 'selected' : '' }} class="bg-gray-950">
+                                <option value="{{ $p->id }}" {{ old('purchase_id', $selectedPurchaseId) == $p->id ? 'selected' : '' }} class="bg-gray-950">
                                     {{ $p->addon->name ?? 'Addon' }} — {{ $p->created_at->format('M d, Y') }}
                                 </option>
                                 @endforeach

@@ -21,7 +21,12 @@ class ReclamationController extends Controller
             ->latest()
             ->get();
 
-        return view('client.reclamations.index', compact('reclamations', 'purchases'));
+        $selectedPurchaseId = $request->integer('purchase_id') ?: null;
+        if ($selectedPurchaseId && !$purchases->contains('id', $selectedPurchaseId)) {
+            $selectedPurchaseId = null;
+        }
+
+        return view('client.reclamations.index', compact('reclamations', 'purchases', 'selectedPurchaseId'));
     }
 
     public function store(Request $request)
