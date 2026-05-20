@@ -39,3 +39,14 @@
   .a-error    { @apply mt-1 text-xs text-red-400; }
   .a-badge    { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
 }
+
+/* Hide scrollbar but keep scrolling functional */
+.no-scrollbar {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / old Edge */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari / new Edge */
+  width: 0;
+  height: 0;
+}

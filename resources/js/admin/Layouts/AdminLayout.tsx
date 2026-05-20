@@ -98,10 +98,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex min-h-screen bg-[color:var(--color-admin-bg,#0a0a0f)] text-gray-200">
-      {/* Sidebar */}
+      {/* Sidebar — always fixed on desktop, slides in on mobile */}
       <aside
         className={
-          'fixed inset-y-0 left-0 z-40 w-64 transform border-r border-white/5 bg-[#0f0f17] transition-transform lg:translate-x-0 lg:static ' +
+          'fixed inset-y-0 left-0 z-40 w-64 transform border-r border-white/5 bg-[#0f0f17] transition-transform lg:translate-x-0 ' +
           (open ? 'translate-x-0' : '-translate-x-full')
         }
       >
@@ -122,7 +122,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </div>
 
-        <nav className="h-[calc(100vh-4rem)] overflow-y-auto px-3 py-4">
+        <nav className="no-scrollbar h-[calc(100vh-4rem)] overflow-y-auto px-3 py-4">
           {groups.map((g) => (
             <div key={g.label} className="mb-5">
               <div className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-widest text-gray-500">
@@ -185,8 +185,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         />
       )}
 
-      {/* Content */}
-      <div className="flex flex-1 flex-col lg:pl-0">
+      {/* Content — offset by sidebar width on desktop */}
+      <div className="flex flex-1 flex-col lg:pl-64">
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-white/5 bg-[#0a0a0f]/80 px-5 backdrop-blur">
           <button
             className="rounded-lg border border-white/10 p-2 lg:hidden"
