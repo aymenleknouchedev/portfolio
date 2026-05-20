@@ -1,31 +1,82 @@
 @extends('layouts.admin')
 
+@section('page_title', 'Project Categories')
+@section('page_subtitle', $categories->count() . ' ' . Str::plural('category', $categories->count()))
+
 @section('content')
-<div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold">Project Categories</h1>
-    <a href="{{ route('admin.project-categories.create') }}" class="bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-all">+ New Category</a>
+<div class="flex items-center justify-between mb-6 gap-4 flex-wrap">
+    <p class="text-sm text-gray-400">Categorize portfolio projects.</p>
+    <a href="{{ route('admin.project-categories.create') }}"
+        class="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-all">
+        <i class="fa-solid fa-plus text-xs"></i> New Category
+    </a>
 </div>
 
-<div class="rounded-xl bg-gray-900 border border-white/5 overflow-hidden">
+<div class="rounded-2xl bg-gray-900 border border-white/5 overflow-hidden">
     <div class="overflow-x-auto">
-    <table class="w-full text-sm min-w-[640px]">
-        <thead><tr class="text-gray-400 border-b border-white/5"><th class="text-left p-4">Name</th><th class="text-left p-4">Slug</th><th class="text-left p-4">Projects</th><th class="text-left p-4">Status</th><th class="text-right p-4">Actions</th></tr></thead>
-        <tbody>
-            @foreach($categories as $category)
-            <tr class="border-b border-white/5 hover:bg-white/5">
-                <td class="p-4 font-medium">{{ $category->name }}</td>
-                <td class="p-4 text-gray-400">{{ $category->slug }}</td>
-                <td class="p-4">{{ $category->projects_count }}</td>
-                <td class="p-4"><span class="px-2 py-1 rounded-full text-xs {{ $category->is_active ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400' }}">{{ $category->is_active ? 'Active' : 'Inactive' }}</span></td>
-                <td class="p-4 text-right">
-                    <a href="{{ route('admin.project-categories.edit', $category) }}" class="text-purple-400 hover:text-purple-300 mr-3">Edit</a>
-                    <form action="{{ route('admin.project-categories.destroy', $category) }}" method="POST" class="inline" onsubmit="return confirm('Delete this category?')">@csrf @method('DELETE')<button class="text-red-400 hover:text-red-300">Delete</button></form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <table class="w-full text-sm min-w-[640px]">
+            <thead>
+                <tr class="text-gray-400 text-left text-xs uppercase tracking-wider">
+                    <th class="px-6 py-4 font-medium">Name</th>
+                    <th class="px-6 py-4 font-medium">Slug</th>
+                    <th class="px-6 py-4 font-medium">Projects</th>
+                    <th class="px-6 py-4 font-medium">Status</th>
+                    <th class="px-6 py-4 font-medium text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                @forelse($categories as $category)
+                <tr class="transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500/30 to-purple-700/20 border border-pink-500/20 flex items-center justify-center">
+                                <i class="fa-solid fa-folder text-pink-300 text-sm"></i>
+                            </div>
+                            <span class="font-medium text-white">{{ $category->name }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-400 font-mono text-xs">{{ $category->slug }}</td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-white/5 border border-white/10">{{ $category->projects_count }}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        @if($category->is_active)
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Active
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-gray-500/10 text-gray-400 border border-gray-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span> Inactive
+                            </span>
+                        @endif
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="inline-flex items-center gap-1">
+                            <a href="{{ route('admin.project-categories.edit', $category) }}"
+                                class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-purple-400 hover:bg-purple-500/10 transition-colors" title="Edit">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </a>
+                            <form action="{{ route('admin.project-categories.destroy', $category) }}" method="POST" class="inline" onsubmit="return confirm('Delete this category?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-red-400 hover:bg-red-500/10 transition-colors" title="Delete">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5" class="px-6 py-16 text-center">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-white/5 flex items-center justify-center mb-3">
+                            <i class="fa-solid fa-folder-tree text-gray-600"></i>
+                        </div>
+                        <p class="text-gray-400 text-sm">No project categories yet.</p>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
-    @if($categories->isEmpty()) <p class="p-8 text-center text-gray-400">No project categories yet.</p> @endif
 </div>
 @endsection

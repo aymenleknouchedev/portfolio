@@ -1,23 +1,11 @@
 @extends('layouts.admin')
 
-@section('content')
-<div class="max-w-4xl">
-    <div class="flex items-center justify-between mb-8">
-        <div>
-            <h1 class="text-2xl font-bold">General Settings</h1>
-            <p class="text-gray-400 text-sm mt-1">Site name and contact information</p>
-        </div>
-    </div>
+@section('page_title', 'General Settings')
+@section('page_subtitle', 'Site name, contact info & login page branding')
 
-    {{-- Settings Navigation --}}
-    <div class="flex gap-2 mb-8 flex-wrap">
-        <a href="{{ route('admin.settings.hero') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">Hero</a>
-        <a href="{{ route('admin.settings.general') }}" class="px-4 py-2 rounded-lg text-sm font-medium bg-purple-600 text-white">General</a>
-        <a href="{{ route('admin.settings.social') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">Social Media</a>
-        <a href="{{ route('admin.settings.about') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">About Section</a>
-        <a href="{{ route('admin.settings.account') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">Account</a>
-        <a href="{{ route('admin.settings.payment') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">Payment</a>
-    </div>
+@section('content')
+<div>
+    @include('admin.settings._tabs')
 
     <form action="{{ route('admin.settings.general.update') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
         @csrf

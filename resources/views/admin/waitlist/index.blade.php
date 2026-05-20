@@ -1,23 +1,50 @@
 @extends('layouts.admin')
 
+@section('page_title', 'Waitlist')
+@section('page_subtitle', $entries->total() . ' ' . Str::plural('signup', $entries->total()))
+
 @section('content')
-<h1 class="text-2xl font-bold mb-6">Waitlist</h1>
-<div class="rounded-xl bg-gray-900 border border-white/5 overflow-hidden">
+<div class="rounded-2xl bg-gray-900 border border-white/5 overflow-hidden">
     <div class="overflow-x-auto">
-    <table class="w-full text-sm min-w-[480px]">
-        <thead><tr class="text-gray-400 border-b border-white/5"><th class="text-left p-4">Email</th><th class="text-left p-4">Course</th><th class="text-left p-4">Date</th></tr></thead>
-        <tbody>
-            @foreach($entries as $entry)
-            <tr class="border-b border-white/5 hover:bg-white/5">
-                <td class="p-4">{{ $entry->email }}</td>
-                <td class="p-4 text-gray-400">{{ $entry->course_name }}</td>
-                <td class="p-4 text-gray-400">{{ $entry->created_at->format('M d, Y H:i') }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <table class="w-full text-sm min-w-[480px]">
+            <thead>
+                <tr class="text-gray-400 text-left text-xs uppercase tracking-wider">
+                    <th class="px-6 py-4 font-medium">Email</th>
+                    <th class="px-6 py-4 font-medium">Course</th>
+                    <th class="px-6 py-4 font-medium">Signed up</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                @forelse($entries as $entry)
+                <tr class="transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500/40 to-violet-600/40 flex items-center justify-center text-xs font-bold shrink-0">
+                                {{ strtoupper(substr($entry->email, 0, 1)) }}
+                            </div>
+                            <span class="text-gray-200">{{ $entry->email }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-400">{{ $entry->course_name }}</td>
+                    <td class="px-6 py-4 text-gray-500 text-xs">{{ $entry->created_at->format('M d, Y · H:i') }}</td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="3" class="px-6 py-16 text-center">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-white/5 flex items-center justify-center mb-3">
+                            <i class="fa-solid fa-users text-gray-600"></i>
+                        </div>
+                        <p class="text-gray-400 text-sm">No waitlist signups yet.</p>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
-    @if($entries->isEmpty()) <p class="p-8 text-center text-gray-400">No waitlist entries yet.</p> @endif
+    @if($entries->hasPages())
+    <div class="p-4 border-t border-white/5">
+        {{ $entries->links() }}
+    </div>
+    @endif
 </div>
-<div class="mt-6">{{ $entries->links() }}</div>
 @endsection

@@ -63,9 +63,21 @@
         }
         body {
             background:
-                radial-gradient(1200px 600px at 90% -10%, color-mix(in srgb, var(--clr-brand) 18%, transparent), transparent 60%),
-                radial-gradient(900px 500px at -10% 110%, color-mix(in srgb, var(--clr-brand) 12%, transparent), transparent 60%),
-                #07070b;
+                radial-gradient(1400px 700px at 92% -10%, color-mix(in srgb, var(--clr-brand) 30%, transparent), transparent 55%),
+                radial-gradient(1100px 600px at -10% 110%, color-mix(in srgb, var(--clr-brand) 22%, transparent), transparent 60%),
+                radial-gradient(700px 400px at 50% 50%, rgba(59, 130, 246, 0.05), transparent 70%),
+                linear-gradient(180deg, #0d0d18 0%, #0a0a14 100%);
+            color: #e5e7eb;
+        }
+        /* Decorative dot grid on the body */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+            z-index: 0;
         }
         .sidebar-label { display: none; white-space: nowrap; overflow: hidden; }
         .sidebar-expanded .sidebar-label { display: inline; }
@@ -100,22 +112,140 @@
             flex-shrink: 0;
         }
 
-        /* Universal glass effect for every admin tab.
-           Any solid gray card becomes translucent w/ backdrop blur. */
+        /* ========== Universal Glass Effect ========== */
         .admin-main [class~="bg-gray-900"],
-        .admin-main [class~="bg-gray-900\\/60"] {
-            background-color: rgba(17, 17, 23, 0.55) !important;
-            backdrop-filter: blur(14px) saturate(120%);
-            -webkit-backdrop-filter: blur(14px) saturate(120%);
+        .admin-main [class~="bg-gray-900\\/60"],
+        .admin-main [class~="bg-gray-900\\/80"] {
+            background: linear-gradient(180deg, rgba(30, 30, 45, 0.55) 0%, rgba(20, 20, 32, 0.55) 100%) !important;
+            backdrop-filter: blur(18px) saturate(140%);
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 24px 60px -30px rgba(0,0,0,0.6);
         }
         .admin-main [class~="bg-gray-950"] {
-            background-color: rgba(7, 7, 11, 0.6) !important;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(10, 10, 18, 0.65) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         .admin-main [class~="bg-white\\/5"] {
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            background-color: rgba(255, 255, 255, 0.045) !important;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .admin-main [class~="bg-white\\/10"] {
+            background-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        /* Position content above the dot grid */
+        .admin-main, header.sticky, aside { position: relative; z-index: 1; }
+
+        /* ========== Universal Input Polish ========== */
+        .admin-main input[type="text"],
+        .admin-main input[type="email"],
+        .admin-main input[type="url"],
+        .admin-main input[type="number"],
+        .admin-main input[type="password"],
+        .admin-main input[type="search"],
+        .admin-main input[type="tel"],
+        .admin-main input[type="date"],
+        .admin-main input[type="datetime-local"],
+        .admin-main input[type="file"],
+        .admin-main select,
+        .admin-main textarea {
+            background: linear-gradient(180deg, rgba(18, 18, 30, 0.7), rgba(12, 12, 22, 0.7)) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            color: #f3f4f6 !important;
+            transition: all 0.2s ease;
+        }
+        .admin-main input[type="text"]:hover,
+        .admin-main input[type="email"]:hover,
+        .admin-main input[type="url"]:hover,
+        .admin-main input[type="number"]:hover,
+        .admin-main input[type="password"]:hover,
+        .admin-main input[type="search"]:hover,
+        .admin-main input[type="tel"]:hover,
+        .admin-main select:hover,
+        .admin-main textarea:hover {
+            border-color: rgba(255, 255, 255, 0.16) !important;
+        }
+        .admin-main input:focus,
+        .admin-main select:focus,
+        .admin-main textarea:focus {
+            border-color: var(--clr-brand) !important;
+            outline: none;
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--clr-brand) 25%, transparent),
+                        0 0 24px -6px color-mix(in srgb, var(--clr-brand) 40%, transparent);
+        }
+        .admin-main input::placeholder,
+        .admin-main textarea::placeholder {
+            color: rgba(156, 163, 175, 0.5);
+        }
+        .admin-main select option {
+            background: #14141e !important;
+            color: #f3f4f6 !important;
+        }
+        .admin-main input[type="checkbox"]:focus,
+        .admin-main input[type="radio"]:focus {
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--clr-brand) 25%, transparent);
+        }
+        .admin-main input[type="file"]::file-selector-button {
+            background: linear-gradient(135deg, var(--clr-brand), color-mix(in srgb, var(--clr-brand) 70%, black)) !important;
+            color: white !important;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin-right: 0.75rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .admin-main input[type="file"]::file-selector-button:hover {
+            filter: brightness(1.15);
+        }
+
+        /* ========== Buttons (purple gradient for primary) ========== */
+        .admin-main button[type="submit"],
+        .admin-main .btn-primary,
+        .admin-main a.bg-purple-600,
+        .admin-main button.bg-purple-600 {
+            background: linear-gradient(135deg, var(--clr-brand), color-mix(in srgb, var(--clr-brand) 70%, black)) !important;
+            box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--clr-brand) 70%, transparent);
+        }
+        .admin-main button[type="submit"]:hover,
+        .admin-main a.bg-purple-600:hover,
+        .admin-main button.bg-purple-600:hover {
+            filter: brightness(1.12);
+            box-shadow: 0 10px 28px -8px color-mix(in srgb, var(--clr-brand) 80%, transparent);
+        }
+        .admin-main a.bg-emerald-600,
+        .admin-main button.bg-emerald-600 {
+            background: linear-gradient(135deg, #10b981, #047857) !important;
+            box-shadow: 0 8px 20px -10px rgba(16, 185, 129, 0.5);
+        }
+
+        /* ========== Typography / Headings ========== */
+        .admin-main h1 { color: white; }
+        .admin-main h2, .admin-main h3 { color: #f3f4f6; }
+
+        /* ========== Tables — subtle stripe + cleaner header ========== */
+        .admin-main table thead {
+            background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)) !important;
+        }
+        .admin-main table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.035) !important;
+        }
+
+        /* ========== Scrollbar ========== */
+        .admin-main ::-webkit-scrollbar { width: 10px; height: 10px; }
+        .admin-main ::-webkit-scrollbar-track { background: transparent; }
+        .admin-main ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 8px; }
+        .admin-main ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); }
+
+        /* Section icon chips — softer */
+        .admin-main .section-header-icon {
+            background: linear-gradient(135deg, color-mix(in srgb, var(--clr-brand) 25%, transparent), color-mix(in srgb, var(--clr-brand) 10%, transparent));
+            border: 1px solid color-mix(in srgb, var(--clr-brand) 20%, transparent);
         }
 
         /* Force 100% width on the page's top-level wrapper / form. */
