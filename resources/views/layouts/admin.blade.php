@@ -99,6 +99,43 @@
             text-align: center;
             flex-shrink: 0;
         }
+
+        /* Universal glass effect for every admin tab.
+           Any solid gray card becomes translucent w/ backdrop blur. */
+        .admin-main [class~="bg-gray-900"],
+        .admin-main [class~="bg-gray-900\\/60"] {
+            background-color: rgba(17, 17, 23, 0.55) !important;
+            backdrop-filter: blur(14px) saturate(120%);
+            -webkit-backdrop-filter: blur(14px) saturate(120%);
+        }
+        .admin-main [class~="bg-gray-950"] {
+            background-color: rgba(7, 7, 11, 0.6) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .admin-main [class~="bg-white\\/5"] {
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        /* Force 100% width on the page's top-level wrapper / form. */
+        .admin-main > .max-w-sm,
+        .admin-main > .max-w-md,
+        .admin-main > .max-w-lg,
+        .admin-main > .max-w-xl,
+        .admin-main > .max-w-2xl,
+        .admin-main > .max-w-3xl,
+        .admin-main > .max-w-4xl,
+        .admin-main > .max-w-5xl,
+        .admin-main > .max-w-6xl,
+        .admin-main > .max-w-7xl {
+            max-width: 100% !important;
+            width: 100%;
+        }
+        .admin-main > form[class*="max-w-"] {
+            max-width: 100% !important;
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -357,7 +394,7 @@
             </div>
             @endif
 
-            <main class="p-5 sm:p-8 flex-1">
+            <main class="admin-main p-5 sm:p-8 flex-1 w-full">
                 @yield('content')
             </main>
         </div>
