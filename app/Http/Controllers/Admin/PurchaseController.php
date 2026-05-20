@@ -10,7 +10,7 @@ class PurchaseController extends Controller
 {
     public function index()
     {
-        $purchases = Purchase::with(['user', 'addon'])->latest()->paginate(20);
+        $purchases = Purchase::with(['user', 'addon', 'licenses'])->latest()->paginate(20);
         return Inertia::render('Purchases/Index', compact('purchases'));
     }
 }

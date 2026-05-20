@@ -115,6 +115,8 @@ Route::middleware(['auth', 'verified', 'role:admin', 'inertia'])->prefix('admin'
     Route::resource('promo-codes', Admin\PromoCodeController::class)->except(['show']);
 
     Route::get('/purchases', [Admin\PurchaseController::class , 'index'])->name('purchases.index');
+    Route::post('/licenses/{license}/refresh', [Admin\LicenseController::class , 'refresh'])->name('licenses.refresh');
+
     Route::get('/users', [Admin\UserController::class , 'index'])->name('users.index');
     Route::get('/users/export', [Admin\UserController::class , 'exportEmails'])->name('users.export');
     Route::get('/waitlist', [Admin\WaitlistController::class , 'index'])->name('waitlist.index');
