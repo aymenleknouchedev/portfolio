@@ -63,7 +63,7 @@ class ReclamationController extends Controller
 
     public function show(Request $request, Reclamation $reclamation)
     {
-        abort_unless($reclamation->user_id === $request->user()->id, 403);
+        abort_unless((int) $reclamation->user_id === (int) $request->user()->id, 403);
 
         if (!$reclamation->is_read_client) {
             $reclamation->update(['is_read_client' => true]);
