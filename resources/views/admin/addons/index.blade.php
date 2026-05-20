@@ -7,7 +7,7 @@
 <div class="flex items-center justify-between mb-6 gap-4 flex-wrap">
     <p class="text-sm text-gray-400">Manage your digital products and license packs.</p>
     <a href="{{ route('admin.addons.create') }}"
-        class="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-all hover:shadow-lg hover:shadow-purple-500/25">
+        class="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-all hover: hover:">
         <i class="fa-solid fa-plus text-xs"></i>
         New Add-on
     </a>
@@ -34,7 +34,7 @@
                             @if($addon->cover_image)
                                 <img src="{{ asset('storage/' . $addon->cover_image) }}" alt="" class="w-10 h-10 rounded-lg object-cover border border-white/10 shrink-0">
                             @else
-                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500/30 to-violet-700/30 flex items-center justify-center shrink-0">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0">
                                     <i class="fa-solid fa-puzzle-piece text-purple-300 text-sm"></i>
                                 </div>
                             @endif

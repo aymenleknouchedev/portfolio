@@ -15,7 +15,7 @@
             {{-- Conversation card --}}
             <div class="rounded-2xl bg-gray-900 border border-white/5 p-6 space-y-5">
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-violet-700 flex items-center justify-center text-base font-bold shrink-0 shadow-lg shadow-purple-500/30">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-base font-bold shrink-0">
                         {{ strtoupper(substr($reclamation->user->name ?? 'U', 0, 1)) }}
                     </div>
                     <div class="flex-1 min-w-0">
@@ -39,7 +39,7 @@
 
                 @if($reclamation->admin_reply)
                 <div class="border-t border-white/5 pt-5">
-                    <div class="rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 p-5">
+                    <div class="rounded-xl border border-purple-500/20 p-5">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-sm font-semibold text-purple-300 flex items-center gap-2">
                                 <i class="fa-solid fa-reply"></i> Your reply

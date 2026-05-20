@@ -21,7 +21,7 @@
                 Uploading...
             </h2>
             <div class="relative w-full h-3 bg-white/5 rounded-full overflow-hidden">
-                <div id="progress-bar" class="absolute inset-y-0 left-0 bg-gradient-to-r from-purple-600 to-violet-500 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
+                <div id="progress-bar" class="absolute inset-y-0 left-0 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
             </div>
             <p class="text-center">
                 <span id="progress-number" class="text-3xl font-display text-white">0</span>
@@ -56,7 +56,7 @@
                     @endphp
                     @foreach($colorPresets as $hex => $label)
                     <button type="button" onclick="setBrandColor('{{ $hex }}')" title="{{ $label }}"
-                        class="w-9 h-9 rounded-full transition-all hover:scale-110 ring-2 ring-offset-2 ring-offset-gray-900 ring-white/0 hover:ring-white/40"
+                        class="w-9 h-9 rounded-full transition-all hover:scale-110 ring-2 ring-offset-2 ring-white/0 hover:ring-white/40"
                         style="background-color: {{ $hex }}"></button>
                     @endforeach
                 </div>
@@ -151,7 +151,7 @@
             </div>
             @else
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center font-bold text-2xl">F</div>
+                <div class="w-14 h-14 rounded-lg flex items-center justify-center font-bold text-2xl">F</div>
                 <p class="text-sm text-gray-400">Using default gradient logo. Upload an image to replace it.</p>
             </div>
             @endif
@@ -203,7 +203,7 @@
         </div>
 
         <div class="flex gap-3">
-            <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white font-medium px-8 py-3 rounded-xl transition-all hover:shadow-lg hover:shadow-purple-500/25">
+            <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white font-medium px-8 py-3 rounded-xl transition-all hover: hover:">
                 Save Settings
             </button>
         </div>
@@ -267,7 +267,7 @@ document.getElementById('hero-form').addEventListener('submit', function(e) {
             window.location.reload();
         } else {
             progressStatus.textContent = 'Upload failed. Please try again.';
-            progressBar.classList.remove('from-purple-600', 'to-violet-500');
+            progressBar.classList.remove('', '');
             progressBar.classList.add('bg-red-500');
             submitBtn.disabled = false;
             submitBtn.textContent = 'Save Settings';

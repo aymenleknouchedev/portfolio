@@ -16,12 +16,12 @@
     {{-- Tab pills --}}
     <div class="rounded-2xl bg-gray-900 border border-white/5 p-1.5 inline-flex gap-1">
         <button @click="tab = 'all'"
-            :class="tab === 'all' ? 'bg-gradient-to-br from-purple-600 to-violet-700 text-white shadow-lg shadow-purple-500/30' : 'text-gray-400 hover:text-white hover:bg-white/5'"
+            :class="tab === 'all' ? ' text-white ' : 'text-gray-400 hover:text-white hover:bg-white/5'"
             class="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-xl transition-all">
             <i class="fa-solid fa-list text-xs"></i> All Projects
         </button>
         <button @click="tab = 'featured'"
-            :class="tab === 'featured' ? 'bg-gradient-to-br from-purple-600 to-violet-700 text-white shadow-lg shadow-purple-500/30' : 'text-gray-400 hover:text-white hover:bg-white/5'"
+            :class="tab === 'featured' ? ' text-white ' : 'text-gray-400 hover:text-white hover:bg-white/5'"
             class="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-xl transition-all">
             <i class="fa-solid fa-star text-xs"></i> Featured Order
         </button>

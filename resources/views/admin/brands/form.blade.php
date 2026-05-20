@@ -62,7 +62,7 @@
         </div>
 
         <aside class="space-y-4">
-            <div class="rounded-2xl bg-gradient-to-br from-purple-600/15 via-violet-700/10 to-gray-900 border border-purple-500/20 p-6">
+            <div class="card-accent p-6">
                 <h3 class="font-semibold mb-1">{{ isset($brand) ? 'Save Changes' : 'Create Brand' }}</h3>
                 <p class="text-xs text-gray-400 mb-4">Required fields are marked with *.</p>
                 <button type="submit"

@@ -13,8 +13,7 @@
     @foreach($tabs as $tab)
     @php $active = request()->routeIs($tab['route']); @endphp
     <a href="{{ route($tab['route']) }}"
-        class="inline-flex items-center gap-2 text-sm font-medium px-4 py-2.5 rounded-xl transition-all
-        {{ $active ? 'bg-gradient-to-br from-purple-600 to-violet-700 text-white shadow-lg shadow-purple-500/30' : 'text-gray-400 hover:text-white hover:bg-white/5' }}">
+        class="inline-flex items-center gap-2 text-sm font-medium px-4 py-2.5 rounded-xl transition-all {{ $active ? ' text-white ' : 'text-gray-400 hover:text-white hover:bg-white/5' }}">
         <i class="fa-solid {{ $tab['icon'] }} text-xs"></i>
         {{ $tab['label'] }}
     </a>

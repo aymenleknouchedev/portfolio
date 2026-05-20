@@ -38,7 +38,7 @@
                 <tr class="hover:bg-white/[0.03] transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-violet-700 flex items-center justify-center text-xs font-bold shrink-0">
+                            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             </div>
                             <div class="min-w-0">
@@ -49,8 +49,7 @@
                     </td>
                     <td class="px-6 py-4 text-gray-300">{{ $user->email }}</td>
                     <td class="px-6 py-4">
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border
-                            {{ $user->role === 'admin' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20' }}">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border {{ $user->role === 'admin' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20' }}">
                             <i class="fa-solid fa-{{ $user->role === 'admin' ? 'shield-halved' : 'user' }} text-[10px]"></i>
                             {{ ucfirst($user->role ?? 'client') }}
                         </span>

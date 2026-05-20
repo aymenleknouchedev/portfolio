@@ -149,7 +149,7 @@
                         <div class="relative group" data-gallery-item data-path="{{ $img }}">
                             <img src="{{ asset('storage/' . $img) }}" alt="Gallery image" class="w-full h-28 object-cover rounded-lg border border-white/10">
                             <button type="button" onclick="galleryRemoveExisting(this)"
-                                class="absolute top-1 right-1 w-6 h-6 bg-red-600/90 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all shadow-lg">&times;</button>
+                                class="absolute top-1 right-1 w-6 h-6 bg-red-600/90 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all">&times;</button>
                         </div>
                         @endforeach
                     @endif
@@ -395,7 +395,7 @@
                 div.className = 'relative group';
                 div.innerHTML =
                     '<img src="' + url + '" alt="New" class="w-full h-28 object-cover rounded-lg border border-purple-500/30">' +
-                    '<button type="button" class="absolute top-1 right-1 w-6 h-6 bg-red-600/90 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all shadow-lg">&times;</button>' +
+                    '<button type="button" class="absolute top-1 right-1 w-6 h-6 bg-red-600/90 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all">&times;</button>' +
                     '<div class="absolute bottom-1 left-1 right-1 text-[10px] text-white/70 truncate px-1">' + file.name.replace(/</g, '&lt;') + '</div>';
                 div.querySelector('button').addEventListener('click', function() {
                     URL.revokeObjectURL(url);

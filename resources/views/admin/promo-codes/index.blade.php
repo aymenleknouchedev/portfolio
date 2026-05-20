@@ -30,7 +30,7 @@
                 <tr class="transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500/30 to-orange-700/20 border border-amber-500/20 flex items-center justify-center">
+                            <div class="w-9 h-9 rounded-lg border border-amber-500/20 flex items-center justify-center">
                                 <i class="fa-solid fa-ticket text-amber-300 text-sm"></i>
                             </div>
                             <span class="font-mono font-semibold text-purple-300 tracking-wider">{{ $promo->code }}</span>

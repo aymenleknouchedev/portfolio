@@ -28,7 +28,7 @@
                 <tr class="transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-sky-500/30 to-blue-700/20 border border-sky-500/20 flex items-center justify-center">
+                            <div class="w-9 h-9 rounded-lg border border-sky-500/20 flex items-center justify-center">
                                 <i class="fa-solid fa-newspaper text-sky-300 text-sm"></i>
                             </div>
                             <span class="font-medium text-white">{{ $article->title }}</span>

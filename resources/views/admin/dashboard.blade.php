@@ -15,22 +15,19 @@
 {{-- KPI Cards --}}
 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
     {{-- Revenue --}}
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-600/20 via-purple-700/10 to-violet-900/10 border border-purple-500/20 p-6">
-        <div class="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-purple-500/20 blur-3xl"></div>
-        <div class="relative">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-10 h-10 rounded-xl bg-purple-500/30 flex items-center justify-center backdrop-blur-sm">
-                    <i class="fa-solid fa-dollar-sign text-purple-300"></i>
-                </div>
-                <span class="text-xs px-2 py-1 rounded-md font-medium {{ $monthGrowth >= 0 ? 'bg-emerald-500/15 text-emerald-300' : 'bg-red-500/15 text-red-300' }}">
-                    <i class="fa-solid fa-{{ $monthGrowth >= 0 ? 'arrow-trend-up' : 'arrow-trend-down' }} text-[10px]"></i>
-                    {{ $monthGrowth >= 0 ? '+' : '' }}{{ $monthGrowth }}%
-                </span>
+    <div class="card-accent p-6">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                <i class="fa-solid fa-dollar-sign text-purple-300"></i>
             </div>
-            <div class="text-xs text-purple-200/70 font-medium uppercase tracking-wider">Total Revenue</div>
-            <div class="text-3xl font-bold mt-1 text-white">${{ number_format($stats['revenue'], 2) }}</div>
-            <div class="text-xs text-gray-400 mt-2">This month: <span class="text-purple-300 font-semibold">${{ number_format($stats['monthly_revenue'], 2) }}</span></div>
+            <span class="text-xs px-2 py-1 rounded-md font-medium {{ $monthGrowth >= 0 ? 'bg-emerald-500/15 text-emerald-300' : 'bg-red-500/15 text-red-300' }}">
+                <i class="fa-solid fa-{{ $monthGrowth >= 0 ? 'arrow-trend-up' : 'arrow-trend-down' }} text-[10px]"></i>
+                {{ $monthGrowth >= 0 ? '+' : '' }}{{ $monthGrowth }}%
+            </span>
         </div>
+        <div class="text-xs text-gray-400 font-medium uppercase tracking-wider">Total Revenue</div>
+        <div class="text-3xl font-bold mt-1 text-white">${{ number_format($stats['revenue'], 2) }}</div>
+        <div class="text-xs text-gray-400 mt-2">This month: <span class="text-purple-300 font-semibold">${{ number_format($stats['monthly_revenue'], 2) }}</span></div>
     </div>
 
     {{-- Users --}}
@@ -115,7 +112,7 @@
                 <div class="flex-1 flex flex-col items-center gap-2 group">
                     <span class="text-[11px] font-medium text-gray-500 group-hover:text-purple-300 transition-colors">${{ number_format($month['revenue'], 0) }}</span>
                     <div class="w-full flex-1 flex flex-col justify-end">
-                        <div class="w-full bg-gradient-to-t from-purple-600 to-purple-400 rounded-t-md hover:from-purple-500 hover:to-purple-300 transition-all"
+                        <div class="w-full rounded-t-md hover: hover: transition-all"
                             style="height: {{ $h }}%">
                         </div>
                     </div>
@@ -134,7 +131,7 @@
         <div class="divide-y divide-white/5">
             @forelse($stats['recent_users'] as $user)
             <div class="px-5 py-3.5 flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-violet-700 flex items-center justify-center text-xs font-bold shrink-0">
+                <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0">
                     {{ strtoupper(substr($user->name, 0, 1)) }}
                 </div>
                 <div class="min-w-0 flex-1">
@@ -176,7 +173,7 @@
                 <tr class="hover:bg-white/[0.03] transition-colors">
                     <td class="px-5 py-3.5">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500/40 to-violet-600/40 flex items-center justify-center text-xs font-bold shrink-0">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0">
                                 {{ strtoupper(substr($purchase->user->name ?? 'U', 0, 1)) }}
                             </div>
                             <div class="min-w-0">

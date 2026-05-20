@@ -103,7 +103,7 @@
         </div>
 
         <div class="flex gap-3">
-            <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white font-medium px-8 py-3 rounded-xl transition-all hover:shadow-lg hover:shadow-purple-500/25">
+            <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white font-medium px-8 py-3 rounded-xl transition-all hover: hover:">
                 Save Settings
             </button>
         </div>

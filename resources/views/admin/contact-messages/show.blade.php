@@ -12,7 +12,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 rounded-2xl bg-gray-900 border border-white/5 p-6 space-y-6">
             <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-violet-700 flex items-center justify-center text-base font-bold shrink-0 shadow-lg shadow-purple-500/30">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-base font-bold shrink-0">
                     {{ strtoupper(substr($contactMessage->name, 0, 1)) }}
                 </div>
                 <div class="flex-1 min-w-0">
@@ -36,11 +36,11 @@
         </div>
 
         <aside class="space-y-4">
-            <div class="rounded-2xl bg-gradient-to-br from-purple-600/15 via-violet-700/10 to-gray-900 border border-purple-500/20 p-6">
+            <div class="card-accent p-6">
                 <h3 class="font-semibold mb-1">Quick Reply</h3>
                 <p class="text-xs text-gray-400 mb-4">Open your mail client with a prefilled subject.</p>
                 <a href="mailto:{{ $contactMessage->email }}?subject=Re: {{ urlencode($contactMessage->subject) }}"
-                    class="block w-full text-center bg-purple-600 hover:bg-purple-500 text-white font-semibold py-3 rounded-xl transition-all hover:shadow-xl hover:shadow-purple-500/30">
+                    class="block w-full text-center bg-purple-600 hover:bg-purple-500 text-white font-semibold py-3 rounded-xl transition-all hover: hover:">
                     <i class="fa-solid fa-reply mr-1.5"></i> Reply via Email
                 </a>
             </div>

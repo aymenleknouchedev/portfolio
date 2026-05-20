@@ -26,7 +26,7 @@
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500/40 to-violet-600/40 flex items-center justify-center text-xs font-bold shrink-0">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0">
                                 {{ strtoupper(substr($msg->name, 0, 1)) }}
                             </div>
                             <div class="min-w-0">
