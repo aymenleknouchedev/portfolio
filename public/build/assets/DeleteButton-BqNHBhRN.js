@@ -1,0 +1,1 @@
+import{t as e,u as t}from"./app-lBa8ou8J.js";var n=e();function r({url:e,message:r,label:i=`Delete`,className:a}){return(0,n.jsx)(`button`,{type:`button`,onClick:()=>{confirm(r??`Delete this item? This cannot be undone.`)&&t.delete(e,{preserveScroll:!0})},className:`a-btn-danger `+(a??``),children:i})}export{r as t};

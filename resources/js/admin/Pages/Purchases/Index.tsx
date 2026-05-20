@@ -42,90 +42,70 @@ const licenseStatusClass: Record<string, string> = {
 
 function maskKey(key: string): string {
   if (key.length <= 8) return key;
-  return key.slice(0, 4) + '••••••••••••••••••••••••' + key.slice(-4);
+  return key.slice(0, 4) + '—————' + key.slice(-4);
 }
 
+/** Amber "Refresh Key" button — reused in both single and multi-key layouts */
+function RefreshBtn({ licenseId, refreshing, onRefresh }: {
+  licenseId: number;
+  refreshing: boolean;
+  onRefresh: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={refreshing}
+      onClick={onRefresh}
+      title="Generate a new key and unbind from device"
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-300 transition hover:bg-amber-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      <svg className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`}
+        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+      {refreshing ? 'Refreshing…' : 'Refresh Key'}
+    </button>
+  );
+}
+
+/** One row inside the expanded pack panel */
 function LicenseRow({ license, refreshing, onRefresh }: {
   license: License;
   refreshing: boolean;
   onRefresh: () => void;
 }) {
   const [revealed, setRevealed] = useState(false);
-
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] px-4 py-3">
-      {/* Key */}
       <div className="flex min-w-0 flex-1 items-center gap-2">
         <span className="font-mono text-xs text-gray-300 break-all">
           {revealed ? license.key : maskKey(license.key)}
         </span>
-        <button
-          type="button"
-          onClick={() => setRevealed(r => !r)}
+        <button type="button" onClick={() => setRevealed(r => !r)}
           className="shrink-0 text-xs text-gray-500 hover:text-gray-300 transition-colors"
-          title={revealed ? 'Hide key' : 'Reveal key'}
-        >
+          title={revealed ? 'Hide' : 'Reveal'}>
           {revealed ? '🙈' : '👁'}
         </button>
       </div>
-
-      {/* Meta badges */}
       <div className="flex shrink-0 flex-wrap items-center gap-2">
         <span className={`a-badge ${licenseStatusClass[license.status] ?? 'bg-gray-500/15 text-gray-300'}`}>
           {license.status}
         </span>
-
-        {license.machine_id ? (
-          <span className="a-badge bg-amber-500/15 text-amber-300 flex items-center gap-1">
-            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            Bound to device
-          </span>
-        ) : (
-          <span className="a-badge bg-blue-500/15 text-blue-300 flex items-center gap-1">
-            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-            </svg>
-            Unbound
-          </span>
-        )}
-
-        {license.machine_id && (
-          <span className="font-mono text-xs text-gray-500" title={`Machine ID: ${license.machine_id}`}>
-            {license.machine_id.slice(0, 12)}…
-          </span>
-        )}
+        {license.machine_id
+          ? <span className="a-badge bg-amber-500/15 text-amber-300">🖥 Bound</span>
+          : <span className="a-badge bg-blue-500/15 text-blue-300">Unbound</span>
+        }
       </div>
-
-      {/* Refresh */}
-      <button
-        type="button"
-        disabled={refreshing}
-        onClick={onRefresh}
-        className="shrink-0 a-btn-sec flex items-center gap-1.5 text-xs py-1.5 px-3 disabled:opacity-50 disabled:cursor-not-allowed"
-        title="Generate a new key and unbind from device"
-      >
-        <svg
-          className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`}
-          fill="none" stroke="currentColor" viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-        {refreshing ? 'Refreshing…' : 'Refresh Key'}
-      </button>
+      <RefreshBtn licenseId={license.id} refreshing={refreshing} onRefresh={onRefresh} />
     </div>
   );
 }
 
 function PurchaseRow({ p }: { p: Purchase }) {
+  const licenses = p.licenses ?? [];
   const [open, setOpen] = useState(false);
   const [refreshing, setRefreshing] = useState<number | null>(null);
-
-  const hasLicenses = p.licenses.length > 0;
 
   function doRefresh(licenseId: number) {
     if (refreshing !== null) return;
@@ -161,40 +141,59 @@ function PurchaseRow({ p }: { p: Purchase }) {
         </td>
         <td className="a-td font-mono text-xs text-gray-400">{p.paypal_order_id ?? '—'}</td>
         <td className="a-td text-xs text-gray-400">{formatDate(p.created_at, true)}</td>
+
+        {/* Keys / Refresh column */}
         <td className="a-td">
-          {hasLicenses ? (
+          {licenses.length === 0 && (
+            <span className="text-xs text-gray-600">no keys</span>
+          )}
+
+          {/* Single license → Refresh button directly in the row */}
+          {licenses.length === 1 && (
+            <div className="flex flex-col gap-1.5">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className={`a-badge text-[10px] ${licenseStatusClass[licenses[0].status] ?? ''}`}>
+                  {licenses[0].status}
+                </span>
+                {licenses[0].machine_id
+                  ? <span className="a-badge bg-amber-500/15 text-amber-300 text-[10px]">🖥 Bound</span>
+                  : <span className="a-badge bg-blue-500/15 text-blue-300 text-[10px]">Unbound</span>
+                }
+              </div>
+              <RefreshBtn
+                licenseId={licenses[0].id}
+                refreshing={refreshing === licenses[0].id}
+                onRefresh={() => doRefresh(licenses[0].id)}
+              />
+            </div>
+          )}
+
+          {/* Pack (multiple keys) → expand toggle */}
+          {licenses.length > 1 && (
             <button
               type="button"
               onClick={() => setOpen(o => !o)}
-              className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-300 transition hover:bg-blue-500/20"
             >
-              <svg
-                className={`h-3.5 w-3.5 transition-transform ${open ? 'rotate-180' : ''}`}
-                fill="none" stroke="currentColor" viewBox="0 0 24 24"
-              >
+              <svg className={`h-3.5 w-3.5 transition-transform ${open ? 'rotate-180' : ''}`}
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
-              {p.licenses.length} key{p.licenses.length !== 1 ? 's' : ''}
+              {licenses.length} keys
             </button>
-          ) : (
-            <span className="text-xs text-gray-600">no keys</span>
           )}
         </td>
       </tr>
 
-      {open && hasLicenses && (
+      {/* Expanded panel for packs */}
+      {open && licenses.length > 1 && (
         <tr>
           <td colSpan={9} className="px-4 pb-4 pt-1 bg-white/[0.01]">
             <div className="ml-4 space-y-2 border-l-2 border-blue-500/20 pl-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">
-                License Keys — {p.addon?.name}
-                {p.licenses.length > 1 && (
-                  <span className="ml-2 normal-case text-gray-600">
-                    (select which key to refresh below)
-                  </span>
-                )}
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-2">
+                Pack Keys — {p.addon?.name} — pick which key to refresh
               </p>
-              {p.licenses.map((lic) => (
+              {licenses.map((lic) => (
                 <LicenseRow
                   key={lic.id}
                   license={lic}
